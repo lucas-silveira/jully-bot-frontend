@@ -5,11 +5,11 @@ export default function Home(): React.ReactNode {
 }
 
 export const getStaticProps: GetStaticProps<any> = async () => {
-  const isLogged = false;
+  const isAuthenticated = false;
 
   return {
     redirect: {
-      destination: isLogged ? '/dashboard' : '/login',
+      destination: isAuthenticated ? '/dashboard' : '/login',
       permanent: false,
     },
   };
