@@ -1,11 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { RecoilRoot } from 'recoil';
 import GlobalStyle from '../styles/global';
 
 export default function MyApp({ Component, pageProps }): React.ReactNode {
   return (
     <>
       <GlobalStyle />
-      <Component {...pageProps} />
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
     </>
   );
 }
