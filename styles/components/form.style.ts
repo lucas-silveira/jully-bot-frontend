@@ -10,10 +10,10 @@ export const TextField = styled(TextFieldMUI)`
   input {
     background-color: #fff;
   }
-  input:autofill,
-  input:autofill:hover,
-  input:autofill:focus,
-  input:autofill:active {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px #fff inset !important;
   }
 
@@ -34,10 +34,10 @@ export const PasswordField = styled(FormControlMUI)`
   input {
     background-color: #fff;
   }
-  input:autofill,
-  input:autofill:hover,
-  input:autofill:focus,
-  input:autofill:active {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px #fff inset !important;
   }
 
