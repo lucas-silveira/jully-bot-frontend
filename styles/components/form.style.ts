@@ -59,6 +59,7 @@ export const PasswordField = styled(FormControlMUI)`
 `;
 
 export const SubmitButton = styled(Button).attrs(() => ({
+  type: 'submit',
   size: 'large',
 }))`
   color: #fff;
