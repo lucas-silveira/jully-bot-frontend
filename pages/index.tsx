@@ -1,5 +1,5 @@
 import { CircularProgress } from '@material-ui/core';
-import { Backdrop } from '@styles/components/backdrop';
+import { Backdrop } from '@styles/components/backdrop.style';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
