@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import {
   FilledInput,
@@ -48,6 +49,9 @@ export default function Login(): JSX.Element {
 
   return (
     <S.LayoutWrapper>
+      <Head>
+        <title>Acesse sua conta</title>
+      </Head>
       <S.LayoutMain>
         <header>
           <h2>Acesse sua conta</h2>
