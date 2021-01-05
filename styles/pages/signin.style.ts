@@ -2,12 +2,19 @@ import styled from 'styled-components';
 
 export const LayoutWrapper = styled.section`
   display: flex;
+  flex-direction: column;
+  justify-content: start;
   height: 100vh;
-  justify-content: center;
-  align-items: center;
 `;
 
-export const LayoutMain = styled.div`
+export const LayoutMain = styled.section`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+export const LoginBox = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
