@@ -9,7 +9,7 @@ export default function Dashboard(): JSX.Element {
   const [isAuthenticated] = useState(false);
 
   useEffect(() => {
-    router.push(isAuthenticated ? 'dashboard' : 'login');
+    router.push(isAuthenticated ? 'dashboard' : 'signin');
   }, [router, isAuthenticated]);
   return (
     <>

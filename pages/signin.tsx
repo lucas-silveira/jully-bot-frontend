@@ -8,7 +8,7 @@ import {
   InputLabel,
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import * as S from '@styles/pages/login.style';
+import * as S from '@styles/pages/signin.style';
 import * as FormStyle from '@styles/components/form.style';
 
 type FormState = {
@@ -18,7 +18,7 @@ type FormState = {
   error: boolean;
 };
 
-export default function Login(): JSX.Element {
+export default function SignIn(): JSX.Element {
   const [formState, setFormState] = useState<FormState>({
     email: '',
     password: '',
