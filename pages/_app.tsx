@@ -2,7 +2,7 @@
 import { RecoilRoot } from 'recoil';
 import GlobalStyle from '../styles/global';
 
-export default function MyApp({ Component, pageProps }): React.ReactNode {
+export default function MyApp({ Component, pageProps }): JSX.Element {
   return (
     <>
       <GlobalStyle />
