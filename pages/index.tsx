@@ -1,16 +1,7 @@
 import { CircularProgress } from '@material-ui/core';
 import { Backdrop } from '@styles/components/backdrop.style';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
 export default function Home(): JSX.Element {
-  const router = useRouter();
-  const [isAuthenticated] = useState(false);
-
-  useEffect(() => {
-    router.push(isAuthenticated ? 'dashboard' : 'login');
-  }, [router, isAuthenticated]);
-
   return (
     <Backdrop open>
       <CircularProgress color="inherit" />
