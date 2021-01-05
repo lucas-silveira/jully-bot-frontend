@@ -1,3 +1,5 @@
+import { CircularProgress } from '@material-ui/core';
+import { Backdrop } from '@styles/components/backdrop';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -9,5 +11,9 @@ export default function Home(): JSX.Element {
     router.push(isAuthenticated ? 'dashboard' : 'login');
   }, [router, isAuthenticated]);
 
-  return <p>Redirecionando...</p>;
+  return (
+    <Backdrop open>
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  );
 }
