@@ -50,7 +50,7 @@ export default function SignIn(): JSX.Element {
   return (
     <S.LayoutWrapper>
       <Head>
-        <title>Acesse sua conta</title>
+        <title>Acesse sua conta | Jully Bot</title>
       </Head>
       <S.LayoutMain>
         <header>
@@ -95,7 +95,7 @@ export default function SignIn(): JSX.Element {
         <footer>
           <p>
             Não possui uma conta?
-            <Link href="/"> Cadastre-se agora.</Link>
+            <Link href="/signup"> Cadastre-se agora.</Link>
           </p>
         </footer>
       </S.LayoutMain>

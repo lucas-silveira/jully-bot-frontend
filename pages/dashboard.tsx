@@ -14,7 +14,7 @@ export default function Dashboard(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Meu dashboard</title>
+        <title>Meu dashboard | Jully Bot</title>
       </Head>
       <Backdrop open>
         <CircularProgress color="inherit" />
