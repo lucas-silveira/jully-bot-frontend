@@ -1,16 +1,13 @@
-import { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-export default function Home(): React.ReactNode {
-  return <></>;
+export default function Home(): JSX.Element {
+  const router = useRouter();
+  const [isAuthenticated] = useState(false);
+
+  useEffect(() => {
+    router.push(isAuthenticated ? 'dashboard' : 'login');
+  }, [router, isAuthenticated]);
+
+  return <p>Redirecionando...</p>;
 }
-
-export const getStaticProps: GetStaticProps<any> = async () => {
-  const isAuthenticated = false;
-
-  return {
-    redirect: {
-      destination: isAuthenticated ? '/dashboard' : '/login',
-      permanent: false,
-    },
-  };
-};
