@@ -20,7 +20,31 @@ export default createGlobalStyle`
     font-family: Roboto, Helvetica, sans-serif;
   }
 
+  h1 {
+    font-size: 3rem;
+  }
+
+  h2 {
+    font-size: 2.4rem;
+  }
+
+  h3 {
+    font-size: 2rem;
+  }
+
+  h4 {
+    font-size: 1.6rem;
+  }
+
+  h5, h6 {
+    font-size: 1.2rem;
+  }
+
   h1, h2, h3, h4, h5, h6, a {
     color: #52489C;
+  }
+
+  a {
+    text-decoration: none;
   }
 `;
