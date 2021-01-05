@@ -61,19 +61,9 @@ export default function BillingAddressForm({
       <FormStyle.TextField
         type="text"
         value={formState.billingAddressState}
-        onChange={handleChange('billingAddressState')}
-        error={formState.error}
-        label="Cidade"
-        variant="filled"
-        fullWidth
-        helperText={formState.error ? 'Campo obrigatório' : ''}
-      />
-      <FormStyle.TextField
-        type="text"
-        value={formState.billingAddressCity}
         onChange={handleChange('billingAddressCity')}
         error={formState.error}
-        label="Estado"
+        label="Cidade"
         variant="filled"
         fullWidth
         helperText={formState.error ? 'Campo obrigatório' : ''}
