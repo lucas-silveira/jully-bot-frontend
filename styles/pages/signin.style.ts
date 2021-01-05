@@ -17,6 +17,7 @@ export const LayoutMain = styled.section`
 export const LoginBox = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: 542px;
   padding: 20px;
 
   > header {
