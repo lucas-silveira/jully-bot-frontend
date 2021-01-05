@@ -5,18 +5,9 @@ import {
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { lighten } from 'polished';
+import { KeyboardDatePicker as KeyboardDatePickerMUI } from '@material-ui/pickers';
 
-export const TextField = styled(TextFieldMUI)`
-  input {
-    background-color: #fff;
-  }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    box-shadow: 0 0 0 30px #fff inset !important;
-  }
-
+const formatDefaultMUIStyle = `
   label.Mui-focused {
     color: var(--primary-color);
   }
@@ -30,32 +21,41 @@ export const TextField = styled(TextFieldMUI)`
   }
 `;
 
+const deactiveInputAutofill = `
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    box-shadow: 0 0 0 30px #fff inset !important;
+  }
+`;
+
+export const TextField = styled(TextFieldMUI)`
+  input {
+    background-color: #fff;
+    ${deactiveInputAutofill}
+  }
+
+  ${formatDefaultMUIStyle}
+`;
+
 export const PasswordField = styled(FormControlMUI)`
   input {
     background-color: #fff;
-  }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    box-shadow: 0 0 0 30px #fff inset !important;
-  }
-
-  label.Mui-focused {
-    color: var(--primary-color);
+    ${deactiveInputAutofill}
   }
 
   .MuiFilledInput-root {
     background-color: #fff;
   }
 
-  .MuiFilledInput-underline:after {
-    border-bottom-color: var(--primary-color);
-  }
+  ${formatDefaultMUIStyle}
+`;
 
-  .Mui-focused fieldset {
-    border-color: var(--primary-color);
-  }
+export const KeyboardDatePicker = styled(KeyboardDatePickerMUI).attrs(() => ({
+  margin: 'normal',
+}))`
+  ${formatDefaultMUIStyle}
 `;
 
 export const SubmitButton = styled(Button).attrs(() => ({
