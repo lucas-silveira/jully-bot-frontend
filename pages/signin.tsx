@@ -65,6 +65,7 @@ export default function SignIn(): JSX.Element {
           <S.Form noValidate autoComplete="off">
             <FormStyle.TextField
               type="email"
+              required
               value={formState.email}
               onChange={handleChange('email')}
               error={formState.error}
@@ -73,8 +74,8 @@ export default function SignIn(): JSX.Element {
               fullWidth
               helperText={formState.error ? 'Digite um email válido' : ''}
             />
-            <FormStyle.PasswordField fullWidth variant="filled">
-              <InputLabel htmlFor="password">Password</InputLabel>
+            <FormStyle.PasswordField fullWidth variant="filled" required>
+              <InputLabel htmlFor="password">Sua senha</InputLabel>
               <FilledInput
                 id="password"
                 type={formState.showPass ? 'text' : 'password'}
