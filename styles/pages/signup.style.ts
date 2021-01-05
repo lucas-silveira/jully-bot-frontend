@@ -34,12 +34,3 @@ export const LoginBox = styled.div`
     }
   }
 `;
-
-export const Form = styled.form`
-  margin-bottom: 50px;
-
-  > div + div,
-  > button {
-    margin-top: 20px;
-  }
-`;
