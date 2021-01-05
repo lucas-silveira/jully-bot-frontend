@@ -1,17 +1,9 @@
-/* eslint-disable prettier/prettier */
 import { useCallback, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import {
-  FilledInput,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-} from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
 import * as S from '@styles/pages/signin.style';
-import * as FormStyle from '@styles/components/form.style';
 import HeaderBrand from 'components/header/header-brand';
+import SignInForm from '@components/forms/signin-form';
 
 type FormState = {
   email: string;
@@ -62,40 +54,12 @@ export default function SignIn(): JSX.Element {
             <p>Insira o seu e-mail e senha para acessar o seu dashboard.</p>
           </header>
 
-          <S.Form noValidate autoComplete="off">
-            <FormStyle.TextField
-              type="email"
-              required
-              value={formState.email}
-              onChange={handleChange('email')}
-              error={formState.error}
-              label="Seu e-mail"
-              variant="filled"
-              fullWidth
-              helperText={formState.error ? 'Digite um email válido' : ''}
-            />
-            <FormStyle.PasswordField fullWidth variant="filled" required>
-              <InputLabel htmlFor="password">Sua senha</InputLabel>
-              <FilledInput
-                id="password"
-                type={formState.showPass ? 'text' : 'password'}
-                value={formState.password}
-                onChange={handleChange('password')}
-                endAdornment={(
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {formState.showPass ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                )}
-              />
-            </FormStyle.PasswordField>
-            <FormStyle.SubmitButton fullWidth>Entrar</FormStyle.SubmitButton>
-          </S.Form>
+          <SignInForm
+            formState={formState}
+            handleChange={handleChange}
+            handleClickShowPassword={handleClickShowPassword}
+            handleMouseDownPassword={handleMouseDownPassword}
+          />
 
           <footer>
             <p>

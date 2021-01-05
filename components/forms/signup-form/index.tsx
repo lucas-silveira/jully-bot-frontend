@@ -24,7 +24,7 @@ type FormState = {
   error: boolean;
 };
 
-type SignInForm = {
+type SignUpForm = {
   formState: FormState;
   handleChange: (...args: any[]) => any;
   handleClickShowPassword: (...args: any[]) => any;
@@ -32,13 +32,13 @@ type SignInForm = {
   handleDateChange: (...args: any[]) => any;
 };
 
-export default function SignInForm({
+export default function SignUpForm({
   formState,
   handleChange,
   handleClickShowPassword,
   handleMouseDownPassword,
   handleDateChange,
-}: SignInForm): JSX.Element {
+}: SignUpForm): JSX.Element {
   return (
     <S.Form noValidate autoComplete="off">
       <FormStyle.TextField
@@ -68,7 +68,7 @@ export default function SignInForm({
           type={formState.showPass ? 'text' : 'password'}
           value={formState.password}
           onChange={handleChange('password')}
-          endAdornment={(
+          endAdornment={
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
@@ -78,7 +78,7 @@ export default function SignInForm({
                 {formState.showPass ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )}
+          }
         />
       </FormStyle.PasswordField>
       <FormStyle.PasswordField fullWidth variant="filled">
@@ -88,7 +88,7 @@ export default function SignInForm({
           type={formState.showPass ? 'text' : 'password'}
           value={formState.passwordConfirm}
           onChange={handleChange('passwordConfirm')}
-          endAdornment={(
+          endAdornment={
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
@@ -98,7 +98,7 @@ export default function SignInForm({
                 {formState.showPass ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          )}
+          }
         />
       </FormStyle.PasswordField>
       <FormStyle.KeyboardDatePicker

@@ -11,7 +11,7 @@ import { removeSpecialCharacters } from '@utils/string-parser';
 import { viaCepAPI, ViaCepResponse } from '@utils/api';
 import { zipcodeRegex } from '@utils/string-regex';
 import * as S from '@styles/pages/signup.style';
-import SignInForm from '@components/forms/signup-form';
+import SignUpForm from '@components/forms/signup-form';
 import BillingAddressForm from '@components/forms/billing-address-form';
 
 type FormState = {
@@ -126,7 +126,7 @@ export default function SignUp(): JSX.Element {
                   title: 'Seus dados',
                   content: (
                     <Fade in>
-                      <SignInForm
+                      <SignUpForm
                         formState={formState}
                         handleChange={handleChange}
                         handleClickShowPassword={handleClickShowPassword}
