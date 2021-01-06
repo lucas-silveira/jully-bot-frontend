@@ -64,6 +64,7 @@ export const SubmitButton = styled(ButtonMUI).attrs(() => ({
   type: 'submit',
   size: 'large',
 }))`
+  min-height: 50px;
   color: #fff;
   background-color: var(--primary-color);
   padding: 12px 0;
@@ -82,6 +83,7 @@ export const Button = styled(ButtonMUI).attrs(() => ({
   size: 'large',
 }))<MyButtonProps>`
   min-width: ${props => (props.isSending ? '50px' : '200px')};
+  min-height: 50px;
   color: #fff;
   background-color: var(--primary-color);
   padding: 12px 22px;

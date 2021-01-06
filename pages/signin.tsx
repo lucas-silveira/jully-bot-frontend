@@ -14,6 +14,7 @@ type FormState = {
   email: string;
   password: string;
   showPass: boolean;
+  isSending: boolean;
   errors: {
     [key: string]: string;
   };
@@ -24,39 +25,53 @@ export default function SignIn(): JSX.Element {
     email: '',
     password: '',
     showPass: false,
+    isSending: false,
     errors: {},
   });
 
+  const validateFormData = useCallback(async () => {
+    try {
+      await validateSignInForm({
+        email: formState.email,
+        password: formState.password,
+      });
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors: {},
+      }));
+
+      return true;
+    } catch (err) {
+      const errors = {};
+
+      if (err instanceof yup.ValidationError) {
+        (err.errors as any).forEach((error: FormValidationError) => {
+          errors[error.field] = error.message;
+        });
+      }
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors,
+      }));
+
+      return false;
+    }
+  }, [formState.email, formState.password]);
+
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
-      try {
-        event.preventDefault();
+      event.preventDefault();
 
-        await validateSignInForm({
-          email: formState.email,
-          password: formState.password,
-        });
+      await validateFormData();
 
-        setFormState(oldValues => ({
-          ...oldValues,
-          errors: {},
-        }));
-      } catch (err) {
-        const errors = {};
-
-        if (err instanceof yup.ValidationError) {
-          (err.errors as any).forEach((error: FormValidationError) => {
-            errors[error.field] = error.message;
-          });
-        }
-
-        setFormState(oldValues => ({
-          ...oldValues,
-          errors,
-        }));
-      }
+      setFormState(oldValues => ({
+        ...oldValues,
+        isSending: true,
+      }));
     },
-    [formState.email, formState.password],
+    [validateFormData],
   );
 
   const handleChange = useCallback(

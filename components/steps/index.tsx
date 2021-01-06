@@ -94,6 +94,7 @@ export default function Steps({
                 variant="contained"
                 onClick={handleNext}
                 isSending={isSending}
+                disabled={isSending}
               >
                 {isSending ? (
                   <CircularProgress size={14} color="inherit" />

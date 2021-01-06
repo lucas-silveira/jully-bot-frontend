@@ -1,4 +1,5 @@
 import {
+  CircularProgress,
   FilledInput,
   IconButton,
   InputAdornment,
@@ -12,6 +13,7 @@ type FormState = {
   email: string;
   password: string;
   showPass: boolean;
+  isSending: boolean;
   errors: {
     [key: string]: string;
   };
@@ -75,7 +77,17 @@ export default function SignInForm({
           </p>
         )}
       </FormStyle.PasswordField>
-      <FormStyle.SubmitButton fullWidth>Entrar</FormStyle.SubmitButton>
+      <FormStyle.SubmitButton
+        variant="contained"
+        disabled={formState.isSending}
+        fullWidth
+      >
+        {formState.isSending ? (
+          <CircularProgress size={14} color="inherit" />
+        ) : (
+          'Entrar'
+        )}
+      </FormStyle.SubmitButton>
     </S.Form>
   );
 }
