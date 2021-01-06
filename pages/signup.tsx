@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Fade } from '@material-ui/core';
@@ -21,6 +21,8 @@ import {
 import ToastFormError from '@components/toasts/toast-form-error';
 import { useRouter } from 'next/router';
 import { getCepDebouncer } from '@utils/viacep-api';
+import { useRecoilValue } from 'recoil';
+import { authState } from 'store/auth';
 
 type FormState = {
   name: string;
@@ -50,6 +52,7 @@ type GetAddressResponse = {
 
 export default function SignUp(): JSX.Element {
   const router = useRouter();
+  const auth = useRecoilValue(authState);
   const [formState, setFormState] = useState<FormState>({
     name: '',
     email: '',
@@ -70,6 +73,10 @@ export default function SignUp(): JSX.Element {
     open: false,
     message: '',
   });
+
+  useEffect(() => {
+    if (auth.accessToken) router.push('dashboard');
+  }, [router, auth]);
 
   const validateFirstStep = useCallback(async () => {
     try {
@@ -225,64 +232,69 @@ export default function SignUp(): JSX.Element {
   );
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
-      <S.LayoutWrapper>
-        <Head>
-          <title>Crie a sua conta | Jully Bot</title>
-        </Head>
-        <HeaderBrand />
-        <S.LayoutMain>
-          <S.LoginBox>
-            <header>
-              <h2>Crie a sua conta</h2>
-              <p>
-                Ao cadastrar, você ganha 14 dias gratuítos para testar a Jully.
-                Cancele quando quiser.
-              </p>
-            </header>
-            <Steps
-              handleSubmit={handleSubmit}
-              steps={[
-                {
-                  title: 'Seus dados',
-                  validator: validateFirstStep,
-                  content: (
-                    <Fade in>
-                      <SignUpForm
-                        formState={formState}
-                        handleChange={handleChange}
-                        handleClickShowPassword={handleClickShowPassword}
-                        handleMouseDownPassword={handleMouseDownPassword}
-                        handleDateChange={handleDateChange}
-                      />
-                    </Fade>
-                  ),
-                },
-                {
-                  title: 'Dados de cobrança',
-                  validator: validateSecondStep,
-                  content: (
-                    <Fade in>
-                      <BillingAddressForm
-                        formState={formState}
-                        handleChange={handleChange}
-                      />
-                    </Fade>
-                  ),
-                },
-              ]}
-            />
+    <>
+      <Head>
+        <title>Crie a sua conta | Jully Bot</title>
+      </Head>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <ToastFormError
+          toast={toastError}
+          handleClose={handleToastErrorClose}
+        />
+        <S.LayoutWrapper>
+          <HeaderBrand />
+          <S.LayoutMain>
+            <S.LoginBox>
+              <header>
+                <h2>Crie a sua conta</h2>
+                <p>
+                  Ao cadastrar, você ganha 14 dias gratuítos para testar a
+                  Jully. Cancele quando quiser.
+                </p>
+              </header>
+              <Steps
+                handleSubmit={handleSubmit}
+                steps={[
+                  {
+                    title: 'Seus dados',
+                    validator: validateFirstStep,
+                    content: (
+                      <Fade in>
+                        <SignUpForm
+                          formState={formState}
+                          handleChange={handleChange}
+                          handleClickShowPassword={handleClickShowPassword}
+                          handleMouseDownPassword={handleMouseDownPassword}
+                          handleDateChange={handleDateChange}
+                        />
+                      </Fade>
+                    ),
+                  },
+                  {
+                    title: 'Dados de cobrança',
+                    validator: validateSecondStep,
+                    content: (
+                      <Fade in>
+                        <BillingAddressForm
+                          formState={formState}
+                          handleChange={handleChange}
+                        />
+                      </Fade>
+                    ),
+                  },
+                ]}
+              />
 
-            <footer>
-              <p>
-                Já possui uma conta?
-                <Link href="/signin"> Faça login agora.</Link>
-              </p>
-            </footer>
-          </S.LoginBox>
-        </S.LayoutMain>
-      </S.LayoutWrapper>
-    </MuiPickersUtilsProvider>
+              <footer>
+                <p>
+                  Já possui uma conta?
+                  <Link href="/signin"> Faça login agora.</Link>
+                </p>
+              </footer>
+            </S.LoginBox>
+          </S.LayoutMain>
+        </S.LayoutWrapper>
+      </MuiPickersUtilsProvider>
+    </>
   );
 }

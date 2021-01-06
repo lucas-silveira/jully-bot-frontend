@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import * as yup from 'yup';
@@ -11,6 +11,11 @@ import {
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
 import ToastFormError from '@components/toasts/toast-form-error';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { authState } from 'store/auth';
+import { useRouter } from 'next/router';
+import { Backdrop } from '@styles/components/backdrop.style';
+import { CircularProgress } from '@material-ui/core';
 
 type FormState = {
   email: string;
@@ -23,6 +28,13 @@ type FormState = {
 };
 
 export default function SignIn(): JSX.Element {
+  const router = useRouter();
+  const [auth, setAuth] = useRecoilState(authState);
+
+  useEffect(() => {
+    if (auth.accessToken) router.push('dashboard');
+  }, [router, auth]);
+
   const [formState, setFormState] = useState<FormState>({
     email: '',
     password: '',
@@ -83,10 +95,15 @@ export default function SignIn(): JSX.Element {
           password: formState.password,
         });
 
+        setAuth({
+          accessToken: data.access_token,
+        });
         setFormState(oldValues => ({
           ...oldValues,
           isSending: false,
         }));
+
+        router.push('/dashboard');
       } catch (err) {
         setFormState(oldValues => ({
           ...oldValues,
@@ -132,11 +149,11 @@ export default function SignIn(): JSX.Element {
 
   return (
     <>
+      <Head>
+        <title>Acesse sua conta | Jully Bot</title>
+      </Head>
       <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
       <S.LayoutWrapper>
-        <Head>
-          <title>Acesse sua conta | Jully Bot</title>
-        </Head>
         <HeaderBrand />
         <S.LayoutMain>
           <S.LoginBox>

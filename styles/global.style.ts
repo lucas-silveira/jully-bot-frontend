@@ -9,9 +9,9 @@ export default createGlobalStyle`
   :root {
     --primary-color: #52489C;
     --secudanry-color: #59C3C3;
-    --dark-sea-green: #84a98c;
-    --ash-gray: #CAD2C5;
-    --platinum: #EBEBEB;
+    --dark-sea-green-color: #84a98c;
+    --ash-gray-color: #CAD2C5;
+    --platinum-color: #EBEBEB;
   }
 
   body {

@@ -3,5 +3,6 @@ import styled from 'styled-components';
 
 export const Backdrop = styled(BackdropMUI)`
   z-index: 1;
-  color: #fff;
+  color: var(--primary-color);
+  background: var(--platinum-color); ;
 `;
