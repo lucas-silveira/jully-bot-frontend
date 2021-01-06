@@ -17,9 +17,13 @@ type Step = {
 
 type StepsProps = {
   steps: Step[];
+  handleSubmit: (...args: any[]) => any;
 };
 
-export default function Steps({ steps }: StepsProps): JSX.Element {
+export default function Steps({
+  steps,
+  handleSubmit,
+}: StepsProps): JSX.Element {
   const [activeStep, setActiveStep] = useState(0);
 
   const getStepContent = useCallback(
@@ -34,12 +38,15 @@ export default function Steps({ steps }: StepsProps): JSX.Element {
     const formValidator = steps[activeStep].validator;
     const formIsValid = await formValidator();
 
-    if (formIsValid) return;
+    if (!formIsValid) return;
 
-    if (next === steps.length) return;
+    if (next === steps.length) {
+      await handleSubmit();
+      return;
+    }
 
     setActiveStep(prevActiveStep => prevActiveStep + 1);
-  }, [activeStep, steps]);
+  }, [activeStep, steps, handleSubmit]);
 
   const handleBack = useCallback(() => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);

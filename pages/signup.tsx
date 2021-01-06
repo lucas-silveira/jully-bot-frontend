@@ -4,12 +4,11 @@ import Link from 'next/link';
 import { Fade } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { debounce } from 'lodash';
 import * as Yup from 'yup';
 import HeaderBrand from '@components/header/header-brand';
 import Steps from '@components/steps';
 import { removeSpecialCharacters } from '@utils/string-parser';
-import { viaCepAPI, ViaCepResponse } from '@utils/api';
+import { jullyAPI } from '@utils/api';
 import { zipcodeRegex } from '@utils/string-regex';
 import * as S from '@styles/pages/signup.style';
 import SignUpForm from '@components/forms/signup-form';
@@ -19,6 +18,9 @@ import {
   validateSignUpFirstStepForm,
   validateSignUpSecondStepForm,
 } from '@utils/form-validators';
+import ToastFormError from '@components/toasts/toast-form-error';
+import { useRouter } from 'next/router';
+import { getCepDebouncer } from '@utils/viacep-api';
 
 type FormState = {
   name: string;
@@ -33,29 +35,21 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
+  loadAddress: boolean;
   errors: {
     [key: string]: string;
   };
 };
 
-const getCepDebouncer = debounce(
-  async (zipcode: string, callback: (object: object) => void) => {
-    const zipcodeParsed = removeSpecialCharacters(zipcode);
-    const { data } = await viaCepAPI.get<ViaCepResponse>(
-      `/${zipcodeParsed}/json/`,
-    );
-
-    callback({
-      billingAddressLine1: data.logradouro,
-      billingAddressLine2: data.bairro,
-      billingAddressCity: data.localidade,
-      billingAddressState: data.uf,
-    });
-  },
-  500,
-);
+type GetAddressResponse = {
+  bairro: string;
+  logradouro: string;
+  localidade: string;
+  uf: string;
+};
 
 export default function SignUp(): JSX.Element {
+  const router = useRouter();
   const [formState, setFormState] = useState<FormState>({
     name: '',
     email: '',
@@ -69,7 +63,12 @@ export default function SignUp(): JSX.Element {
     billingAddressCity: '',
     billingAddressState: '',
     billingAddressCountry: 'Brasil',
+    loadAddress: false,
     errors: {},
+  });
+  const [toastError, setToastError] = useState({
+    open: false,
+    message: '',
   });
 
   const validateFirstStep = useCallback(async () => {
@@ -152,12 +151,49 @@ export default function SignUp(): JSX.Element {
     if (!zipcodeRegex.test(zipcode)) return;
 
     getCepDebouncer.cancel();
-    getCepDebouncer(zipcode, newValues =>
+    getCepDebouncer(zipcode, (newValues: GetAddressResponse) =>
       setFormState(oldValues => ({
         ...oldValues,
-        ...newValues,
+        billingAddressLine1: newValues.logradouro,
+        billingAddressLine2: newValues.bairro,
+        billingAddressCity: newValues.localidade,
+        billingAddressState: newValues.uf,
+        loadAddress: true,
       })),
     );
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      await jullyAPI.post('/managers', {
+        name: formState.name,
+        email: formState.email,
+        password: formState.password,
+        passwordConfirm: formState.passwordConfirm,
+        birthday: formState.birthday,
+        billingAddress: {
+          line1: formState.billingAddressLine1,
+          line2: formState.billingAddressLine2,
+          zipcode: removeSpecialCharacters(formState.billingAddressZipcode),
+          city: formState.billingAddressCity,
+          state: formState.billingAddressState,
+          country: formState.billingAddressCountry,
+        },
+      });
+      router.push('/signin');
+    } catch (err) {
+      setToastError({
+        open: true,
+        message: err.response.data.message,
+      });
+    }
+  }, [formState, router]);
+
+  const handleToastErrorClose = useCallback(() => {
+    setToastError({
+      open: false,
+      message: '',
+    });
   }, []);
 
   const handleChange = useCallback(
@@ -190,6 +226,7 @@ export default function SignUp(): JSX.Element {
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
       <S.LayoutWrapper>
         <Head>
           <title>Crie a sua conta | Jully Bot</title>
@@ -205,6 +242,7 @@ export default function SignUp(): JSX.Element {
               </p>
             </header>
             <Steps
+              handleSubmit={handleSubmit}
               steps={[
                 {
                   title: 'Seus dados',

@@ -14,6 +14,7 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
+  loadAddress: boolean;
   errors: {
     [key: string]: string;
   };
@@ -40,36 +41,40 @@ export default function BillingAddressForm({
         fullWidth
         helperText={formState.errors.zipcode || ''}
       />
-      <FormStyle.TextField
-        type="text"
-        value={formState.billingAddressLine1}
-        onChange={handleChange('billingAddressLine1')}
-        error={!!formState.errors.line1}
-        label="Rua"
-        variant="filled"
-        fullWidth
-        helperText={formState.errors.line1 || ''}
-      />
-      <FormStyle.TextField
-        type="text"
-        value={formState.billingAddressLine2}
-        onChange={handleChange('billingAddressLine2')}
-        error={!!formState.errors.line2}
-        label="Bairro"
-        variant="filled"
-        fullWidth
-        helperText={formState.errors.line2 || ''}
-      />
-      <FormStyle.TextField
-        type="text"
-        value={formState.billingAddressCity}
-        onChange={handleChange('billingAddressCity')}
-        error={!!formState.errors.city}
-        label="Cidade"
-        variant="filled"
-        fullWidth
-        helperText={formState.errors.city || ''}
-      />
+      {formState.loadAddress && (
+        <>
+          <FormStyle.TextField
+            type="text"
+            value={formState.billingAddressLine1}
+            onChange={handleChange('billingAddressLine1')}
+            error={!!formState.errors.line1}
+            label="Rua"
+            variant="filled"
+            fullWidth
+            helperText={formState.errors.line1 || ''}
+          />
+          <FormStyle.TextField
+            type="text"
+            value={formState.billingAddressLine2}
+            onChange={handleChange('billingAddressLine2')}
+            error={!!formState.errors.line2}
+            label="Bairro"
+            variant="filled"
+            fullWidth
+            helperText={formState.errors.line2 || ''}
+          />
+          <FormStyle.TextField
+            type="text"
+            value={formState.billingAddressCity}
+            onChange={handleChange('billingAddressCity')}
+            error={!!formState.errors.city}
+            label="Cidade"
+            variant="filled"
+            fullWidth
+            helperText={formState.errors.city || ''}
+          />
+        </>
+      )}
     </S.Form>
   );
 }
