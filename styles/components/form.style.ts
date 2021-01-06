@@ -51,6 +51,12 @@ export const PasswordField = styled(FormControlMUI)`
     background-color: #fff;
   }
 
+  p {
+    color: #f44336;
+    font-size: 0.75rem;
+    margin: 3px 14px 0;
+  }
+
   ${formatDefaultMUIStyle}
 `;
 
