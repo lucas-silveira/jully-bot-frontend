@@ -9,6 +9,8 @@ import {
   FormValidationError,
   validateSignInForm,
 } from '@utils/form-validators';
+import { jullyAPI } from '@utils/api';
+import ToastFormError from '@components/toasts/toast-form-error';
 
 type FormState = {
   email: string;
@@ -27,6 +29,10 @@ export default function SignIn(): JSX.Element {
     showPass: false,
     isSending: false,
     errors: {},
+  });
+  const [toastError, setToastError] = useState({
+    open: false,
+    message: '',
   });
 
   const validateFormData = useCallback(async () => {
@@ -62,17 +68,46 @@ export default function SignIn(): JSX.Element {
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
-      event.preventDefault();
+      try {
+        event.preventDefault();
 
-      await validateFormData();
+        await validateFormData();
 
-      setFormState(oldValues => ({
-        ...oldValues,
-        isSending: true,
-      }));
+        setFormState(oldValues => ({
+          ...oldValues,
+          isSending: true,
+        }));
+
+        const { data } = await jullyAPI.post('/authentication', {
+          email: formState.email,
+          password: formState.password,
+        });
+
+        setFormState(oldValues => ({
+          ...oldValues,
+          isSending: false,
+        }));
+      } catch (err) {
+        setFormState(oldValues => ({
+          ...oldValues,
+          isSending: false,
+        }));
+
+        setToastError({
+          open: true,
+          message: err.response.data.message,
+        });
+      }
     },
-    [validateFormData],
+    [validateFormData, formState.email, formState.password],
   );
+
+  const handleToastErrorClose = useCallback(() => {
+    setToastError({
+      open: false,
+      message: '',
+    });
+  }, []);
 
   const handleChange = useCallback(
     (prop: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,34 +131,37 @@ export default function SignIn(): JSX.Element {
   );
 
   return (
-    <S.LayoutWrapper>
-      <Head>
-        <title>Acesse sua conta | Jully Bot</title>
-      </Head>
-      <HeaderBrand />
-      <S.LayoutMain>
-        <S.LoginBox>
-          <header>
-            <h2>Acesse sua conta</h2>
-            <p>Insira o seu e-mail e senha para acessar o seu dashboard.</p>
-          </header>
+    <>
+      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
+      <S.LayoutWrapper>
+        <Head>
+          <title>Acesse sua conta | Jully Bot</title>
+        </Head>
+        <HeaderBrand />
+        <S.LayoutMain>
+          <S.LoginBox>
+            <header>
+              <h2>Acesse sua conta</h2>
+              <p>Insira o seu e-mail e senha para acessar o seu dashboard.</p>
+            </header>
 
-          <SignInForm
-            formState={formState}
-            handleSubmit={handleSubmit}
-            handleChange={handleChange}
-            handleClickShowPassword={handleClickShowPassword}
-            handleMouseDownPassword={handleMouseDownPassword}
-          />
+            <SignInForm
+              formState={formState}
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+              handleClickShowPassword={handleClickShowPassword}
+              handleMouseDownPassword={handleMouseDownPassword}
+            />
 
-          <footer>
-            <p>
-              Não possui uma conta?
-              <Link href="/signup"> Cadastre-se agora.</Link>
-            </p>
-          </footer>
-        </S.LoginBox>
-      </S.LayoutMain>
-    </S.LayoutWrapper>
+            <footer>
+              <p>
+                Não possui uma conta?
+                <Link href="/signup"> Cadastre-se agora.</Link>
+              </p>
+            </footer>
+          </S.LoginBox>
+        </S.LayoutMain>
+      </S.LayoutWrapper>
+    </>
   );
 }
