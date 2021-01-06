@@ -8,15 +8,23 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import * as FormStyle from '@styles/components/form.style';
 import * as S from './styles';
 
+type Error = {
+  field: string;
+  message: string;
+};
+
 type FormState = {
   email: string;
   password: string;
   showPass: boolean;
-  error: boolean;
+  errors: {
+    [key: string]: Error;
+  };
 };
 
 type SignInForm = {
   formState: FormState;
+  handleSubmit: (...args: any[]) => any;
   handleChange: (...args: any[]) => any;
   handleClickShowPassword: (...args: any[]) => any;
   handleMouseDownPassword: (...args: any[]) => any;
@@ -24,24 +32,30 @@ type SignInForm = {
 
 export default function SignInForm({
   formState,
+  handleSubmit,
   handleChange,
   handleClickShowPassword,
   handleMouseDownPassword,
 }: SignInForm): JSX.Element {
   return (
-    <S.Form noValidate autoComplete="off">
+    <S.Form noValidate autoComplete="off" onSubmit={handleSubmit}>
       <FormStyle.TextField
         type="email"
         required
         value={formState.email}
         onChange={handleChange('email')}
-        error={formState.error}
+        error={!!formState.errors.email}
         label="Seu e-mail"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Digite um email válido' : ''}
+        helperText={formState.errors.email || ''}
       />
-      <FormStyle.PasswordField fullWidth variant="filled" required>
+      <FormStyle.PasswordField
+        fullWidth
+        variant="filled"
+        required
+        error={!!formState.errors.password}
+      >
         <InputLabel htmlFor="password">Sua senha</InputLabel>
         <FilledInput
           id="password"
@@ -60,6 +74,11 @@ export default function SignInForm({
             </InputAdornment>
           )}
         />
+        {!!formState.errors.password && (
+          <p className="MuiFormHelperText-root MuiFormHelperText-contained Mui-error Mui-required">
+            {formState.errors.password || ''}
+          </p>
+        )}
       </FormStyle.PasswordField>
       <FormStyle.SubmitButton fullWidth>Entrar</FormStyle.SubmitButton>
     </S.Form>

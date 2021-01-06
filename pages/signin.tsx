@@ -1,15 +1,22 @@
 import { useCallback, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import * as yup from 'yup';
 import * as S from '@styles/pages/signin.style';
 import HeaderBrand from 'components/header/header-brand';
 import SignInForm from '@components/forms/signin-form';
+import {
+  FormValidationError,
+  validateSignInForm,
+} from '@utils/form-validators';
 
 type FormState = {
   email: string;
   password: string;
   showPass: boolean;
-  error: boolean;
+  errors: {
+    [key: string]: string;
+  };
 };
 
 export default function SignIn(): JSX.Element {
@@ -17,8 +24,40 @@ export default function SignIn(): JSX.Element {
     email: '',
     password: '',
     showPass: false,
-    error: false,
+    errors: {},
   });
+
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      try {
+        event.preventDefault();
+
+        await validateSignInForm({
+          email: formState.email,
+          password: formState.password,
+        });
+
+        setFormState(oldValues => ({
+          ...oldValues,
+          errors: {},
+        }));
+      } catch (err) {
+        const errors = {};
+
+        if (err instanceof yup.ValidationError) {
+          (err.errors as any).forEach((error: FormValidationError) => {
+            errors[error.field] = error.message;
+          });
+        }
+
+        setFormState(oldValues => ({
+          ...oldValues,
+          errors,
+        }));
+      }
+    },
+    [formState.email, formState.password],
+  );
 
   const handleChange = useCallback(
     (prop: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +95,7 @@ export default function SignIn(): JSX.Element {
 
           <SignInForm
             formState={formState}
+            handleSubmit={handleSubmit}
             handleChange={handleChange}
             handleClickShowPassword={handleClickShowPassword}
             handleMouseDownPassword={handleMouseDownPassword}
