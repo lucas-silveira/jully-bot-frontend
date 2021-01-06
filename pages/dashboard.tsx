@@ -5,6 +5,8 @@ import { CircularProgress } from '@material-ui/core';
 import { Backdrop } from '@styles/components/backdrop.style';
 import { useRecoilValue } from 'recoil';
 import { authState } from 'store/auth';
+import * as S from '@styles/pages/dahsboard.style';
+import DashboardLayout from 'layouts/dashboard';
 
 export default function Dashboard(): JSX.Element {
   const router = useRouter();
@@ -27,7 +29,11 @@ export default function Dashboard(): JSX.Element {
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      {!pageIsLoading && <h1>Dashboard</h1>}
+      {!pageIsLoading && (
+        <DashboardLayout>
+          <S.Wrapper>Carregando...</S.Wrapper>
+        </DashboardLayout>
+      )}
     </>
   );
 }
