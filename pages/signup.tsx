@@ -17,6 +17,7 @@ import BillingAddressForm from '@components/forms/billing-address-form';
 import {
   FormValidationError,
   validateSignUpFirstStepForm,
+  validateSignUpSecondStepForm,
 } from '@utils/form-validators';
 
 type FormState = {
@@ -109,6 +110,44 @@ export default function SignUp(): JSX.Element {
     formState.passwordConfirm,
   ]);
 
+  const validateSecondStep = useCallback(async () => {
+    try {
+      await validateSignUpSecondStepForm({
+        line1: formState.billingAddressLine1,
+        line2: formState.billingAddressLine2,
+        zipcode: formState.billingAddressZipcode,
+        city: formState.billingAddressCity,
+      });
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors: {},
+      }));
+
+      return true;
+    } catch (err) {
+      const errors = {};
+
+      if (err instanceof Yup.ValidationError) {
+        (err.errors as any).forEach((error: FormValidationError) => {
+          errors[error.field] = error.message;
+        });
+      }
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors,
+      }));
+
+      return false;
+    }
+  }, [
+    formState.billingAddressLine1,
+    formState.billingAddressLine2,
+    formState.billingAddressZipcode,
+    formState.billingAddressCity,
+  ]);
+
   const getAndSetAddressDataByZipcode = useCallback((zipcode: string) => {
     if (!zipcodeRegex.test(zipcode)) return;
 
@@ -184,7 +223,7 @@ export default function SignUp(): JSX.Element {
                 },
                 {
                   title: 'Dados de cobrança',
-                  validator: () => {},
+                  validator: validateSecondStep,
                   content: (
                     <Fade in>
                       <BillingAddressForm

@@ -31,14 +31,14 @@ export default function Steps({ steps }: StepsProps): JSX.Element {
 
   const handleNext = useCallback(async () => {
     const next = activeStep + 1;
+    const formValidator = steps[activeStep].validator;
+    const formIsValid = await formValidator();
+
+    if (formIsValid) return;
 
     if (next === steps.length) return;
 
-    const formValidator = steps[activeStep].validator;
-
-    const formIsValid = await formValidator();
-
-    if (formIsValid) setActiveStep(prevActiveStep => prevActiveStep + 1);
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
   }, [activeStep, steps]);
 
   const handleBack = useCallback(() => {

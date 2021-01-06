@@ -34,41 +34,41 @@ export default function BillingAddressForm({
         type="tel"
         value={formState.billingAddressZipcode}
         onChange={handleChange('billingAddressZipcode')}
-        error={formState.error}
+        error={!!formState.errors.zipcode}
         label="Cep"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Campo obrigatório' : ''}
+        helperText={formState.errors.zipcode || ''}
       />
       <FormStyle.TextField
         type="text"
         value={formState.billingAddressLine1}
         onChange={handleChange('billingAddressLine1')}
-        error={formState.error}
+        error={!!formState.errors.line1}
         label="Rua"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Campo obrigatório' : ''}
+        helperText={formState.errors.line1 || ''}
       />
       <FormStyle.TextField
         type="text"
         value={formState.billingAddressLine2}
         onChange={handleChange('billingAddressLine2')}
-        error={formState.error}
+        error={!!formState.errors.line2}
         label="Bairro"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Campo obrigatório' : ''}
+        helperText={formState.errors.line2 || ''}
       />
       <FormStyle.TextField
         type="text"
-        value={formState.billingAddressState}
+        value={formState.billingAddressCity}
         onChange={handleChange('billingAddressCity')}
-        error={formState.error}
+        error={!!formState.errors.city}
         label="Cidade"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Campo obrigatório' : ''}
+        helperText={formState.errors.city || ''}
       />
     </S.Form>
   );

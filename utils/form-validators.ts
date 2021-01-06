@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { zipcodeRegex } from './string-regex';
 
 export type FormValidationError = {
   field: string;
@@ -72,5 +73,42 @@ const signUpFirstStepFormValidator = () => {
     schema.validate(dataToValidate, { abortEarly: false });
 };
 
+const signUpSecondStepFormValidator = () => {
+  type ObjectSchema = {
+    line1: string;
+    line2: string;
+    zipcode: string;
+    city: string;
+  };
+
+  const schema = Yup.object().shape({
+    line1: Yup.string().required(({ path }) => ({
+      field: path,
+      message: 'A rua é obrigatória',
+    })),
+    line2: Yup.string().required(({ path }) => ({
+      field: path,
+      message: 'O bairro é obrigatório',
+    })),
+    zipcode: Yup.string()
+      .matches(zipcodeRegex, ({ path }) => ({
+        field: path,
+        message: 'O cep não é válido',
+      }))
+      .required(({ path }) => ({
+        field: path,
+        message: 'O cep é obrigatório',
+      })),
+    city: Yup.string().required(({ path }) => ({
+      field: path,
+      message: 'A cidade é obrigatória',
+    })),
+  });
+
+  return async (dataToValidate: ObjectSchema) =>
+    schema.validate(dataToValidate, { abortEarly: false });
+};
+
 export const validateSignInForm = signInFormValidator();
 export const validateSignUpFirstStepForm = signUpFirstStepFormValidator();
+export const validateSignUpSecondStepForm = signUpSecondStepFormValidator();
