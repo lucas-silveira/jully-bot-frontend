@@ -7,6 +7,9 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { AccountCircle } from '@material-ui/icons';
+import { useSetRecoilState } from 'recoil';
+import { authState } from 'store/auth';
+import { useRouter } from 'next/router';
 import * as S from './style';
 
 type AppBarProps = {
@@ -16,6 +19,8 @@ type AppBarProps = {
 export default function AppBar({
   handleDrawerToggle,
 }: AppBarProps): JSX.Element {
+  const router = useRouter();
+  const setAuthState = useSetRecoilState(authState);
   const [anchorEl, setAnchorEl] = useState(null);
   const accountMenuOpen = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
@@ -29,6 +34,15 @@ export default function AppBar({
   const handleAccountMenuClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const handleSignOut = useCallback(() => {
+    handleAccountMenuClose();
+    setAuthState(oldValues => ({
+      ...oldValues,
+      accessToken: null,
+    }));
+    router.push('signin');
+  }, [handleAccountMenuClose, setAuthState, router]);
 
   return (
     <S.LayoutAppBar>
@@ -68,7 +82,7 @@ export default function AppBar({
             onClose={handleAccountMenuClose}
           >
             <MenuItem onClick={handleAccountMenuClose}>Minha conta</MenuItem>
-            <MenuItem onClick={handleAccountMenuClose}>Sair</MenuItem>
+            <MenuItem onClick={handleSignOut}>Sair</MenuItem>
           </MenuMUI>
         </div>
       </Toolbar>
