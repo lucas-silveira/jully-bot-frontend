@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   Button,
+  CircularProgress,
   Step,
   StepLabel,
   Stepper,
@@ -25,6 +26,11 @@ export default function Steps({
   handleSubmit,
 }: StepsProps): JSX.Element {
   const [activeStep, setActiveStep] = useState(0);
+  const [isSending, setIsSending] = useState(false);
+
+  const getButtonText = useCallback(() => {
+    return activeStep === steps.length - 1 ? 'Criar conta' : 'Avançar';
+  }, [activeStep, steps]);
 
   const getStepContent = useCallback(
     (stepIndex: number) => {
@@ -41,7 +47,9 @@ export default function Steps({
     if (!formIsValid) return;
 
     if (next === steps.length) {
+      setIsSending(true);
       await handleSubmit();
+      setIsSending(false);
       return;
     }
 
@@ -77,13 +85,21 @@ export default function Steps({
             <S.Footer>
               <FormStyle.Button
                 variant="contained"
-                disabled={activeStep === 0}
+                disabled={activeStep === 0 || isSending}
                 onClick={handleBack}
               >
                 Voltar
               </FormStyle.Button>
-              <FormStyle.Button variant="contained" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Criar conta' : 'Avançar'}
+              <FormStyle.Button
+                variant="contained"
+                onClick={handleNext}
+                isSending={isSending}
+              >
+                {isSending ? (
+                  <CircularProgress size={14} color="inherit" />
+                ) : (
+                  getButtonText()
+                )}
               </FormStyle.Button>
             </S.Footer>
           </div>

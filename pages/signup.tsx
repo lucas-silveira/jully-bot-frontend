@@ -35,7 +35,7 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
-  loadAddress: boolean;
+  loadedAddress: boolean;
   errors: {
     [key: string]: string;
   };
@@ -63,7 +63,7 @@ export default function SignUp(): JSX.Element {
     billingAddressCity: '',
     billingAddressState: '',
     billingAddressCountry: 'Brasil',
-    loadAddress: false,
+    loadedAddress: false,
     errors: {},
   });
   const [toastError, setToastError] = useState({
@@ -158,7 +158,7 @@ export default function SignUp(): JSX.Element {
         billingAddressLine2: newValues.bairro,
         billingAddressCity: newValues.localidade,
         billingAddressState: newValues.uf,
-        loadAddress: true,
+        loadedAddress: true,
       })),
     );
   }, []);

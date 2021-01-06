@@ -2,6 +2,8 @@ import {
   TextField as TextFieldMUI,
   FormControl as FormControlMUI,
   Button as ButtonMUI,
+  ExtendButtonBase,
+  ButtonTypeMap,
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { lighten } from 'polished';
@@ -71,12 +73,19 @@ export const SubmitButton = styled(ButtonMUI).attrs(() => ({
   }
 `;
 
+interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
+  name?: string;
+  isSending?: boolean;
+}
+
 export const Button = styled(ButtonMUI).attrs(() => ({
   size: 'large',
-}))`
+}))<MyButtonProps>`
+  min-width: ${props => (props.isSending ? '50px' : '200px')};
   color: #fff;
   background-color: var(--primary-color);
   padding: 12px 22px;
+  transition: min-width 500ms;
 
   &:hover {
     background-color: ${lighten(0.07, '#52489C')};

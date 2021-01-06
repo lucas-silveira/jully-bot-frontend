@@ -14,7 +14,7 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
-  loadAddress: boolean;
+  loadedAddress: boolean;
   errors: {
     [key: string]: string;
   };
@@ -41,7 +41,7 @@ export default function BillingAddressForm({
         fullWidth
         helperText={formState.errors.zipcode || ''}
       />
-      {formState.loadAddress && (
+      {formState.loadedAddress && (
         <>
           <FormStyle.TextField
             type="text"
