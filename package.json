@@ -21,7 +21,8 @@
     "react-dom": "17.0.1",
     "recoil": "^0.1.2",
     "styled-components": "^5.2.1",
-    "swr": "^0.3.11"
+    "swr": "^0.3.11",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.167",
