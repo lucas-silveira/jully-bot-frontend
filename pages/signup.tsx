@@ -123,6 +123,7 @@ export default function SignUp(): JSX.Element {
         line2: formState.billingAddressLine2,
         zipcode: formState.billingAddressZipcode,
         city: formState.billingAddressCity,
+        state: formState.billingAddressState,
       });
 
       setFormState(oldValues => ({
@@ -152,6 +153,7 @@ export default function SignUp(): JSX.Element {
     formState.billingAddressLine2,
     formState.billingAddressZipcode,
     formState.billingAddressCity,
+    formState.billingAddressState,
   ]);
 
   const getAndSetAddressDataByZipcode = useCallback((zipcode: string) => {

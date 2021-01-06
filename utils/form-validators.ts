@@ -79,6 +79,7 @@ const signUpSecondStepFormValidator = () => {
     line2: string;
     zipcode: string;
     city: string;
+    state: string;
   };
 
   const schema = Yup.object().shape({
@@ -102,6 +103,10 @@ const signUpSecondStepFormValidator = () => {
     city: Yup.string().required(({ path }) => ({
       field: path,
       message: 'A cidade é obrigatória',
+    })),
+    state: Yup.string().required(({ path }) => ({
+      field: path,
+      message: 'O estado é obrigatório',
     })),
   });
 

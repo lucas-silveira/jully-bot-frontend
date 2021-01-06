@@ -73,6 +73,16 @@ export default function BillingAddressForm({
             fullWidth
             helperText={formState.errors.city || ''}
           />
+          <FormStyle.TextField
+            type="text"
+            value={formState.billingAddressState}
+            onChange={handleChange('billingAddressState')}
+            error={!!formState.errors.state}
+            label="Estado"
+            variant="filled"
+            fullWidth
+            helperText={formState.errors.state || ''}
+          />
         </>
       )}
     </S.Form>
