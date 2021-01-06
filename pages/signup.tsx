@@ -5,6 +5,7 @@ import { Fade } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { debounce } from 'lodash';
+import * as Yup from 'yup';
 import HeaderBrand from '@components/header/header-brand';
 import Steps from '@components/steps';
 import { removeSpecialCharacters } from '@utils/string-parser';
@@ -13,6 +14,10 @@ import { zipcodeRegex } from '@utils/string-regex';
 import * as S from '@styles/pages/signup.style';
 import SignUpForm from '@components/forms/signup-form';
 import BillingAddressForm from '@components/forms/billing-address-form';
+import {
+  FormValidationError,
+  validateSignUpFirstStepForm,
+} from '@utils/form-validators';
 
 type FormState = {
   name: string;
@@ -27,7 +32,9 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
-  error: boolean;
+  errors: {
+    [key: string]: string;
+  };
 };
 
 const getCepDebouncer = debounce(
@@ -61,8 +68,46 @@ export default function SignUp(): JSX.Element {
     billingAddressCity: '',
     billingAddressState: '',
     billingAddressCountry: 'Brasil',
-    error: false,
+    errors: {},
   });
+
+  const validateFirstStep = useCallback(async () => {
+    try {
+      await validateSignUpFirstStepForm({
+        name: formState.name,
+        email: formState.email,
+        password: formState.password,
+        passwordConfirm: formState.passwordConfirm,
+      });
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors: {},
+      }));
+
+      return true;
+    } catch (err) {
+      const errors = {};
+
+      if (err instanceof Yup.ValidationError) {
+        (err.errors as any).forEach((error: FormValidationError) => {
+          errors[error.field] = error.message;
+        });
+      }
+
+      setFormState(oldValues => ({
+        ...oldValues,
+        errors,
+      }));
+
+      return false;
+    }
+  }, [
+    formState.name,
+    formState.email,
+    formState.password,
+    formState.passwordConfirm,
+  ]);
 
   const getAndSetAddressDataByZipcode = useCallback((zipcode: string) => {
     if (!zipcodeRegex.test(zipcode)) return;
@@ -124,6 +169,7 @@ export default function SignUp(): JSX.Element {
               steps={[
                 {
                   title: 'Seus dados',
+                  validator: validateFirstStep,
                   content: (
                     <Fade in>
                       <SignUpForm
@@ -138,6 +184,7 @@ export default function SignUp(): JSX.Element {
                 },
                 {
                   title: 'Dados de cobrança',
+                  validator: () => {},
                   content: (
                     <Fade in>
                       <BillingAddressForm

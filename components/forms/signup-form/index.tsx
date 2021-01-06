@@ -21,7 +21,9 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
-  error: boolean;
+  errors: {
+    [key: string]: string;
+  };
 };
 
 type SignUpForm = {
@@ -45,21 +47,21 @@ export default function SignUpForm({
         type="text"
         value={formState.name}
         onChange={handleChange('name')}
-        error={formState.error}
+        error={!!formState.errors.name}
         label="Nome completo"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Nome obrigatório' : ''}
+        helperText={formState.errors.name || ''}
       />
       <FormStyle.TextField
         type="email"
         value={formState.email}
         onChange={handleChange('email')}
-        error={formState.error}
+        error={!!formState.errors.email}
         label="E-mail"
         variant="filled"
         fullWidth
-        helperText={formState.error ? 'Digite um email válido' : ''}
+        helperText={formState.errors.email || ''}
       />
       <FormStyle.PasswordField fullWidth variant="filled">
         <InputLabel htmlFor="password">Senha</InputLabel>
@@ -68,7 +70,7 @@ export default function SignUpForm({
           type={formState.showPass ? 'text' : 'password'}
           value={formState.password}
           onChange={handleChange('password')}
-          endAdornment={
+          endAdornment={(
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
@@ -78,8 +80,13 @@ export default function SignUpForm({
                 {formState.showPass ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          }
+          )}
         />
+        {!!formState.errors.password && (
+          <p className="MuiFormHelperText-root MuiFormHelperText-contained Mui-error Mui-required">
+            {formState.errors.password || ''}
+          </p>
+        )}
       </FormStyle.PasswordField>
       <FormStyle.PasswordField fullWidth variant="filled">
         <InputLabel htmlFor="confirm-password">Confirme a Senha</InputLabel>
@@ -88,7 +95,7 @@ export default function SignUpForm({
           type={formState.showPass ? 'text' : 'password'}
           value={formState.passwordConfirm}
           onChange={handleChange('passwordConfirm')}
-          endAdornment={
+          endAdornment={(
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
@@ -98,8 +105,13 @@ export default function SignUpForm({
                 {formState.showPass ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
-          }
+          )}
         />
+        {!!formState.errors.passwordConfirm && (
+          <p className="MuiFormHelperText-root MuiFormHelperText-contained Mui-error Mui-required">
+            {formState.errors.passwordConfirm || ''}
+          </p>
+        )}
       </FormStyle.PasswordField>
       <FormStyle.KeyboardDatePicker
         id="date-picker-dialog"

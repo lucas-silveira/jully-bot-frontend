@@ -8,17 +8,12 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import * as FormStyle from '@styles/components/form.style';
 import * as S from './styles';
 
-type Error = {
-  field: string;
-  message: string;
-};
-
 type FormState = {
   email: string;
   password: string;
   showPass: boolean;
   errors: {
-    [key: string]: Error;
+    [key: string]: string;
   };
 };
 

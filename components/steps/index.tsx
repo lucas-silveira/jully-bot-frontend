@@ -11,6 +11,7 @@ import * as S from './styles';
 
 type Step = {
   title: string;
+  validator: (...args: any[]) => any;
   content: React.ReactNode;
 };
 
@@ -28,12 +29,16 @@ export default function Steps({ steps }: StepsProps): JSX.Element {
     [steps],
   );
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     const next = activeStep + 1;
 
     if (next === steps.length) return;
 
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
+    const formValidator = steps[activeStep].validator;
+
+    const formIsValid = await formValidator();
+
+    if (formIsValid) setActiveStep(prevActiveStep => prevActiveStep + 1);
   }, [activeStep, steps]);
 
   const handleBack = useCallback(() => {

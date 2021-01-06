@@ -14,7 +14,9 @@ type FormState = {
   billingAddressCity: string;
   billingAddressState: string;
   billingAddressCountry: string;
-  error: boolean;
+  errors: {
+    [key: string]: string;
+  };
 };
 
 type BillingAddressForm = {
