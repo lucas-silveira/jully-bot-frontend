@@ -135,7 +135,34 @@ const forgotPasswordFormValidator = () => {
     schema.validate(dataToValidate, { abortEarly: false });
 };
 
+const resetPasswordFormValidator = () => {
+  type ObjectSchema = {
+    password: string;
+    passwordConfirm: string;
+  };
+
+  const schema = Yup.object().shape({
+    password: Yup.string()
+      .min(6, ({ path }) => ({
+        field: path,
+        message: 'A senha precisa ter no mínimo 6 dígitos',
+      }))
+      .required(({ path }) => ({
+        field: path,
+        message: 'A senha é obrigatória',
+      })),
+    passwordConfirm: Yup.string().oneOf([Yup.ref('password')], ({ path }) => ({
+      field: path,
+      message: 'As senhas precisam ser iguais',
+    })),
+  });
+
+  return async (dataToValidate: ObjectSchema) =>
+    schema.validate(dataToValidate, { abortEarly: false });
+};
+
 export const validateSignInForm = signInFormValidator();
 export const validateSignUpFirstStepForm = signUpFirstStepFormValidator();
 export const validateSignUpSecondStepForm = signUpSecondStepFormValidator();
 export const validateForgotPasswordForm = forgotPasswordFormValidator();
+export const validateResetPasswordForm = resetPasswordFormValidator();

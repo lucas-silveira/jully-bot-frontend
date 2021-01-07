@@ -5,17 +5,19 @@ import * as S from '@styles/pages/signin.style';
 import HeaderBrand from 'components/header/header-brand';
 import {
   FormValidationError,
-  validateForgotPasswordForm,
+  validateResetPasswordForm,
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
 import ToastFormError from '@components/toasts/toast-form-error';
 import { useRecoilValue } from 'recoil';
 import { authState } from 'store/auth';
 import { useRouter } from 'next/router';
-import ForgotPasswordForm from '@components/forms/forgot-password-form';
+import ResetPasswordForm from '@components/forms/reset-password-form';
 
 type FormState = {
-  email: string;
+  password: string;
+  passwordConfirm: string;
+  showPass: boolean;
   isSending: boolean;
   emailSent: boolean;
   errors: {
@@ -27,7 +29,9 @@ export default function ForgotPassword(): JSX.Element {
   const router = useRouter();
   const auth = useRecoilValue(authState);
   const [formState, setFormState] = useState<FormState>({
-    email: '',
+    password: '',
+    passwordConfirm: '',
+    showPass: false,
     isSending: false,
     emailSent: false,
     errors: {},
@@ -50,8 +54,9 @@ export default function ForgotPassword(): JSX.Element {
 
   const validateFormData = useCallback(async () => {
     try {
-      await validateForgotPasswordForm({
-        email: formState.email,
+      await validateResetPasswordForm({
+        password: formState.password,
+        passwordConfirm: formState.passwordConfirm,
       });
 
       setFormState(oldValues => ({
@@ -76,12 +81,14 @@ export default function ForgotPassword(): JSX.Element {
 
       return false;
     }
-  }, [formState.email]);
+  }, [formState.password, formState.passwordConfirm]);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
       try {
         event.preventDefault();
+
+        console.log(router.query.token);
 
         const formIsValid = await validateFormData();
 
@@ -124,40 +131,44 @@ export default function ForgotPassword(): JSX.Element {
     [],
   );
 
+  const handleClickShowPassword = useCallback(() => {
+    setFormState(oldValues => ({
+      ...oldValues,
+      showPass: !oldValues.showPass,
+    }));
+  }, []);
+
+  const handleMouseDownPassword = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
+
   return (
     <>
       <Head>
-        <title>Recuperar senha | Jully Bot</title>
+        <title>Resetar senha | Jully Bot</title>
       </Head>
       <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
       <S.LayoutWrapper>
         <HeaderBrand />
         <S.LayoutMain>
           <S.LoginBox>
-            {!formState.emailSent ? (
-              <>
-                <header>
-                  <h2>Recupere a sua senha</h2>
-                  <p>
-                    Insira o seu e-mail abaixo e enviaremos as instruções de
-                    redefinição.
-                  </p>
-                </header>
-                <ForgotPasswordForm
-                  formState={formState}
-                  handleSubmit={handleSubmit}
-                  handleChange={handleChange}
-                />
-              </>
-            ) : (
-              <header>
-                <h2>E-mail de recuperação enviado</h2>
-                <p>
-                  Confira a sua caixa de entrada. O e-mail pode levar alguns
-                  minutos para chegar.
-                </p>
-              </header>
-            )}
+            <header>
+              <h2>Redefina a sua senha</h2>
+              <p>
+                Insira a sua nova senha nos campos abaixo. Certifique-se de usar
+                uma senha segura!
+              </p>
+            </header>
+            <ResetPasswordForm
+              formState={formState}
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+              handleClickShowPassword={handleClickShowPassword}
+              handleMouseDownPassword={handleMouseDownPassword}
+            />
           </S.LoginBox>
         </S.LayoutMain>
       </S.LayoutWrapper>
