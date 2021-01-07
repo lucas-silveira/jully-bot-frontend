@@ -1,34 +1,48 @@
 import Icon from '@components/icons';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { useCallback, useMemo } from 'react';
 import * as S from './style';
 
 type MenuItem = {
   label: string;
   icon: JSX.Element;
+  href: string;
 };
 
 export default function Menu(): JSX.Element {
+  const router = useRouter();
   const menuItems = useMemo<MenuItem[]>(
     () => [
       {
         label: 'Overview',
         icon: <Icon name="home" />,
+        href: 'dashboard',
       },
       {
         label: 'Bots',
         icon: <Icon name="face" />,
+        href: 'bots',
       },
       {
         label: 'Sessões',
         icon: <Icon name="forum" />,
+        href: 'sessions',
       },
       {
         label: 'Clientes',
         icon: <Icon name="group" />,
+        href: 'customers',
       },
     ],
     [],
+  );
+
+  const handleClickItem = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      router.push(event.currentTarget.dataset.href);
+    },
+    [router],
   );
 
   return (
@@ -38,7 +52,12 @@ export default function Menu(): JSX.Element {
       </S.LayoutMenu>
       <List>
         {menuItems.map(item => (
-          <ListItem button key={item.label}>
+          <ListItem
+            button
+            data-href={item.href}
+            onClick={handleClickItem}
+            key={item.label}
+          >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.label} />
           </ListItem>
