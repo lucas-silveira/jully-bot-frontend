@@ -10,7 +10,7 @@ import Steps from '@components/steps';
 import { removeSpecialCharacters } from '@utils/string-parser';
 import { jullyAPI } from '@utils/api';
 import { zipcodeRegex } from '@utils/string-regex';
-import * as S from '@styles/pages/signup.style';
+import * as S from '@styles/pages/signin.style';
 import SignUpForm from '@components/forms/signup-form';
 import BillingAddressForm from '@components/forms/billing-address-form';
 import {

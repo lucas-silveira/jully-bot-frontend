@@ -1,39 +1,35 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import * as yup from 'yup';
 import * as S from '@styles/pages/signin.style';
 import HeaderBrand from 'components/header/header-brand';
-import SignInForm from '@components/forms/signin-form';
 import {
   FormValidationError,
-  validateSignInForm,
+  validateForgotPasswordForm,
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
 import ToastFormError from '@components/toasts/toast-form-error';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { authState } from 'store/auth';
 import { useRouter } from 'next/router';
+import ForgotPasswordForm from '@components/forms/forgot-password-form';
 
 type FormState = {
   email: string;
-  password: string;
-  showPass: boolean;
   isSending: boolean;
+  emailSent: boolean;
   errors: {
     [key: string]: string;
   };
 };
 
-export default function SignIn(): JSX.Element {
+export default function ForgotPassword(): JSX.Element {
   const router = useRouter();
-  const [auth, setAuth] = useRecoilState(authState);
-
+  const auth = useRecoilValue(authState);
   const [formState, setFormState] = useState<FormState>({
     email: '',
-    password: '',
-    showPass: false,
     isSending: false,
+    emailSent: false,
     errors: {},
   });
   const [toastError, setToastError] = useState({
@@ -45,11 +41,17 @@ export default function SignIn(): JSX.Element {
     if (auth.accessToken) router.push('dashboard');
   }, [router, auth]);
 
+  const handleToastErrorClose = useCallback(() => {
+    setToastError({
+      open: false,
+      message: '',
+    });
+  }, []);
+
   const validateFormData = useCallback(async () => {
     try {
-      await validateSignInForm({
+      await validateForgotPasswordForm({
         email: formState.email,
-        password: formState.password,
       });
 
       setFormState(oldValues => ({
@@ -74,7 +76,7 @@ export default function SignIn(): JSX.Element {
 
       return false;
     }
-  }, [formState.email, formState.password]);
+  }, [formState.email]);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
@@ -90,20 +92,16 @@ export default function SignIn(): JSX.Element {
           isSending: true,
         }));
 
-        const { data } = await jullyAPI.post('/authentication', {
-          email: formState.email,
-          password: formState.password,
-        });
+        // const { data } = await jullyAPI.post('/authentication', {
+        //   email: formState.email,
+        //   password: formState.password,
+        // });
 
-        setAuth({
-          accessToken: data.access_token,
-        });
         setFormState(oldValues => ({
           ...oldValues,
           isSending: false,
+          emailSent: true,
         }));
-
-        router.push('/dashboard');
       } catch (err) {
         setFormState(oldValues => ({
           ...oldValues,
@@ -116,33 +114,12 @@ export default function SignIn(): JSX.Element {
         });
       }
     },
-    [validateFormData, formState.email, formState.password],
+    [validateFormData],
   );
-
-  const handleToastErrorClose = useCallback(() => {
-    setToastError({
-      open: false,
-      message: '',
-    });
-  }, []);
 
   const handleChange = useCallback(
     (prop: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setFormState(oldValues => ({ ...oldValues, [prop]: event.target.value }));
-    },
-    [],
-  );
-
-  const handleClickShowPassword = useCallback(() => {
-    setFormState(oldValues => ({
-      ...oldValues,
-      showPass: !oldValues.showPass,
-    }));
-  }, []);
-
-  const handleMouseDownPassword = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
     },
     [],
   );
@@ -157,29 +134,30 @@ export default function SignIn(): JSX.Element {
         <HeaderBrand />
         <S.LayoutMain>
           <S.LoginBox>
-            <header>
-              <h2>Acesse sua conta</h2>
-              <p>Insira o seu e-mail e senha para acessar o seu dashboard.</p>
-            </header>
-
-            <SignInForm
-              formState={formState}
-              handleSubmit={handleSubmit}
-              handleChange={handleChange}
-              handleClickShowPassword={handleClickShowPassword}
-              handleMouseDownPassword={handleMouseDownPassword}
-            />
-
-            <footer>
-              <p>
-                Não possui uma conta?
-                <Link href="/signup"> Cadastre-se agora.</Link>
-              </p>
-              <p>
-                Esqueceu a senha?
-                <Link href="/forgot-password"> Recupere a senha.</Link>
-              </p>
-            </footer>
+            {!formState.emailSent ? (
+              <>
+                <header>
+                  <h2>Recupere a sua senha</h2>
+                  <p>
+                    Insira o seu e-mail abaixo e enviaremos as instruções de
+                    redefinição.
+                  </p>
+                </header>
+                <ForgotPasswordForm
+                  formState={formState}
+                  handleSubmit={handleSubmit}
+                  handleChange={handleChange}
+                />
+              </>
+            ) : (
+              <header>
+                <h2>E-mail de recuperação enviado</h2>
+                <p>
+                  Confira a sua caixa de entrada. O e-mail pode levar alguns
+                  minutos para chegar.
+                </p>
+              </header>
+            )}
           </S.LoginBox>
         </S.LayoutMain>
       </S.LayoutWrapper>

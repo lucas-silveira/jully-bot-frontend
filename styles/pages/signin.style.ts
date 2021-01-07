@@ -32,5 +32,9 @@ export const LoginBox = styled.div`
     p {
       color: rgba(0, 0, 0, 0.4);
     }
+
+    p + p {
+      margin-top: 16px;
+    }
   }
 `;

@@ -114,6 +114,28 @@ const signUpSecondStepFormValidator = () => {
     schema.validate(dataToValidate, { abortEarly: false });
 };
 
+const forgotPasswordFormValidator = () => {
+  type ObjectSchema = {
+    email: string;
+  };
+
+  const schema = Yup.object().shape({
+    email: Yup.string()
+      .email(() => ({
+        field: 'email',
+        message: 'Precisa ser um e-mail válido',
+      }))
+      .required(({ path }) => ({
+        field: path,
+        message: 'O e-mail é obrigatório',
+      })),
+  });
+
+  return async (dataToValidate: ObjectSchema) =>
+    schema.validate(dataToValidate, { abortEarly: false });
+};
+
 export const validateSignInForm = signInFormValidator();
 export const validateSignUpFirstStepForm = signUpFirstStepFormValidator();
 export const validateSignUpSecondStepForm = signUpSecondStepFormValidator();
+export const validateForgotPasswordForm = forgotPasswordFormValidator();
