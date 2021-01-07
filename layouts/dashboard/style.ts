@@ -52,6 +52,11 @@ export const LayoutAppBar = styled(AppBarMUI).attrs(() => ({
 
 export const LayoutNav = styled.nav`
   grid-area: nav;
+
+  .MuiPaper-root {
+    width: 240px;
+    z-index: 1000;
+  }
 `;
 
 export const LayoutMain = styled.section`
@@ -67,7 +72,6 @@ export const useStyles = makeStyles((theme: Theme) => {
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
       width: 240,
-      zIndex: 1000,
     },
   });
 });
