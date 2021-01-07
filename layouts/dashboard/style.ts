@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-import {
-  AppBar as AppBarMUI,
-  createStyles,
-  makeStyles,
-  Theme,
-} from '@material-ui/core';
+import { AppBar as AppBarMUI, Drawer } from '@material-ui/core';
 
 export const LayoutWrapper = styled.section`
   display: grid;
@@ -28,34 +23,71 @@ export const LayoutWrapper = styled.section`
 
 export const LayoutAppBar = styled(AppBarMUI).attrs(() => ({
   position: 'fixed',
+  elevation: 0,
 }))`
   grid-area: header;
   height: 64px;
+  color: var(--primary-color);
+  background-color: var(--platinum-color);
 
   > div {
     display: flex;
     justify-content: space-between;
-    background-color: var(--primary-color);
 
-    @media (min-width: 960px) {
-      > button {
-        display: none;
+    > div {
+      display: flex;
+      align-items: center;
+
+      button > span > div {
+        font-size: 1rem;
+        margin-right: 5px;
       }
     }
   }
 
   h6 {
     flex-grow: 1;
-    color: #fff;
+  }
+
+  @media (min-width: 960px) {
+    > div {
+      > div {
+        button {
+          border-radius: 5px;
+        }
+      }
+
+      > button {
+        display: none;
+      }
+    }
   }
 `;
 
 export const LayoutNav = styled.nav`
   grid-area: nav;
+`;
 
+export const LayoutMenu = styled.div`
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 16px;
+
+  h6 {
+    color: inherit;
+  }
+`;
+
+export const LayoutDrawer = styled(Drawer)`
   .MuiPaper-root {
     width: 240px;
-    z-index: 1000;
+    color: #fff;
+    background-color: var(--primary-color);
+  }
+
+  h6 {
+    color: inherit;
   }
 `;
 
@@ -65,13 +97,3 @@ export const LayoutMain = styled.section`
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.12);
 `;
-
-export const useStyles = makeStyles((theme: Theme) => {
-  return createStyles({
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    drawerPaper: {
-      width: 240,
-    },
-  });
-});

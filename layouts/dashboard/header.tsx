@@ -5,11 +5,12 @@ import {
   MenuItem,
   Toolbar,
   Menu as MenuMUI,
+  Hidden,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
 import { AccountCircle } from '@material-ui/icons';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '@store/auth';
+import Icon from '@components/icons';
 import * as S from './style';
 
 type AppBarProps = {
@@ -53,7 +54,7 @@ export default function Header({
           edge="start"
           onClick={handleDrawerToggle}
         >
-          <MenuIcon />
+          <Icon name="menu" color="#52489C" />
         </IconButton>
         <h6>JullyBot</h6>
         <div>
@@ -62,9 +63,11 @@ export default function Header({
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={handleAccountMenu}
-            color="inherit"
           >
-            <AccountCircle />
+            <Hidden smDown implementation="css">
+              Conta
+            </Hidden>
+            <Icon name="accountCircle" color="#52489C" />
           </IconButton>
           <MenuMUI
             id="menu-appbar"
