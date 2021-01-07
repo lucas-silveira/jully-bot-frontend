@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { CircularProgress } from '@material-ui/core';
-import { Backdrop } from '@styles/components/backdrop.style';
 import { useRecoilValue } from 'recoil';
-import { authState } from 'store/auth';
-import * as S from '@styles/pages/dahsboard.style';
+import { CircularProgress } from '@material-ui/core';
+import { authState } from '@store/auth';
 import DashboardLayout from 'layouts/dashboard';
+import { Backdrop } from '@styles/components/backdrop.style';
+import * as S from '@styles/pages/dahsboard.style';
 
 export default function Dashboard(): JSX.Element {
   const router = useRouter();

@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import {
   IconButton,
   MenuItem,
@@ -8,8 +9,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import { AccountCircle } from '@material-ui/icons';
 import { useSetRecoilState } from 'recoil';
-import { authState } from 'store/auth';
-import { useRouter } from 'next/router';
+import { authState } from '@store/auth';
 import * as S from './style';
 
 type AppBarProps = {

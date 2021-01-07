@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
 import * as yup from 'yup';
+import { authState } from '@store/auth';
 import * as S from '@styles/pages/signin.style';
-import HeaderBrand from 'components/header/header-brand';
 import {
   FormValidationError,
   validateForgotPasswordForm,
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
-import ToastFormError from '@components/toasts/toast-form-error';
-import { useRecoilValue } from 'recoil';
-import { authState } from 'store/auth';
-import { useRouter } from 'next/router';
+import HeaderBrand from 'components/header/header-brand';
 import ForgotPasswordForm from '@components/forms/forgot-password-form';
+import ToastForm from '@components/toasts/toast-form';
 
 type FormState = {
   email: string;
@@ -92,10 +92,9 @@ export default function ForgotPassword(): JSX.Element {
           isSending: true,
         }));
 
-        // const { data } = await jullyAPI.post('/authentication', {
-        //   email: formState.email,
-        //   password: formState.password,
-        // });
+        await jullyAPI.post('/managers/recovery-password', {
+          email: formState.email,
+        });
 
         setFormState(oldValues => ({
           ...oldValues,
@@ -114,7 +113,7 @@ export default function ForgotPassword(): JSX.Element {
         });
       }
     },
-    [validateFormData],
+    [validateFormData, formState.email],
   );
 
   const handleChange = useCallback(
@@ -129,7 +128,11 @@ export default function ForgotPassword(): JSX.Element {
       <Head>
         <title>Recuperar senha | Jully Bot</title>
       </Head>
-      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
+      <ToastForm
+        type="error"
+        toast={toastError}
+        handleClose={handleToastErrorClose}
+      />
       <S.LayoutWrapper>
         <HeaderBrand />
         <S.LayoutMain>

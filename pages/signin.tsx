@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useRecoilState } from 'recoil';
 import * as yup from 'yup';
+import { authState } from '@store/auth';
 import * as S from '@styles/pages/signin.style';
 import HeaderBrand from 'components/header/header-brand';
 import SignInForm from '@components/forms/signin-form';
@@ -10,10 +13,7 @@ import {
   validateSignInForm,
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
-import ToastFormError from '@components/toasts/toast-form-error';
-import { useRecoilState } from 'recoil';
-import { authState } from 'store/auth';
-import { useRouter } from 'next/router';
+import ToastForm from '@components/toasts/toast-form';
 
 type FormState = {
   email: string;
@@ -152,7 +152,11 @@ export default function SignIn(): JSX.Element {
       <Head>
         <title>Acesse sua conta | Jully Bot</title>
       </Head>
-      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
+      <ToastForm
+        type="error"
+        toast={toastError}
+        handleClose={handleToastErrorClose}
+      />
       <S.LayoutWrapper>
         <HeaderBrand />
         <S.LayoutMain>

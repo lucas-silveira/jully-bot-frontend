@@ -4,25 +4,25 @@ import Link from 'next/link';
 import { Fade } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
 import * as Yup from 'yup';
-import HeaderBrand from '@components/header/header-brand';
-import Steps from '@components/steps';
+import { authState } from '@store/auth';
 import { removeSpecialCharacters } from '@utils/string-parser';
 import { jullyAPI } from '@utils/api';
 import { zipcodeRegex } from '@utils/string-regex';
-import * as S from '@styles/pages/signin.style';
-import SignUpForm from '@components/forms/signup-form';
-import BillingAddressForm from '@components/forms/billing-address-form';
+import { getCepDebouncer } from '@utils/viacep-api';
 import {
   FormValidationError,
   validateSignUpFirstStepForm,
   validateSignUpSecondStepForm,
 } from '@utils/form-validators';
-import ToastFormError from '@components/toasts/toast-form-error';
-import { useRouter } from 'next/router';
-import { getCepDebouncer } from '@utils/viacep-api';
-import { useRecoilValue } from 'recoil';
-import { authState } from 'store/auth';
+import HeaderBrand from '@components/header/header-brand';
+import Steps from '@components/steps';
+import SignUpForm from '@components/forms/signup-form';
+import BillingAddressForm from '@components/forms/billing-address-form';
+import * as S from '@styles/pages/signin.style';
+import ToastForm from '@components/toasts/toast-form';
 
 type FormState = {
   name: string;
@@ -239,7 +239,8 @@ export default function SignUp(): JSX.Element {
         <title>Crie a sua conta | Jully Bot</title>
       </Head>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <ToastFormError
+        <ToastForm
+          type="error"
           toast={toastError}
           handleClose={handleToastErrorClose}
         />

@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
 import * as yup from 'yup';
 import * as S from '@styles/pages/signin.style';
-import HeaderBrand from 'components/header/header-brand';
+import { authState } from '@store/auth';
 import {
   FormValidationError,
   validateResetPasswordForm,
 } from '@utils/form-validators';
 import { jullyAPI } from '@utils/api';
-import ToastFormError from '@components/toasts/toast-form-error';
-import { useRecoilValue } from 'recoil';
-import { authState } from 'store/auth';
-import { useRouter } from 'next/router';
+import HeaderBrand from '@components/header/header-brand';
 import ResetPasswordForm from '@components/forms/reset-password-form';
+import ToastForm from '@components/toasts/toast-form';
 
 type FormState = {
   password: string;
@@ -40,6 +40,10 @@ export default function ForgotPassword(): JSX.Element {
     open: false,
     message: '',
   });
+  const [toastSuccess, setToastSuccess] = useState({
+    open: false,
+    message: '',
+  });
 
   useEffect(() => {
     if (auth.accessToken) router.push('dashboard');
@@ -47,6 +51,13 @@ export default function ForgotPassword(): JSX.Element {
 
   const handleToastErrorClose = useCallback(() => {
     setToastError({
+      open: false,
+      message: '',
+    });
+  }, []);
+
+  const handleToastSuccessClose = useCallback(() => {
+    setToastSuccess({
       open: false,
       message: '',
     });
@@ -88,8 +99,6 @@ export default function ForgotPassword(): JSX.Element {
       try {
         event.preventDefault();
 
-        console.log(router.query.token);
-
         const formIsValid = await validateFormData();
 
         if (!formIsValid) return;
@@ -99,16 +108,24 @@ export default function ForgotPassword(): JSX.Element {
           isSending: true,
         }));
 
-        // const { data } = await jullyAPI.post('/authentication', {
-        //   email: formState.email,
-        //   password: formState.password,
-        // });
+        await jullyAPI.post('/managers/reset-password', {
+          token: router.query.token,
+          password: formState.password,
+          passwordConfirm: formState.passwordConfirm,
+        });
 
         setFormState(oldValues => ({
           ...oldValues,
           isSending: false,
           emailSent: true,
         }));
+
+        setToastSuccess({
+          open: true,
+          message: 'A sua senha foi redefinida com sucesso!',
+        });
+
+        router.push('signin');
       } catch (err) {
         setFormState(oldValues => ({
           ...oldValues,
@@ -121,7 +138,7 @@ export default function ForgotPassword(): JSX.Element {
         });
       }
     },
-    [validateFormData],
+    [validateFormData, router, formState.password, formState.passwordConfirm],
   );
 
   const handleChange = useCallback(
@@ -150,7 +167,16 @@ export default function ForgotPassword(): JSX.Element {
       <Head>
         <title>Resetar senha | Jully Bot</title>
       </Head>
-      <ToastFormError toast={toastError} handleClose={handleToastErrorClose} />
+      <ToastForm
+        type="error"
+        toast={toastError}
+        handleClose={handleToastErrorClose}
+      />
+      <ToastForm
+        type="success"
+        toast={toastSuccess}
+        handleClose={handleToastSuccessClose}
+      />
       <S.LayoutWrapper>
         <HeaderBrand />
         <S.LayoutMain>

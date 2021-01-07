@@ -1,5 +1,5 @@
 import { Snackbar } from '@material-ui/core';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import MuiAlert, { AlertProps, Color } from '@material-ui/lab/Alert';
 
 type ToastProps = {
   open: boolean;
@@ -7,6 +7,7 @@ type ToastProps = {
 };
 
 type FormErrorToastProps = {
+  type: Color;
   toast: ToastProps;
   handleClose: (...args: any[]) => any;
 };
@@ -15,7 +16,8 @@ function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function ToastFormError({
+export default function ToastForm({
+  type,
   toast,
   handleClose,
 }: FormErrorToastProps): JSX.Element {
@@ -26,7 +28,7 @@ export default function ToastFormError({
       open={toast.open}
       onClose={handleClose}
     >
-      <Alert onClose={handleClose} severity="error">
+      <Alert onClose={handleClose} severity={type}>
         {toast.message}
       </Alert>
     </Snackbar>

@@ -23,6 +23,7 @@
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"],
       "@utils/*": ["utils/*"],
+      "@store/*": ["store/*"],
       "@styles/*": ["styles/*"],
     }
   },
