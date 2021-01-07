@@ -28,7 +28,7 @@ export const Link = styled.a<Link>`
     css`
       color: #fff;
       background-color: var(--primary-color);
-      padding: 10px;
+      padding: 10px 16px;
       border-radius: 5px;
     `}
 `;
