@@ -16,7 +16,7 @@ type AppBarProps = {
   handleDrawerToggle: (...args: any[]) => any;
 };
 
-export default function AppBar({
+export default function Header({
   handleDrawerToggle,
 }: AppBarProps): JSX.Element {
   const router = useRouter();

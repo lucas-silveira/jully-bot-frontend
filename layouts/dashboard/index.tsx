@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import * as S from './style';
-import AppBar from './appbar';
+import Header from './header';
 import Nav from './nav';
 
 type DashboardLayoutProps = {
@@ -18,7 +18,7 @@ export default function DashboardLayout({
 
   return (
     <S.LayoutWrapper>
-      <AppBar handleDrawerToggle={handleDrawerToggle} />
+      <Header handleDrawerToggle={handleDrawerToggle} />
       <Nav mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
       <S.LayoutMain>{children}</S.LayoutMain>
     </S.LayoutWrapper>

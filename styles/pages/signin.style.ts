@@ -9,9 +9,9 @@ export const LayoutWrapper = styled.section`
 
 export const LayoutMain = styled.section`
   display: flex;
+  flex-grow: 1;
   justify-content: center;
   align-items: center;
-  height: 100%;
 `;
 
 export const LoginBox = styled.div`
