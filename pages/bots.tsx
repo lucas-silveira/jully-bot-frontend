@@ -28,7 +28,7 @@ export default function Bots(): JSX.Element {
     message: '',
   });
   const [bots, setBots] = useState([]);
-  const [checked, setChecked] = useState([0]);
+  const [checked, setChecked] = useState([]);
 
   useEffect(() => {
     const getAllBots = async () => {
@@ -110,11 +110,11 @@ export default function Bots(): JSX.Element {
 
                 return (
                   <ListItem
-                    key={bot.name}
+                    key={bot.id}
                     role={undefined}
                     dense
                     button
-                    data-key={bot.name}
+                    data-key={bot.id}
                     onClick={handleToggle}
                   >
                     <ListItemIcon>
