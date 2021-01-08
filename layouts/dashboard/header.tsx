@@ -46,7 +46,7 @@ export default function Header({
   }, [handleAccountMenuClose, setAuthState, router]);
 
   return (
-    <S.LayoutAppBar>
+    <S.LayoutHeader>
       <Toolbar>
         <IconButton
           color="inherit"
@@ -64,10 +64,10 @@ export default function Header({
             aria-haspopup="true"
             onClick={handleAccountMenu}
           >
-            <Hidden smDown implementation="css">
-              Conta
-            </Hidden>
             <Icon name="accountCircle" color="#52489C" />
+            <Hidden smDown implementation="css">
+              Minha Conta
+            </Hidden>
           </IconButton>
           <MenuMUI
             id="menu-appbar"
@@ -89,6 +89,6 @@ export default function Header({
           </MenuMUI>
         </div>
       </Toolbar>
-    </S.LayoutAppBar>
+    </S.LayoutHeader>
   );
 }

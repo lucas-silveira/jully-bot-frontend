@@ -25,7 +25,7 @@ export const LayoutWrapper = styled.section`
   }
 `;
 
-export const LayoutAppBar = styled(AppBarMUI).attrs(() => ({
+export const LayoutHeader = styled(AppBarMUI).attrs(() => ({
   position: 'fixed',
   elevation: 0,
 }))`
@@ -43,7 +43,9 @@ export const LayoutAppBar = styled(AppBarMUI).attrs(() => ({
       align-items: center;
 
       button > span > div {
-        font-size: 1rem;
+        color: var(--primary-color);
+        font-size: 0.7rem;
+        text-transform: uppercase;
         margin-right: 5px;
       }
     }
