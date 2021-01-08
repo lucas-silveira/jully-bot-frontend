@@ -9,7 +9,6 @@ import { useRecoilValue } from 'recoil';
 import * as Yup from 'yup';
 import { authState } from '@store/auth';
 import { removeSpecialCharacters } from '@utils/string-parser';
-import { jullyAPI } from '@utils/api';
 import { zipcodeRegex } from '@utils/string-regex';
 import { getCepDebouncer } from '@utils/viacep-api';
 import {
@@ -23,6 +22,7 @@ import SignUpForm from '@components/forms/signup-form';
 import BillingAddressForm from '@components/forms/billing-address-form';
 import * as S from '@styles/pages/signin.style';
 import ToastForm from '@components/toasts/toast-form';
+import { JullyAPIService } from 'services/jully-api.service';
 
 type FormState = {
   name: string;
@@ -174,7 +174,8 @@ export default function SignUp(): JSX.Element {
 
   const handleSubmit = useCallback(async () => {
     try {
-      await jullyAPI.post('/managers', {
+      const jullyApiService = JullyAPIService.getInstance();
+      await jullyApiService.createManager({
         name: formState.name,
         email: formState.email,
         password: formState.password,

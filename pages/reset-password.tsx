@@ -9,10 +9,10 @@ import {
   FormValidationError,
   validateResetPasswordForm,
 } from '@utils/form-validators';
-import { jullyAPI } from '@utils/api';
 import HeaderBrand from '@components/header/header-brand';
 import ResetPasswordForm from '@components/forms/reset-password-form';
 import ToastForm from '@components/toasts/toast-form';
+import { JullyAPIService } from 'services/jully-api.service';
 
 type FormState = {
   password: string;
@@ -108,7 +108,8 @@ export default function ForgotPassword(): JSX.Element {
           isSending: true,
         }));
 
-        await jullyAPI.post('/managers/reset-password', {
+        const jullyApiService = JullyAPIService.getInstance();
+        await jullyApiService.resetPassword({
           token: router.query.token,
           password: formState.password,
           passwordConfirm: formState.passwordConfirm,

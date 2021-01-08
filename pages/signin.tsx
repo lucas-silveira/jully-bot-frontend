@@ -12,8 +12,8 @@ import {
   FormValidationError,
   validateSignInForm,
 } from '@utils/form-validators';
-import { jullyAPI } from '@utils/api';
 import ToastForm from '@components/toasts/toast-form';
+import jullyAPIService from 'services/jully-api.service';
 
 type FormState = {
   email: string;
@@ -90,13 +90,15 @@ export default function SignIn(): JSX.Element {
           isSending: true,
         }));
 
-        const { data } = await jullyAPI.post('/authentication', {
-          email: formState.email,
-          password: formState.password,
-        });
+        const data = await jullyAPIService.createSession(
+          formState.email,
+          formState.password,
+        );
+        jullyAPIService.setAuthorizationToken(data.accessToken);
 
         setAuth({
-          accessToken: data.access_token,
+          managerId: data.managerId,
+          accessToken: data.accessToken,
         });
         setFormState(oldValues => ({
           ...oldValues,

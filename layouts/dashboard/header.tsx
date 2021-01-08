@@ -38,10 +38,10 @@ export default function Header({
 
   const handleSignOut = useCallback(() => {
     handleAccountMenuClose();
-    setAuthState(oldValues => ({
-      ...oldValues,
+    setAuthState({
+      managerId: null,
       accessToken: null,
-    }));
+    });
     router.push('signin');
   }, [handleAccountMenuClose, setAuthState, router]);
 

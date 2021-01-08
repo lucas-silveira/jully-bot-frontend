@@ -39,6 +39,8 @@
       "prettier/prettier": "error",
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      "react/jsx-one-expression-per-line": "off",
+      "dot-notation": "off",
       "import/extensions": [
         "error",
         "ignorePackages",

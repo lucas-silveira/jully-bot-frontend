@@ -17,22 +17,22 @@ export default function Menu(): JSX.Element {
       {
         label: 'Overview',
         icon: <Icon name="home" />,
-        href: 'dashboard',
+        href: '/dashboard',
       },
       {
         label: 'Bots',
         icon: <Icon name="face" />,
-        href: 'bots',
+        href: '/bots',
       },
       {
         label: 'Sessões',
         icon: <Icon name="forum" />,
-        href: 'sessions',
+        href: '/sessions',
       },
       {
         label: 'Clientes',
         icon: <Icon name="group" />,
-        href: 'customers',
+        href: '/customers',
       },
     ],
     [],

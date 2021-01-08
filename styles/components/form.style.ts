@@ -2,6 +2,7 @@ import {
   TextField as TextFieldMUI,
   FormControl as FormControlMUI,
   Button as ButtonMUI,
+  Checkbox as CheckboxMUI,
   ExtendButtonBase,
   ButtonTypeMap,
 } from '@material-ui/core';
@@ -80,14 +81,14 @@ export const SubmitButton = styled(ButtonMUI).attrs(() => ({
   }
 `;
 
-interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
+interface MyFormButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   name?: string;
   isSending?: boolean;
 }
 
-export const Button = styled(ButtonMUI).attrs(() => ({
+export const FormButton = styled(ButtonMUI).attrs(() => ({
   size: 'large',
-}))<MyButtonProps>`
+}))<MyFormButtonProps>`
   min-width: ${props => (props.isSending ? '50px' : '200px')};
   min-height: 50px;
   color: #fff;
@@ -97,5 +98,30 @@ export const Button = styled(ButtonMUI).attrs(() => ({
 
   &:hover {
     background-color: ${lighten(0.07, '#52489C')};
+  }
+`;
+
+interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
+  name?: string;
+  color?: string;
+  bgColor?: string;
+}
+
+export const Button = styled(ButtonMUI).attrs(() => ({
+  size: 'small',
+}))<MyButtonProps>`
+  color: ${props => props.color || '#fff'};
+  background-color: ${props => props.bgColor || '#52489C'};
+  padding: 5px 14px;
+  transition: min-width 500ms;
+
+  &:hover {
+    background-color: ${props => lighten(0.07, props.bgColor || '#52489C')};
+  }
+`;
+
+export const Checkbox = styled(CheckboxMUI)`
+  &.Mui-checked {
+    color: var(--secondary-color);
   }
 `;

@@ -83,14 +83,14 @@ export default function Steps({
           <div>
             {getStepContent(activeStep)}
             <S.Footer>
-              <FormStyle.Button
+              <FormStyle.FormButton
                 variant="contained"
                 disabled={activeStep === 0 || isSending}
                 onClick={handleBack}
               >
                 Voltar
-              </FormStyle.Button>
-              <FormStyle.Button
+              </FormStyle.FormButton>
+              <FormStyle.FormButton
                 variant="contained"
                 onClick={handleNext}
                 isSending={isSending}
@@ -101,7 +101,7 @@ export default function Steps({
                 ) : (
                   getButtonText()
                 )}
-              </FormStyle.Button>
+              </FormStyle.FormButton>
             </S.Footer>
           </div>
         )}
