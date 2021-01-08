@@ -22,6 +22,7 @@
     "paths": {
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"],
+      "@layouts/*": ["layouts/*"],
       "@utils/*": ["utils/*"],
       "@store/*": ["store/*"],
       "@styles/*": ["styles/*"],

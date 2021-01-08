@@ -4,13 +4,12 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 import {
   CircularProgress,
-  IconButton,
   ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core';
-import CommentIcon from '@material-ui/icons/Comment';
+import PhoneIphoneIcon from '@material-ui/icons/PhoneIphone';
 import { authState } from '@store/auth';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
@@ -18,6 +17,19 @@ import * as S from '@styles/pages/bots.style';
 import * as FormStyle from '@styles/components/form.style';
 import jullyAPIService from 'services/jully-api.service';
 import ToastForm from '@components/toasts/toast-form';
+import { Chip } from '@styles/components/chip.style';
+
+type Bots = {
+  id: number;
+  phone: string;
+  name: string;
+  openingHours: string[];
+  welcomeMessage: string;
+  managerId: number;
+  createdAt: string;
+  updatedAt: string;
+  sessionsId: number[];
+};
 
 export default function Bots(): JSX.Element {
   const router = useRouter();
@@ -27,8 +39,16 @@ export default function Bots(): JSX.Element {
     open: false,
     message: '',
   });
-  const [bots, setBots] = useState([]);
+  const [bots, setBots] = useState<Bots[]>([]);
   const [checked, setChecked] = useState([]);
+
+  useEffect(() => {
+    if (!auth.accessToken) {
+      router.push('/signin');
+      return;
+    }
+    setPageIsLoading(false);
+  }, [router, auth]);
 
   useEffect(() => {
     const getAllBots = async () => {
@@ -46,15 +66,7 @@ export default function Bots(): JSX.Element {
     };
 
     getAllBots();
-  }, []);
-
-  useEffect(() => {
-    if (!auth.accessToken) {
-      router.push('/signin');
-      return;
-    }
-    setPageIsLoading(false);
-  }, [router, auth]);
+  }, []); // eslint-disable-line
 
   const handleToastErrorClose = useCallback(() => {
     setToastError({
@@ -80,6 +92,20 @@ export default function Bots(): JSX.Element {
     [checked],
   );
 
+  const handleOpenPage = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      const { phone } = event.currentTarget.dataset;
+
+      router.push(`/bots/${phone}`);
+    },
+    [router],
+  );
+
+  if (router.isFallback)
+    <Backdrop open>
+      <CircularProgress color="inherit" />
+    </Backdrop>;
+
   return (
     <>
       <Head>
@@ -93,7 +119,7 @@ export default function Bots(): JSX.Element {
         toast={toastError}
         handleClose={handleToastErrorClose}
       />
-      {!pageIsLoading && !router.isFallback && (
+      {!pageIsLoading && (
         <DashboardLayout>
           <S.Wrapper>
             <S.Header>
@@ -114,8 +140,8 @@ export default function Bots(): JSX.Element {
                     role={undefined}
                     dense
                     button
-                    data-key={bot.id}
-                    onClick={handleToggle}
+                    data-phone={bot.phone}
+                    onClick={handleOpenPage}
                   >
                     <ListItemIcon>
                       <FormStyle.Checkbox
@@ -124,13 +150,18 @@ export default function Bots(): JSX.Element {
                         tabIndex={-1}
                         disableRipple
                         inputProps={{ 'aria-labelledby': labelId }}
+                        data-key={bot.id}
+                        onClick={handleToggle}
                       />
                     </ListItemIcon>
                     <ListItemText id={labelId} primary={bot.name} />
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="comments">
-                        <CommentIcon />
-                      </IconButton>
+                      <Chip
+                        variant="outlined"
+                        size="small"
+                        icon={<PhoneIphoneIcon />}
+                        label={bot.phone}
+                      />
                     </ListItemSecondaryAction>
                   </ListItem>
                 );
