@@ -12,7 +12,7 @@ import {
 import HeaderBrand from 'components/header/header-brand';
 import ForgotPasswordForm from '@components/forms/forgot-password-form';
 import ToastForm from '@components/toasts/toast-form';
-import { JullyAPIService } from 'services/jully-api.service';
+import jullyAPIService from 'services/jully-api.service';
 
 type FormState = {
   email: string;
@@ -92,8 +92,7 @@ export default function ForgotPassword(): JSX.Element {
           isSending: true,
         }));
 
-        const jullyApiService = JullyAPIService.getInstance();
-        await jullyApiService.recoveryPassword(formState.email);
+        await jullyAPIService.recoveryPassword(formState.email);
 
         setFormState(oldValues => ({
           ...oldValues,
