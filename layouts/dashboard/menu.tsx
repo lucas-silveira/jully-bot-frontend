@@ -1,5 +1,5 @@
 import Icon from '@components/icons';
-import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { List, ListItemIcon, ListItemText } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import * as S from './style';
@@ -46,23 +46,24 @@ export default function Menu(): JSX.Element {
   );
 
   return (
-    <div>
-      <S.LayoutMenu>
+    <S.LayoutMenu>
+      <div>
         <h6>JullyBot</h6>
-      </S.LayoutMenu>
+      </div>
       <List>
         {menuItems.map(item => (
-          <ListItem
+          <S.MenuListItem
             button
             data-href={item.href}
             onClick={handleClickItem}
             key={item.label}
+            selected={router.pathname === item.href}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.label} />
-          </ListItem>
+          </S.MenuListItem>
         ))}
       </List>
-    </div>
+    </S.LayoutMenu>
   );
 }

@@ -1,5 +1,9 @@
 import styled from 'styled-components';
-import { AppBar as AppBarMUI, Drawer } from '@material-ui/core';
+import {
+  AppBar as AppBarMUI,
+  ListItem as ListItemMUI,
+  Drawer as DrawerMUI,
+} from '@material-ui/core';
 
 export const LayoutWrapper = styled.section`
   display: grid;
@@ -69,17 +73,29 @@ export const LayoutNav = styled.nav`
 `;
 
 export const LayoutMenu = styled.div`
-  display: flex;
-  align-items: center;
-  height: 64px;
-  padding: 0 16px;
+  > div {
+    display: flex;
+    align-items: center;
+    height: 64px;
+    padding: 0 16px;
 
-  h6 {
-    color: inherit;
+    h6 {
+      color: inherit;
+    }
   }
 `;
 
-export const LayoutDrawer = styled(Drawer)`
+export const MenuListItem = styled(ListItemMUI)`
+  border-left: 3px solid
+    ${props =>
+      props.selected ? 'var(--secondary-color)' : 'var(--primary-color)'};
+
+  :hover {
+    border-left: 3px solid var(--secondary-color);
+  }
+`;
+
+export const LayoutDrawer = styled(DrawerMUI)`
   .MuiPaper-root {
     width: 240px;
     color: #fff;
