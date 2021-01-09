@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import * as yup from 'yup';
 import { authState } from '@store/auth';
 import * as S from '@styles/pages/signin.style';
@@ -14,6 +14,7 @@ import {
 } from '@utils/form-validators';
 import ToastForm from '@components/toasts/toast-form';
 import jullyApiService from 'services/jully-api.service';
+import { managerState } from '@store/manager';
 
 type FormState = {
   email: string;
@@ -90,15 +91,16 @@ export default function SignIn(): JSX.Element {
           isSending: true,
         }));
 
-        const data = await jullyApiService.createSession(
+        const session = await jullyApiService.createSession(
           formState.email,
           formState.password,
         );
 
         setAuth({
-          managerId: data.managerId,
-          accessToken: data.accessToken,
+          managerId: session.managerId,
+          accessToken: session.accessToken,
         });
+
         setFormState(oldValues => ({
           ...oldValues,
           isSending: false,

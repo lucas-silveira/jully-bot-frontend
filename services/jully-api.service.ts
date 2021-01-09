@@ -1,3 +1,4 @@
+import { ManagerState } from '@store/manager';
 import axios, { AxiosInstance } from 'axios';
 import { JULLY_API_URL } from 'configs/constants';
 
@@ -102,6 +103,10 @@ class JullyApiService {
 
   async createManager(managerDto: CreateManagerDto): Promise<void> {
     await this.api.post('/managers', managerDto);
+  }
+
+  async getManager(): Promise<ManagerState> {
+    return (await this.api.get<ManagerState>('/managers')).data;
   }
 
   async createSession(

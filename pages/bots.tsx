@@ -23,7 +23,11 @@ type Bots = {
   id: number;
   phone: string;
   name: string;
-  openingHours: string[];
+  openingHours: Array<{
+    dayWeek: number;
+    startHour: string;
+    endHour: string;
+  }>;
   welcomeMessage: string;
   managerId: number;
   createdAt: string;

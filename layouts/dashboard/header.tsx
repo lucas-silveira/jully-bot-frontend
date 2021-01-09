@@ -6,8 +6,9 @@ import {
   Toolbar,
   Menu as MenuMUI,
   Hidden,
+  Button,
+  Tooltip,
 } from '@material-ui/core';
-import { AccountCircle } from '@material-ui/icons';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '@store/auth';
 import Icon from '@components/icons';
@@ -58,6 +59,15 @@ export default function Header({
         </IconButton>
         <h6>JullyBot</h6>
         <div>
+          <Tooltip title="15 dias de uso restantes" aria-label="add">
+            <Button
+              style={{ color: '#ff9800', borderColor: '#ff9800' }}
+              variant="outlined"
+              color="primary"
+            >
+              Plano trial
+            </Button>
+          </Tooltip>
           <IconButton
             aria-label="account of current user"
             aria-controls="menu-appbar"
