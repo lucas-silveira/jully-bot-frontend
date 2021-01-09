@@ -5,10 +5,21 @@ import HomeIcon from '@material-ui/icons/HomeRounded';
 import FaceIcon from '@material-ui/icons/FaceRounded';
 import ForumIcon from '@material-ui/icons/ForumRounded';
 import GroupIcon from '@material-ui/icons/GroupRounded';
+import LayersIcon from '@material-ui/icons/Layers';
 import * as S from './styles';
 
+type Icons = {
+  menu: string;
+  accountCircle: string;
+  home: string;
+  face: string;
+  forum: string;
+  group: string;
+  layers: string;
+};
+
 type IconProps = {
-  name: string;
+  name: keyof Icons;
   color?: string;
 };
 
@@ -21,6 +32,7 @@ export default function Icon({ name, color }: IconProps): JSX.Element {
       face: <FaceIcon />,
       forum: <ForumIcon />,
       group: <GroupIcon />,
+      layers: <LayersIcon />,
     }),
     [],
   );

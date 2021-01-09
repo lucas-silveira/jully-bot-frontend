@@ -34,6 +34,11 @@ export default function Menu(): JSX.Element {
         icon: <Icon name="group" />,
         href: '/customers',
       },
+      {
+        label: 'Aplicativos',
+        icon: <Icon name="layers" />,
+        href: '/applications',
+      },
     ],
     [],
   );

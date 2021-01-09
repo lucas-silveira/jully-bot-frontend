@@ -8,7 +8,7 @@ import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/dahsboard.style';
 
-export default function Sessions(): JSX.Element {
+export default function Applications(): JSX.Element {
   const router = useRouter();
   const auth = useRecoilValue(authState);
   const [pageIsLoading, setPageIsLoading] = useState(true);
@@ -24,14 +24,14 @@ export default function Sessions(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Sessões | Jully Bot</title>
+        <title>Meus aplicativos | Jully Bot</title>
       </Head>
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
       {!pageIsLoading && (
         <DashboardLayout>
-          <S.Wrapper>Sessões...</S.Wrapper>
+          <S.Wrapper>Aplicativos...</S.Wrapper>
         </DashboardLayout>
       )}
     </>

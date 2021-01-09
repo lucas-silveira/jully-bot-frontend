@@ -24,7 +24,7 @@ export default function Customers(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Meu dashboard | Jully Bot</title>
+        <title>Meus clientes | Jully Bot</title>
       </Head>
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
