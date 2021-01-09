@@ -77,6 +77,7 @@ export default function Bots(): JSX.Element {
 
   const handleToggle = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
       const value = Number(event.currentTarget.dataset.key);
       const currentIndex = checked.indexOf(value);
       const newChecked = [...checked];
