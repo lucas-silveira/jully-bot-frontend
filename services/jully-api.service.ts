@@ -41,6 +41,7 @@ type GetBotResponse = {
   id: number;
   phone: string;
   name: string;
+  active: boolean;
   openingHours: Array<{
     dayWeek: number;
     startHour: string;

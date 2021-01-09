@@ -9,6 +9,7 @@ import DashboardLayout from '@layouts/dashboard';
 import { authState } from '@store/auth';
 import jullyApiService from '@services/jully-api.service';
 import * as S from '@styles/pages/bot.style';
+import { Chip } from '@styles/components/chip.style';
 
 type BotAnswer = {
   id: string;
@@ -26,6 +27,7 @@ type Bot = {
   id: number;
   phone: string;
   name: string;
+  active: boolean;
   openingHours: Array<{
     dayWeek: number;
     startHour: string;
@@ -67,6 +69,7 @@ export default function Bot(): JSX.Element {
 
   useEffect(() => {
     const getBot = async () => {
+      if (!router.query.phone) return;
       const botFromApi = await jullyApiService.getBot(
         auth.managerId,
         router.query.phone as string,
@@ -94,8 +97,14 @@ export default function Bot(): JSX.Element {
       <DashboardLayout>
         <S.Wrapper>
           <S.Header>
-            <AdbIcon />
             <h4>{bot?.name}</h4>
+            <Chip
+              size="small"
+              variant="default"
+              textColor="#fff"
+              bgColor="#59C3C3"
+              label={bot?.active ? 'Ativo' : 'Inativo'}
+            />
           </S.Header>
         </S.Wrapper>
       </DashboardLayout>

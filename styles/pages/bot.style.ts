@@ -9,8 +9,10 @@ export const Header = styled.header`
   align-items: center;
   height: 32px;
 
-  h4 {
-    flex-grow: 1;
+  .MuiChip-root {
+    font-size: 0.7rem;
+    height: 18px;
+    margin-left: 10px;
   }
 
   svg {

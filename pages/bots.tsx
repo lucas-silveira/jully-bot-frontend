@@ -161,6 +161,8 @@ export default function Bots(): JSX.Element {
                         variant="outlined"
                         size="small"
                         icon={<PhoneIphoneIcon />}
+                        textColor="#84a98c"
+                        bgColor="#84a98c"
                         label={bot.phone}
                       />
                     </ListItemSecondaryAction>

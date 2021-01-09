@@ -1,11 +1,23 @@
-import styled from 'styled-components';
-import { Chip as ChipMUI } from '@material-ui/core';
+import styled, { css } from 'styled-components';
+import { Chip as ChipMUI, ChipTypeMap } from '@material-ui/core';
+import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 
-export const Chip = styled(ChipMUI)`
-  color: var(--dark-sea-green-color);
-  border-color: var(--dark-sea-green-color);
+interface ChipProps extends OverridableComponent<ChipTypeMap> {
+  textColor?: string;
+  bgColor?: string;
+}
+export const Chip = styled(ChipMUI)<ChipProps>`
+  color: ${props => props.textColor || 'var(--dark-sea-green-color)'};
+  ${props =>
+    props.variant === 'default'
+      ? css`
+          background-color: ${props.bgColor || 'var(--dark-sea-green-color);'};
+        `
+      : css`
+          border-color: ${props.bgColor || 'var(--dark-sea-green-color);'};
+        `}
 
   svg {
-    color: var(--dark-sea-green-color);
+    color: ${props => props.textColor || 'var(--dark-sea-green-color)'};
   }
 `;
