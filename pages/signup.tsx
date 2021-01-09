@@ -22,7 +22,7 @@ import SignUpForm from '@components/forms/signup-form';
 import BillingAddressForm from '@components/forms/billing-address-form';
 import * as S from '@styles/pages/signin.style';
 import ToastForm from '@components/toasts/toast-form';
-import jullyAPIService from 'services/jully-api.service';
+import jullyApiService from 'services/jully-api.service';
 
 type FormState = {
   name: string;
@@ -174,7 +174,7 @@ export default function SignUp(): JSX.Element {
 
   const handleSubmit = useCallback(async () => {
     try {
-      await jullyAPIService.createManager({
+      await jullyApiService.createManager({
         name: formState.name,
         email: formState.email,
         password: formState.password,

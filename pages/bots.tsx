@@ -15,7 +15,7 @@ import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/bots.style';
 import * as FormStyle from '@styles/components/form.style';
-import jullyAPIService from 'services/jully-api.service';
+import jullyApiService from 'services/jully-api.service';
 import ToastForm from '@components/toasts/toast-form';
 import { Chip } from '@styles/components/chip.style';
 
@@ -53,7 +53,7 @@ export default function Bots(): JSX.Element {
   useEffect(() => {
     const getAllBots = async () => {
       try {
-        const botsFromApi = await jullyAPIService.getAllBots(auth.managerId);
+        const botsFromApi = await jullyApiService.getAllBots(auth.managerId);
         setBots(botsFromApi);
       } catch (err) {
         setToastError({

@@ -13,7 +13,7 @@ import {
   validateSignInForm,
 } from '@utils/form-validators';
 import ToastForm from '@components/toasts/toast-form';
-import jullyAPIService from 'services/jully-api.service';
+import jullyApiService from 'services/jully-api.service';
 
 type FormState = {
   email: string;
@@ -90,11 +90,10 @@ export default function SignIn(): JSX.Element {
           isSending: true,
         }));
 
-        const data = await jullyAPIService.createSession(
+        const data = await jullyApiService.createSession(
           formState.email,
           formState.password,
         );
-        jullyAPIService.setAuthorizationToken(data.accessToken);
 
         setAuth({
           managerId: data.managerId,

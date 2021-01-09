@@ -25,6 +25,7 @@
       "@layouts/*": ["layouts/*"],
       "@utils/*": ["utils/*"],
       "@store/*": ["store/*"],
+      "@services/*": ["services/*"],
       "@styles/*": ["styles/*"],
     }
   },

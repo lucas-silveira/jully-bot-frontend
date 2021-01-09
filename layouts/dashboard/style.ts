@@ -111,6 +111,7 @@ export const LayoutDrawer = styled(DrawerMUI)`
 
 export const LayoutMain = styled.section`
   grid-area: main;
+  margin-right: 10px;
   background-color: #fff;
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.12);

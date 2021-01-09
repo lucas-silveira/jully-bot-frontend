@@ -1,4 +1,4 @@
-import jullyAPIService from 'services/jully-api.service';
+import jullyApiService from 'services/jully-api.service';
 
 export type AuthState = {
   managerId: number;
@@ -11,10 +11,10 @@ export const setApiServiceToken = ({ onSet }): void => {
   let savedValue: AuthState | string = localStorage.getItem('auth');
   if (savedValue !== null) {
     savedValue = JSON.parse(savedValue) as AuthState;
-    jullyAPIService.setAuthorizationToken(savedValue.accessToken);
+    jullyApiService.setAuthorizationToken(savedValue.accessToken);
   }
 
   onSet((newValue: AuthState) => {
-    jullyAPIService.setAuthorizationToken(newValue.accessToken);
+    jullyApiService.setAuthorizationToken(newValue.accessToken);
   });
 };

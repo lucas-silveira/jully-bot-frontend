@@ -21,7 +21,7 @@ export default function Menu(): JSX.Element {
       },
       {
         label: 'Bots',
-        icon: <Icon name="face" />,
+        icon: <Icon name="adb" />,
         href: '/bots',
       },
       {

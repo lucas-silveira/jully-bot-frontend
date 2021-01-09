@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
+import { JULLY_API_URL } from 'configs/constants';
 
-type CreateManagerData = {
+type CreateManagerDto = {
   name: string;
   email: string;
   password: string;
@@ -19,42 +20,87 @@ type CreateSessionResponse = {
   managerId: number;
   accessToken: string;
 };
-type ResetPasswordData = {
+type ResetPasswordDto = {
   token: string | string[];
   password: string;
   passwordConfirm: string;
+};
+type BotAnswer = {
+  id: string;
+  correlationId: string;
+  optionNumber: number;
+  text: string;
+  questions: {
+    id: string;
+    correlationId: string;
+    optionNumber: number;
+    text: string;
+  };
+};
+type GetBotResponse = {
+  id: number;
+  phone: string;
+  name: string;
+  openingHours: Array<{
+    dayWeek: number;
+    startHour: string;
+    endHour: string;
+  }>;
+  welcomeMessage: string;
+  topics: Array<{
+    id: number;
+    optionNumber: number;
+    name: string;
+    description: string;
+    questions: Array<{
+      id: string;
+      correlationId: string;
+      optionNumber: number;
+      text: string;
+      answers: BotAnswer[];
+    }>;
+  }>;
+  managerId: number;
+  sessionsId: number[];
+  createdAt: string;
+  updatedAt: string;
 };
 type GetAllBotsResponse = Array<{
   id: number;
   phone: string;
   name: string;
-  openingHours: string[];
+  openingHours: Array<{
+    dayWeek: number;
+    startHour: string;
+    endHour: string;
+  }>;
   welcomeMessage: string;
   managerId: number;
+  sessionsId: number[];
   createdAt: string;
   updatedAt: string;
-  sessionsId: number[];
 }>;
 
-class JullyAPIService {
-  randomid = Math.floor(Math.random() * 100) + 1;
+class JullyApiService {
+  public API_URL = JULLY_API_URL;
+
+  public authorizationToken: string;
 
   private api: AxiosInstance;
 
-  private authorizationToken: string;
-
   constructor() {
     this.api = axios.create({
-      baseURL: 'http://localhost:3333',
+      baseURL: this.API_URL,
     });
   }
 
   setAuthorizationToken(token: string): void {
-    this.authorizationToken = `Bearer ${token}`;
+    this.authorizationToken = token;
+    this.api.defaults.headers['Authorization'] = `Bearer ${token}`;
   }
 
-  async createManager(managerData: CreateManagerData): Promise<void> {
-    await this.api.post('/managers', managerData);
+  async createManager(managerDto: CreateManagerDto): Promise<void> {
+    await this.api.post('/managers', managerDto);
   }
 
   async createSession(
@@ -73,16 +119,23 @@ class JullyAPIService {
     await this.api.post('/managers/recovery-password', { email });
   }
 
-  async resetPassword(resetPasswordData: ResetPasswordData): Promise<void> {
-    await this.api.post('/managers/reset-password', resetPasswordData);
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+    await this.api.post('/managers/reset-password', resetPasswordDto);
+  }
+
+  async getBot(managerId: number, botPhone: string): Promise<GetBotResponse> {
+    return (
+      await this.api.get<GetBotResponse>(
+        `/managers/${managerId}/bots/${botPhone}`,
+      )
+    ).data;
   }
 
   async getAllBots(managerId: number): Promise<GetAllBotsResponse> {
-    this.api.defaults.headers['Authorization'] = this.authorizationToken;
     return (
       await this.api.get<GetAllBotsResponse>(`/managers/${managerId}/bots`)
     ).data;
   }
 }
 
-export default new JullyAPIService();
+export default new JullyApiService();

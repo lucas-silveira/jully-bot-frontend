@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import HomeIcon from '@material-ui/icons/HomeRounded';
-import FaceIcon from '@material-ui/icons/FaceRounded';
+import AdbIcon from '@material-ui/icons/Adb';
 import ForumIcon from '@material-ui/icons/ForumRounded';
 import GroupIcon from '@material-ui/icons/GroupRounded';
 import LayersIcon from '@material-ui/icons/Layers';
@@ -12,7 +12,7 @@ type Icons = {
   menu: string;
   accountCircle: string;
   home: string;
-  face: string;
+  adb: string;
   forum: string;
   group: string;
   layers: string;
@@ -29,7 +29,7 @@ export default function Icon({ name, color }: IconProps): JSX.Element {
       menu: <MenuIcon />,
       accountCircle: <AccountCircle />,
       home: <HomeIcon />,
-      face: <FaceIcon />,
+      adb: <AdbIcon />,
       forum: <ForumIcon />,
       group: <GroupIcon />,
       layers: <LayersIcon />,
