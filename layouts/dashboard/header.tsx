@@ -40,7 +40,7 @@ export default function Header({
     if (!getSignatureDaysRemaining) return `Seu plano venceu`;
     if (managerState.signature.plan.name === PLANS.TRIAL)
       return `${getSignatureDaysRemaining} dias de uso restantes`;
-  }, [getSignatureDaysRemaining, managerState.signature.plan.name]);
+  }, [getSignatureDaysRemaining, managerState.signature?.plan?.name]);
 
   const planButtonColorType = useMemo(() => {
     if (getSignatureDaysRemaining < 1) return 'inactive';
