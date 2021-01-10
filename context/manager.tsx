@@ -18,6 +18,7 @@ export type ManagerState = {
     dueAt: string;
     plan: {
       id: number;
+      name: string;
       botsQuantity: number;
       sessionsQuantity: number;
       messagesQuantity: number;

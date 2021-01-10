@@ -27,6 +27,12 @@ export default function Header({
   const { managerState, clearManagerState } = useManager();
   const [anchorEl, setAnchorEl] = useState(null);
   const accountMenuOpen = useMemo(() => Boolean(anchorEl), [anchorEl]);
+  const getSignatureDaysRemaining = useMemo(() => {
+    return differenceInDays(
+      new Date(managerState.signature?.dueAt),
+      new Date(),
+    );
+  }, [managerState.signature?.dueAt]);
 
   const handleAccountMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
@@ -46,10 +52,6 @@ export default function Header({
     router.push('signin');
   }, [handleAccountMenuClose, router, signOut, clearManagerState]);
 
-  const getSignatureDaysRemaining = useCallback((anDay: Date) => {
-    return differenceInDays(anDay, new Date());
-  }, []);
-
   return (
     <S.LayoutHeader>
       <Toolbar>
@@ -64,9 +66,7 @@ export default function Header({
         <h6>JullyBot</h6>
         <div>
           <Tooltip
-            title={`${getSignatureDaysRemaining(
-              new Date(managerState?.signature?.dueAt),
-            )} dias de uso restantes`}
+            title={`${getSignatureDaysRemaining} dias de uso restantes`}
             aria-label="add"
           >
             <Button
@@ -74,7 +74,7 @@ export default function Header({
               variant="outlined"
               color="primary"
             >
-              Plano trial
+              Plano {managerState.signature?.plan?.name}
             </Button>
           </Tooltip>
           <IconButton
