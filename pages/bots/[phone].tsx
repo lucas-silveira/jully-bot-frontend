@@ -64,9 +64,7 @@ export default function Bot(): JSX.Element {
       return;
     }
     setPageIsLoading(false);
-  }, [router, authState.accessToken]);
 
-  useEffect(() => {
     const getBot = async () => {
       if (!router.query.phone) return;
       const botFromApi = await jullyApiService.getBot(
@@ -78,7 +76,7 @@ export default function Bot(): JSX.Element {
     };
 
     getBot();
-  }, [authState.managerId, router.query.phone]);
+  }, [router, authState.accessToken, authState.managerId, router.query.phone]);
 
   if (router.isFallback)
     <Backdrop open>

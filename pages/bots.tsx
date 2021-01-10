@@ -54,6 +54,12 @@ export default function Bots(): JSX.Element {
   }, [router, authState.accessToken]);
 
   useEffect(() => {
+    if (!authState.accessToken) {
+      router.push('/signin');
+      return;
+    }
+    setPageIsLoading(false);
+
     const getAllBots = async () => {
       try {
         const botsFromApi = await jullyApiService.getAllBots(
@@ -71,7 +77,7 @@ export default function Bots(): JSX.Element {
     };
 
     getAllBots();
-  }, []); // eslint-disable-line
+  }, [router, authState.accessToken]); // eslint-disable-line
 
   const handleToastErrorClose = useCallback(() => {
     setToastError({
