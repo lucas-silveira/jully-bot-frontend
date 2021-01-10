@@ -40,6 +40,7 @@ export default function Header({
     if (!getSignatureDaysRemaining) return `Seu plano venceu`;
     if (managerState.signature.plan.name === PLANS.TRIAL)
       return `${getSignatureDaysRemaining} dias de uso restantes`;
+    return null;
   }, [getSignatureDaysRemaining, managerState.signature?.plan?.name]);
 
   const planButtonColorType = useMemo(() => {
@@ -80,7 +81,12 @@ export default function Header({
         </IconButton>
         <h6>JullyBot</h6>
         <div>
-          <Tooltip title={planButtonTextHelper} aria-label="add">
+          <Tooltip
+            title={planButtonTextHelper}
+            disableHoverListener={!planButtonTextHelper}
+            disableFocusListener={!planButtonTextHelper}
+            aria-label="add"
+          >
             <FormStyle.Button
               $colorType={planButtonColorType}
               variant="outlined"
