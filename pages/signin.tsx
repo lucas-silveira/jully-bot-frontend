@@ -11,7 +11,8 @@ import {
   validateSignInForm,
 } from '@utils/form-validators';
 import ToastForm from '@components/toasts/toast-form';
-import jullyApiService from 'services/jully-api.service';
+import { useAuth } from '@context/auth';
+import { useManager } from '@context/hooks';
 
 type FormState = {
   email: string;
@@ -25,7 +26,8 @@ type FormState = {
 
 export default function SignIn(): JSX.Element {
   const router = useRouter();
-
+  const { authState, signIn } = useAuth();
+  const { getManager } = useManager();
   const [formState, setFormState] = useState<FormState>({
     email: '',
     password: '',
@@ -39,8 +41,8 @@ export default function SignIn(): JSX.Element {
   });
 
   useEffect(() => {
-    if (auth.accessToken) router.push('dashboard');
-  }, [router, auth]);
+    if (authState.accessToken) router.push('dashboard');
+  }, [router, authState.accessToken]);
 
   const validateFormData = useCallback(async () => {
     try {
@@ -87,15 +89,11 @@ export default function SignIn(): JSX.Element {
           isSending: true,
         }));
 
-        const session = await jullyApiService.createSession(
-          formState.email,
-          formState.password,
-        );
-
-        setAuth({
-          managerId: session.managerId,
-          accessToken: session.accessToken,
+        await signIn({
+          email: formState.email,
+          password: formState.password,
         });
+        await getManager();
 
         setFormState(oldValues => ({
           ...oldValues,
@@ -115,7 +113,7 @@ export default function SignIn(): JSX.Element {
         });
       }
     },
-    [validateFormData, formState.email, formState.password],
+    [validateFormData, formState.email, formState.password, router, signIn],
   );
 
   const handleToastErrorClose = useCallback(() => {

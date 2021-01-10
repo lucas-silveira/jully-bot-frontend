@@ -5,18 +5,20 @@ import { CircularProgress } from '@material-ui/core';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/dahsboard.style';
+import { useAuth } from '@context/auth';
 
 export default function Applications(): JSX.Element {
   const router = useRouter();
+  const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth.accessToken) {
+    if (!authState.accessToken) {
       router.push('signin');
       return;
     }
     setPageIsLoading(false);
-  }, [router, auth]);
+  }, [router, authState.accessToken]);
 
   return (
     <>

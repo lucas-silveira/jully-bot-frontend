@@ -8,6 +8,7 @@ import DashboardLayout from '@layouts/dashboard';
 import jullyApiService from '@services/jully-api.service';
 import * as S from '@styles/pages/bot.style';
 import { Chip } from '@styles/components/chip.style';
+import { useAuth } from '@context/auth';
 
 type BotAnswer = {
   id: string;
@@ -53,22 +54,23 @@ type Bot = {
 
 export default function Bot(): JSX.Element {
   const router = useRouter();
+  const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [bot, setBot] = useState<Bot>({} as Bot);
 
   useEffect(() => {
-    if (!auth.accessToken) {
+    if (!authState.accessToken) {
       router.push('/signin');
       return;
     }
     setPageIsLoading(false);
-  }, [router, auth]);
+  }, [router, authState.accessToken]);
 
   useEffect(() => {
     const getBot = async () => {
       if (!router.query.phone) return;
       const botFromApi = await jullyApiService.getBot(
-        auth.managerId,
+        authState.managerId,
         router.query.phone as string,
       );
 
@@ -76,7 +78,7 @@ export default function Bot(): JSX.Element {
     };
 
     getBot();
-  }, [auth.managerId, router.query.phone]);
+  }, [authState.managerId, router.query.phone]);
 
   if (router.isFallback)
     <Backdrop open>

@@ -24,7 +24,7 @@
       "@components/*": ["components/*"],
       "@layouts/*": ["layouts/*"],
       "@utils/*": ["utils/*"],
-      "@store/*": ["store/*"],
+      "@context/*": ["context/*"],
       "@services/*": ["services/*"],
       "@styles/*": ["styles/*"],
     }

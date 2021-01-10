@@ -10,6 +10,9 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import Icon from '@components/icons';
+import { useAuth } from '@context/auth';
+import { useManager } from '@context/hooks';
+import { differenceInDays } from 'date-fns';
 import * as S from './style';
 
 type AppBarProps = {
@@ -20,6 +23,8 @@ export default function Header({
   handleDrawerToggle,
 }: AppBarProps): JSX.Element {
   const router = useRouter();
+  const { signOut } = useAuth();
+  const { managerState, clearManagerState } = useManager();
   const [anchorEl, setAnchorEl] = useState(null);
   const accountMenuOpen = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
@@ -36,12 +41,14 @@ export default function Header({
 
   const handleSignOut = useCallback(() => {
     handleAccountMenuClose();
-    setAuthState({
-      managerId: null,
-      accessToken: null,
-    });
+    signOut();
+    clearManagerState();
     router.push('signin');
-  }, [handleAccountMenuClose, setAuthState, router]);
+  }, [handleAccountMenuClose, router, signOut, clearManagerState]);
+
+  const getSignatureDaysRemaining = useCallback((anDay: Date) => {
+    return differenceInDays(anDay, new Date());
+  }, []);
 
   return (
     <S.LayoutHeader>
@@ -56,7 +63,12 @@ export default function Header({
         </IconButton>
         <h6>JullyBot</h6>
         <div>
-          <Tooltip title="15 dias de uso restantes" aria-label="add">
+          <Tooltip
+            title={`${getSignatureDaysRemaining(
+              new Date(managerState?.signature?.dueAt),
+            )} dias de uso restantes`}
+            aria-label="add"
+          >
             <Button
               style={{ color: '#ff9800', borderColor: '#ff9800' }}
               variant="outlined"

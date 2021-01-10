@@ -16,6 +16,7 @@ import * as FormStyle from '@styles/components/form.style';
 import jullyApiService from 'services/jully-api.service';
 import ToastForm from '@components/toasts/toast-form';
 import { Chip } from '@styles/components/chip.style';
+import { useAuth } from '@context/auth';
 
 type Bots = {
   id: number;
@@ -35,6 +36,7 @@ type Bots = {
 
 export default function Bots(): JSX.Element {
   const router = useRouter();
+  const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [toastError, setToastError] = useState({
     open: false,
@@ -44,17 +46,19 @@ export default function Bots(): JSX.Element {
   const [checked, setChecked] = useState([]);
 
   useEffect(() => {
-    if (!auth.accessToken) {
+    if (!authState.accessToken) {
       router.push('/signin');
       return;
     }
     setPageIsLoading(false);
-  }, [router, auth]);
+  }, [router, authState.accessToken]);
 
   useEffect(() => {
     const getAllBots = async () => {
       try {
-        const botsFromApi = await jullyApiService.getAllBots(auth.managerId);
+        const botsFromApi = await jullyApiService.getAllBots(
+          authState.managerId,
+        );
         setBots(botsFromApi);
       } catch (err) {
         setToastError({
