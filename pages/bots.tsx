@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
 import {
   CircularProgress,
   ListItem,
@@ -10,7 +9,6 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import PhoneIphoneIcon from '@material-ui/icons/PhoneIphone';
-import { authState } from '@store/auth';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/bots.style';
@@ -37,7 +35,6 @@ type Bots = {
 
 export default function Bots(): JSX.Element {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [toastError, setToastError] = useState({
     open: false,

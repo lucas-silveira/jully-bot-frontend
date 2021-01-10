@@ -9,8 +9,6 @@ import {
   Button,
   Tooltip,
 } from '@material-ui/core';
-import { useSetRecoilState } from 'recoil';
-import { authState } from '@store/auth';
 import Icon from '@components/icons';
 import * as S from './style';
 
@@ -22,7 +20,6 @@ export default function Header({
   handleDrawerToggle,
 }: AppBarProps): JSX.Element {
   const router = useRouter();
-  const setAuthState = useSetRecoilState(authState);
   const [anchorEl, setAnchorEl] = useState(null);
   const accountMenuOpen = useMemo(() => Boolean(anchorEl), [anchorEl]);
 

@@ -5,9 +5,7 @@ import { Fade } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
 import * as Yup from 'yup';
-import { authState } from '@store/auth';
 import { removeSpecialCharacters } from '@utils/string-parser';
 import { zipcodeRegex } from '@utils/string-regex';
 import { getCepDebouncer } from '@utils/viacep-api';
@@ -52,7 +50,6 @@ type GetAddressResponse = {
 
 export default function SignUp(): JSX.Element {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
   const [formState, setFormState] = useState<FormState>({
     name: '',
     email: '',

@@ -1,4 +1,4 @@
-import { ManagerState } from '@store/manager';
+import { ManagerState } from '@store/manager/notes';
 import axios, { AxiosInstance } from 'axios';
 import { JULLY_API_URL } from 'configs/constants';
 

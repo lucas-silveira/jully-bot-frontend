@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { useRecoilValue } from 'recoil';
 import { CircularProgress } from '@material-ui/core';
 import AdbIcon from '@material-ui/icons/Adb';
 import { Backdrop } from '@styles/components/backdrop.style';
 import DashboardLayout from '@layouts/dashboard';
-import { authState } from '@store/auth';
 import jullyApiService from '@services/jully-api.service';
 import * as S from '@styles/pages/bot.style';
 import { Chip } from '@styles/components/chip.style';
@@ -55,7 +53,6 @@ type Bot = {
 
 export default function Bot(): JSX.Element {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [bot, setBot] = useState<Bot>({} as Bot);
 

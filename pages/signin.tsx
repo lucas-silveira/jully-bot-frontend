@@ -2,9 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import * as yup from 'yup';
-import { authState } from '@store/auth';
 import * as S from '@styles/pages/signin.style';
 import HeaderBrand from 'components/header/header-brand';
 import SignInForm from '@components/forms/signin-form';
@@ -14,7 +12,6 @@ import {
 } from '@utils/form-validators';
 import ToastForm from '@components/toasts/toast-form';
 import jullyApiService from 'services/jully-api.service';
-import { managerState } from '@store/manager';
 
 type FormState = {
   email: string;
@@ -28,7 +25,6 @@ type FormState = {
 
 export default function SignIn(): JSX.Element {
   const router = useRouter();
-  const [auth, setAuth] = useRecoilState(authState);
 
   const [formState, setFormState] = useState<FormState>({
     email: '',

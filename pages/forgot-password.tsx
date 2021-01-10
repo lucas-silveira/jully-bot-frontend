@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
 import * as yup from 'yup';
-import { authState } from '@store/auth';
 import * as S from '@styles/pages/signin.style';
 import {
   FormValidationError,
@@ -25,7 +23,6 @@ type FormState = {
 
 export default function ForgotPassword(): JSX.Element {
   const router = useRouter();
-  const auth = useRecoilValue(authState);
   const [formState, setFormState] = useState<FormState>({
     email: '',
     isSending: false,
