@@ -86,9 +86,13 @@ interface MyFormButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   isSending?: boolean;
 }
 
-export const FormButton = styled(ButtonMUI).attrs(() => ({
-  size: 'large',
-}))<MyFormButtonProps>`
+export const FormButton = styled(ButtonMUI)
+  .attrs(() => ({
+    size: 'large',
+  }))
+  .withConfig({
+    shouldForwardProp: prop => !['isSending'].includes(prop),
+  })<MyFormButtonProps>`
   min-width: ${props => (props.isSending ? '50px' : '200px')};
   min-height: 50px;
   color: #fff;
@@ -107,9 +111,13 @@ interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   bgColor?: string;
 }
 
-export const Button = styled(ButtonMUI).attrs(() => ({
-  size: 'small',
-}))<MyButtonProps>`
+export const Button = styled(ButtonMUI)
+  .attrs(() => ({
+    size: 'small',
+  }))
+  .withConfig({
+    shouldForwardProp: prop => !['bgColor'].includes(prop),
+  })<MyButtonProps>`
   color: ${props => props.color || '#fff'};
   background-color: ${props => props.bgColor || '#52489C'};
   padding: 5px 14px;

@@ -6,7 +6,9 @@ interface ChipProps extends OverridableComponent<ChipTypeMap> {
   textColor?: string;
   bgColor?: string;
 }
-export const Chip = styled(ChipMUI)<ChipProps>`
+export const Chip = styled(ChipMUI).withConfig({
+  shouldForwardProp: prop => !['textColor', 'bgColor'].includes(prop),
+})<ChipProps>`
   color: ${props => props.textColor || 'var(--dark-sea-green-color)'};
   ${props =>
     props.variant === 'default'
