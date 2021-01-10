@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress } from '@material-ui/core';
-import AdbIcon from '@material-ui/icons/Adb';
 import { Backdrop } from '@styles/components/backdrop.style';
 import DashboardLayout from '@layouts/dashboard';
 import jullyApiService from '@services/jully-api.service';
@@ -98,8 +97,8 @@ export default function Bot(): JSX.Element {
             <Chip
               size="small"
               variant="default"
-              textColor="#fff"
-              bgColor="#59C3C3"
+              $textColor="#fff"
+              $bgColor="#59C3C3"
               label={bot?.active ? 'Ativo' : 'Inativo'}
             />
           </S.Header>

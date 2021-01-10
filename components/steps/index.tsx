@@ -93,7 +93,7 @@ export default function Steps({
               <FormStyle.FormButton
                 variant="contained"
                 onClick={handleNext}
-                isSending={isSending}
+                $isSending={isSending}
                 disabled={isSending}
               >
                 {isSending ? (

@@ -137,7 +137,7 @@ export default function Bots(): JSX.Element {
             <S.Header>
               <h4>Meus bots</h4>
               {!!checked.length && (
-                <FormStyle.Button bgColor="#84a98c">
+                <FormStyle.Button $bgColor="#84a98c" size="small">
                   Apagar selecionados ({checked.length})
                 </FormStyle.Button>
               )}
@@ -172,8 +172,8 @@ export default function Bots(): JSX.Element {
                         variant="outlined"
                         size="small"
                         icon={<PhoneIphoneIcon />}
-                        textColor="#84a98c"
-                        bgColor="#84a98c"
+                        $textColor="#84a98c"
+                        $bgColor="#84a98c"
                         label={bot.phone}
                       />
                     </ListItemSecondaryAction>

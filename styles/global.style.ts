@@ -12,6 +12,10 @@ export default createGlobalStyle`
     --dark-sea-green-color: #84a98c;
     --ash-gray-color: #CAD2C5;
     --platinum-color: #EBEBEB;
+
+    --success-color: #4caf50;
+    --warn-color: #ff9800;
+    --error-color: #f44336;
   }
 
   body {

@@ -6,7 +6,7 @@ import {
   ExtendButtonBase,
   ButtonTypeMap,
 } from '@material-ui/core';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
 import { KeyboardDatePicker as KeyboardDatePickerMUI } from '@material-ui/pickers';
 
@@ -83,17 +83,13 @@ export const SubmitButton = styled(ButtonMUI).attrs(() => ({
 
 interface MyFormButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   name?: string;
-  isSending?: boolean;
+  $isSending?: boolean;
 }
 
-export const FormButton = styled(ButtonMUI)
-  .attrs(() => ({
-    size: 'large',
-  }))
-  .withConfig({
-    shouldForwardProp: prop => !['isSending'].includes(prop),
-  })<MyFormButtonProps>`
-  min-width: ${props => (props.isSending ? '50px' : '200px')};
+export const FormButton = styled(ButtonMUI).attrs(() => ({
+  size: 'large',
+}))<MyFormButtonProps>`
+  min-width: ${props => (props.$isSending ? '50px' : '200px')};
   min-height: 50px;
   color: #fff;
   background-color: var(--primary-color);
@@ -105,27 +101,39 @@ export const FormButton = styled(ButtonMUI)
   }
 `;
 
+const colorTypes = {
+  active: 'var(--success-color)',
+  test: 'var(--warn-color)',
+  inactive: 'var(--error-color)',
+};
+
 interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   name?: string;
+  $colorType?: string;
   color?: string;
-  bgColor?: string;
+  $bgColor?: string;
 }
 
-export const Button = styled(ButtonMUI)
-  .attrs(() => ({
-    size: 'small',
-  }))
-  .withConfig({
-    shouldForwardProp: prop => !['bgColor'].includes(prop),
-  })<MyButtonProps>`
-  color: ${props => props.color || '#fff'};
-  background-color: ${props => props.bgColor || '#52489C'};
+export const Button = styled(ButtonMUI)<MyButtonProps>`
+  ${props =>
+    props.$colorType
+      ? css`
+          color: ${colorTypes[props.$colorType]};
+          border-color: ${colorTypes[props.$colorType]};
+          background: ${props.$bgColor
+            ? colorTypes[props.$colorType]
+            : 'transparent'};
+        `
+      : css`
+          color: ${props.color || '#fff'};
+          background-color: ${props.$bgColor || '#52489C'};
+          &:hover {
+            background-color: ${lighten(0.07, props.$bgColor || '#52489C')};
+          }
+        `}
+
   padding: 5px 14px;
   transition: min-width 500ms;
-
-  &:hover {
-    background-color: ${props => lighten(0.07, props.bgColor || '#52489C')};
-  }
 `;
 
 export const Checkbox = styled(CheckboxMUI)`
