@@ -21,6 +21,7 @@ import BillingAddressForm from '@components/forms/billing-address-form';
 import * as S from '@styles/pages/signin.style';
 import ToastForm from '@components/toasts/toast-form';
 import jullyApiService from 'services/jully-api.service';
+import { useAuth } from '@context/auth';
 
 type FormState = {
   name: string;
@@ -50,6 +51,7 @@ type GetAddressResponse = {
 
 export default function SignUp(): JSX.Element {
   const router = useRouter();
+  const { authState } = useAuth();
   const [formState, setFormState] = useState<FormState>({
     name: '',
     email: '',
@@ -72,8 +74,8 @@ export default function SignUp(): JSX.Element {
   });
 
   useEffect(() => {
-    if (auth.accessToken) router.push('dashboard');
-  }, [router, auth]);
+    if (authState.accessToken) router.push('dashboard');
+  }, [router, authState.accessToken]);
 
   const validateFirstStep = useCallback(async () => {
     try {
