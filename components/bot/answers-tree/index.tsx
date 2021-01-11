@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import * as S from '@styles/pages/bot.style';
 
 type BotAnswer = {
@@ -27,12 +26,26 @@ export default function AnswersTree({
   return (
     <div>
       {answers.map(answer => (
-        <S.TreeItem key={answer.id} nodeId={answer.id} label={answer.text}>
+        <S.TreeItem
+          key={answer.id}
+          nodeId={answer.id}
+          label={
+            <S.TreeLabel>
+              <div>{answer.text}</div>
+              <caption>Resposta</caption>
+            </S.TreeLabel>
+          }
+        >
           {answer.questions?.map(question => (
             <S.TreeItem
               key={question.id}
               nodeId={question.id}
-              label={question.text}
+              label={
+                <S.TreeLabel>
+                  <div>{question.text}</div>
+                  <caption>Pergunta</caption>
+                </S.TreeLabel>
+              }
             >
               <AnswersTree answers={question.answers} />
             </S.TreeItem>

@@ -30,19 +30,35 @@ export const Header = styled.header`
 `;
 
 export const Main = styled.main`
+  display: flex;
   padding-top: 20px;
+
+  @media (max-width: 959px) {
+    flex-direction: column;
+    gap: 40px;
+  }
 `;
 
 export const SessionConversation = styled.div`
+  flex-grow: 1;
   h5 {
     margin-bottom: 20px;
   }
 `;
 
+export const SessionDetails = styled.div`
+  flex-grow: 2;
+  h5 {
+    margin-bottom: 20px;
+  }
+
+  > div {
+    margin-bottom: 40px;
+  }
+`;
+
 export const TreeView = styled(TreeViewMUI)`
-  flex-grow: 1;
-  max-width: 400px;
-  height: 264px;
+  max-width: 500px;
 `;
 
 export const TreeItem = styled(TreeItemMUI).attrs(() => ({
@@ -68,8 +84,22 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
   }
 
   .MuiTreeItem-content {
-    margin-left: 7px;
     padding-left: 18px;
     border-left: 1px dashed ${fade('#333', 0.4)};
+  }
+`;
+
+export const TreeLabel = styled.div`
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+
+  div {
+    flex-grow: 1;
+  }
+
+  caption {
+    font-size: 0.7rem;
+    font-style: italic;
   }
 `;

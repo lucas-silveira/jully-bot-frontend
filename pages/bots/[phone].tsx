@@ -12,6 +12,7 @@ import MinusSquare from '@components/squares/minus-square';
 import PlusSquare from '@components/squares/plus-square';
 import CloseSquare from '@components/squares/close-square';
 import AnswersTree from '@components/bot/answers-tree';
+import OpeningHoursTable from '@components/bot/opening-hours-table';
 
 type BotAnswer = {
   id: string;
@@ -75,6 +76,7 @@ export default function Bot(): JSX.Element {
         authState.managerId,
         router.query.phone as string,
       );
+      console.log(botFromApi);
       setBot(botFromApi);
     };
 
@@ -91,13 +93,13 @@ export default function Bot(): JSX.Element {
       <DashboardLayout>
         <S.Wrapper>
           <S.Header>
-            <h4>{bot?.name}</h4>
+            <h4>{bot.name}</h4>
             <Chip
               size="small"
               variant="default"
               $textColor="#fff"
               $bgColor="#59C3C3"
-              label={bot?.active ? 'Ativo' : 'Inativo'}
+              label={bot.active ? 'Ativo' : 'Inativo'}
             />
           </S.Header>
           <Divider light />
@@ -114,13 +116,23 @@ export default function Bot(): JSX.Element {
                   <S.TreeItem
                     key={topic.id}
                     nodeId={topic.id.toString()}
-                    label={topic.name}
+                    label={(
+                      <S.TreeLabel>
+                        <div>{topic.name}</div>
+                        <caption>Tópico</caption>
+                      </S.TreeLabel>
+                    )}
                   >
                     {topic.questions.map(question => (
                       <S.TreeItem
                         key={question.id}
                         nodeId={question.correlationId}
-                        label={question.text}
+                        label={(
+                          <S.TreeLabel>
+                            <div>{question.text}</div>
+                            <caption>Pergunta</caption>
+                          </S.TreeLabel>
+                        )}
                       >
                         <AnswersTree answers={question.answers} />
                       </S.TreeItem>
@@ -129,6 +141,17 @@ export default function Bot(): JSX.Element {
                 ))}
               </S.TreeView>
             </S.SessionConversation>
+            <S.SessionDetails>
+              <h5>Overview</h5>
+              <div>
+                <p>Sessões: 100</p>
+                <p>Mensagens: 100</p>
+              </div>
+              <h5>Horários de atendimento</h5>
+              <div>
+                <OpeningHoursTable data={bot.openingHours} />
+              </div>
+            </S.SessionDetails>
           </S.Main>
         </S.Wrapper>
       </DashboardLayout>
