@@ -119,7 +119,7 @@ export default function Bot(): JSX.Element {
                     label={(
                       <S.TreeLabel>
                         <div>{topic.name}</div>
-                        <caption>Tópico</caption>
+                        <span>Tópico</span>
                       </S.TreeLabel>
                     )}
                   >
@@ -130,7 +130,7 @@ export default function Bot(): JSX.Element {
                         label={(
                           <S.TreeLabel>
                             <div>{question.text}</div>
-                            <caption>Pergunta</caption>
+                            <span>Pergunta</span>
                           </S.TreeLabel>
                         )}
                       >

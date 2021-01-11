@@ -29,23 +29,23 @@ export default function AnswersTree({
         <S.TreeItem
           key={answer.id}
           nodeId={answer.id}
-          label={
+          label={(
             <S.TreeLabel>
               <div>{answer.text}</div>
-              <caption>Resposta</caption>
+              <span>Resposta</span>
             </S.TreeLabel>
-          }
+          )}
         >
           {answer.questions?.map(question => (
             <S.TreeItem
               key={question.id}
               nodeId={question.id}
-              label={
+              label={(
                 <S.TreeLabel>
                   <div>{question.text}</div>
-                  <caption>Pergunta</caption>
+                  <span>Pergunta</span>
                 </S.TreeLabel>
-              }
+              )}
             >
               <AnswersTree answers={question.answers} />
             </S.TreeItem>

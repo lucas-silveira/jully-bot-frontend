@@ -98,7 +98,7 @@ export const TreeLabel = styled.div`
     flex-grow: 1;
   }
 
-  caption {
+  span {
     font-size: 0.7rem;
     font-style: italic;
   }
