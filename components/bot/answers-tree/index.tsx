@@ -31,7 +31,7 @@ export default function AnswersTree({
           nodeId={answer.id}
           label={(
             <S.TreeLabel>
-              <div>{answer.text}</div>
+              <div>{`${answer.optionNumber}. ${answer.text}`}</div>
               <span>Resposta</span>
             </S.TreeLabel>
           )}

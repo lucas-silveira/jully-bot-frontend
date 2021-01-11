@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { fade } from '@material-ui/core';
+import { lighten } from 'polished';
+import { fade, Button as ButtonMUI } from '@material-ui/core';
 import {
   TreeView as TreeViewMUI,
   TreeItem as TreeItemMUI,
 } from '@material-ui/lab';
 import TransitionComponent from '@components/transitions/default';
-import { darken, lighten } from 'polished';
 
 export const Wrapper = styled.section`
   padding: 20px;
@@ -32,6 +32,7 @@ export const Header = styled.header`
 export const Main = styled.main`
   display: flex;
   padding-top: 20px;
+  gap: 40px;
 
   @media (max-width: 959px) {
     flex-direction: column;
@@ -40,27 +41,39 @@ export const Main = styled.main`
 `;
 
 export const SessionConversation = styled.div`
-  flex-grow: 1;
+  width: 540px;
 
-  h5 {
-    margin-bottom: 20px;
+  header {
+    display: flex;
+    margin-bottom: 10px;
+
+    h5 {
+      flex-grow: 1;
+    }
   }
 `;
 
 export const SessionDetails = styled.div`
   flex-grow: 2;
 
-  h5 {
-    margin-bottom: 20px;
-  }
-
   > div {
-    margin-bottom: 40px;
+    header {
+      display: flex;
+      margin-bottom: 10px;
+
+      h5 {
+        flex-grow: 1;
+      }
+    }
+
+    > div {
+      margin-bottom: 40px;
+    }
   }
 `;
 
 export const TreeView = styled(TreeViewMUI)`
-  max-width: 500px;
+  max-width: 540px;
 `;
 
 export const TreeItem = styled(TreeItemMUI).attrs(() => ({
@@ -71,13 +84,13 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
   &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
     margin: 5px;
     padding: 2px 5px;
-    background-color: var(--ash-gray-color);
+    background-color: ${lighten(0.4, '#52489C')};
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
     transition: 500ms;
 
     :hover {
-      background-color: ${lighten(0.1, '#CAD2C5')};
+      background-color: ${lighten(0.5, '#52489C')};
     }
   }
 
@@ -103,5 +116,15 @@ export const TreeLabel = styled.div`
   span {
     font-size: 0.7rem;
     font-style: italic;
+  }
+`;
+
+export const Button = styled(ButtonMUI)`
+  display: flex;
+  align-items: flex-start;
+  color: var(--dark-sea-green-color);
+
+  svg {
+    margin-right: 5px;
   }
 `;

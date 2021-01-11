@@ -2,17 +2,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress, Divider } from '@material-ui/core';
-import { Backdrop } from '@styles/components/backdrop.style';
 import DashboardLayout from '@layouts/dashboard';
 import jullyApiService from '@services/jully-api.service';
-import * as S from '@styles/pages/bot.style';
-import { Chip } from '@styles/components/chip.style';
 import { useAuth } from '@context/auth';
 import MinusSquare from '@components/squares/minus-square';
 import PlusSquare from '@components/squares/plus-square';
 import CloseSquare from '@components/squares/close-square';
 import AnswersTree from '@components/bot/answers-tree';
 import OpeningHoursTable from '@components/bot/opening-hours-table';
+import { Backdrop } from '@styles/components/backdrop.style';
+import { Chip } from '@styles/components/chip.style';
+import * as S from '@styles/pages/bot.style';
+import Icon from '@components/icons';
 
 type BotAnswer = {
   id: string;
@@ -76,7 +77,6 @@ export default function Bot(): JSX.Element {
         authState.managerId,
         router.query.phone as string,
       );
-      console.log(botFromApi);
       setBot(botFromApi);
     };
 
@@ -105,7 +105,13 @@ export default function Bot(): JSX.Element {
           <Divider light />
           <S.Main>
             <S.SessionConversation>
-              <h5>Fluxo de conversa</h5>
+              <header>
+                <h5>Fluxo de conversa</h5>
+                <S.Button size="small">
+                  <Icon name="edit" color="#84a98c" fontSize="small" />
+                  Editar
+                </S.Button>
+              </header>
               <S.TreeView
                 defaultExpanded={['1']}
                 defaultCollapseIcon={<MinusSquare />}
@@ -142,12 +148,24 @@ export default function Bot(): JSX.Element {
               </S.TreeView>
             </S.SessionConversation>
             <S.SessionDetails>
-              <h5>Overview</h5>
               <div>
-                <p>Sessões: {bot.sessionsId?.length}</p>
-                <p>Mensagens: 100</p>
+                <header>
+                  <h5>Overview</h5>
+                </header>
+                <div>
+                  <p>Sessões: {bot.sessionsId?.length}</p>
+                  <p>Mensagens: 100</p>
+                </div>
               </div>
-              <h5>Horários de atendimento</h5>
+              <div>
+                <header>
+                  <h5>Horários de atendimento</h5>
+                  <S.Button size="small">
+                    <Icon name="edit" color="#84a98c" fontSize="small" />
+                    Editar
+                  </S.Button>
+                </header>
+              </div>
               <div>
                 <OpeningHoursTable data={bot.openingHours} />
               </div>

@@ -7,8 +7,7 @@ export const Wrapper = styled.section`
 
 export const Header = styled.header`
   display: flex;
-  height: 32px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
 
   h4 {
     flex-grow: 1;

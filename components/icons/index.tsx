@@ -6,6 +6,7 @@ import AdbIcon from '@material-ui/icons/Adb';
 import ForumIcon from '@material-ui/icons/ForumRounded';
 import GroupIcon from '@material-ui/icons/GroupRounded';
 import LayersIcon from '@material-ui/icons/Layers';
+import EditIcon from '@material-ui/icons/Edit';
 import * as S from './styles';
 
 type Icons = {
@@ -16,23 +17,30 @@ type Icons = {
   forum: string;
   group: string;
   layers: string;
+  edit: string;
 };
 
 type IconProps = {
   name: keyof Icons;
   color?: string;
+  fontSize?: 'inherit' | 'default' | 'small' | 'large';
 };
 
-export default function Icon({ name, color }: IconProps): JSX.Element {
+export default function Icon({
+  name,
+  color,
+  fontSize = 'default',
+}: IconProps): JSX.Element {
   const icons = useMemo(
     () => ({
-      menu: <MenuIcon />,
-      accountCircle: <AccountCircle />,
-      home: <HomeIcon />,
-      adb: <AdbIcon />,
-      forum: <ForumIcon />,
-      group: <GroupIcon />,
-      layers: <LayersIcon />,
+      menu: <MenuIcon fontSize={fontSize} />,
+      accountCircle: <AccountCircle fontSize={fontSize} />,
+      home: <HomeIcon fontSize={fontSize} />,
+      adb: <AdbIcon fontSize={fontSize} />,
+      forum: <ForumIcon fontSize={fontSize} />,
+      group: <GroupIcon fontSize={fontSize} />,
+      layers: <LayersIcon fontSize={fontSize} />,
+      edit: <EditIcon fontSize={fontSize} />,
     }),
     [],
   );
