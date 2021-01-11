@@ -11,6 +11,7 @@ import HeaderBrand from 'components/header/header-brand';
 import ForgotPasswordForm from '@components/forms/forgot-password-form';
 import ToastForm from '@components/toasts/toast-form';
 import jullyApiService from 'services/jully-api.service';
+import { useAuth } from '@context/auth';
 
 type FormState = {
   email: string;
@@ -23,6 +24,7 @@ type FormState = {
 
 export default function ForgotPassword(): JSX.Element {
   const router = useRouter();
+  const { authState } = useAuth();
   const [formState, setFormState] = useState<FormState>({
     email: '',
     isSending: false,
@@ -35,8 +37,8 @@ export default function ForgotPassword(): JSX.Element {
   });
 
   useEffect(() => {
-    if (auth.accessToken) router.push('dashboard');
-  }, [router, auth]);
+    if (authState.accessToken) router.push('dashboard');
+  }, [router, authState]);
 
   const handleToastErrorClose = useCallback(() => {
     setToastError({
