@@ -41,6 +41,7 @@ export const Main = styled.main`
 
 export const SessionConversation = styled.div`
   flex-grow: 1;
+
   h5 {
     margin-bottom: 20px;
   }
@@ -48,6 +49,7 @@ export const SessionConversation = styled.div`
 
 export const SessionDetails = styled.div`
   flex-grow: 2;
+
   h5 {
     margin-bottom: 20px;
   }

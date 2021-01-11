@@ -116,23 +116,23 @@ export default function Bot(): JSX.Element {
                   <S.TreeItem
                     key={topic.id}
                     nodeId={topic.id.toString()}
-                    label={(
+                    label={
                       <S.TreeLabel>
                         <div>{topic.name}</div>
                         <span>Tópico</span>
                       </S.TreeLabel>
-                    )}
+                    }
                   >
                     {topic.questions.map(question => (
                       <S.TreeItem
                         key={question.id}
                         nodeId={question.correlationId}
-                        label={(
+                        label={
                           <S.TreeLabel>
                             <div>{question.text}</div>
                             <span>Pergunta</span>
                           </S.TreeLabel>
-                        )}
+                        }
                       >
                         <AnswersTree answers={question.answers} />
                       </S.TreeItem>
@@ -144,7 +144,7 @@ export default function Bot(): JSX.Element {
             <S.SessionDetails>
               <h5>Overview</h5>
               <div>
-                <p>Sessões: 100</p>
+                <p>Sessões: {bot.sessionsId?.length}</p>
                 <p>Mensagens: 100</p>
               </div>
               <h5>Horários de atendimento</h5>
