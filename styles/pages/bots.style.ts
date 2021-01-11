@@ -8,11 +8,14 @@ export const Wrapper = styled.section`
 export const Header = styled.header`
   display: flex;
   height: 32px;
+  padding-bottom: 10px;
 
   h4 {
     flex-grow: 1;
   }
 `;
+
+export const Main = styled.main``;
 
 export const List = styled(ListMUI)`
   margin-top: 20px;

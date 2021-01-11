@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import {
   CircularProgress,
+  Divider,
   ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -142,45 +143,48 @@ export default function Bots(): JSX.Element {
                 </FormStyle.Button>
               )}
             </S.Header>
-            <S.List>
-              {bots.map(bot => {
-                const labelId = `checkbox-list-label-${bot.name}`;
+            <Divider light />
+            <S.Main>
+              <S.List>
+                {bots.map(bot => {
+                  const labelId = `checkbox-list-label-${bot.name}`;
 
-                return (
-                  <ListItem
-                    key={bot.id}
-                    role={undefined}
-                    dense
-                    button
-                    data-phone={bot.phone}
-                    onClick={handleOpenPage}
-                  >
-                    <ListItemIcon>
-                      <FormStyle.Checkbox
-                        edge="start"
-                        checked={checked.includes(bot.id)}
-                        tabIndex={-1}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': labelId }}
-                        data-key={bot.id}
-                        onClick={handleToggle}
-                      />
-                    </ListItemIcon>
-                    <ListItemText id={labelId} primary={bot.name} />
-                    <ListItemSecondaryAction>
-                      <Chip
-                        variant="outlined"
-                        size="small"
-                        icon={<PhoneIphoneIcon />}
-                        $textColor="#84a98c"
-                        $bgColor="#84a98c"
-                        label={bot.phone}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
-            </S.List>
+                  return (
+                    <ListItem
+                      key={bot.id}
+                      role={undefined}
+                      dense
+                      button
+                      data-phone={bot.phone}
+                      onClick={handleOpenPage}
+                    >
+                      <ListItemIcon>
+                        <FormStyle.Checkbox
+                          edge="start"
+                          checked={checked.includes(bot.id)}
+                          tabIndex={-1}
+                          disableRipple
+                          inputProps={{ 'aria-labelledby': labelId }}
+                          data-key={bot.id}
+                          onClick={handleToggle}
+                        />
+                      </ListItemIcon>
+                      <ListItemText id={labelId} primary={bot.name} />
+                      <ListItemSecondaryAction>
+                        <Chip
+                          variant="outlined"
+                          size="small"
+                          icon={<PhoneIphoneIcon />}
+                          $textColor="#84a98c"
+                          $bgColor="#84a98c"
+                          label={bot.phone}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  );
+                })}
+              </S.List>
+            </S.Main>
           </S.Wrapper>
         </DashboardLayout>
       )}

@@ -1,6 +1,6 @@
-import { ManagerState } from '@store/manager/notes';
 import axios, { AxiosInstance } from 'axios';
 import { JULLY_API_URL } from 'configs/constants';
+import { ManagerState } from '@context/manager';
 
 type CreateManagerDto = {
   name: string;
@@ -31,12 +31,13 @@ type BotAnswer = {
   correlationId: string;
   optionNumber: number;
   text: string;
-  questions: {
+  questions: Array<{
     id: string;
     correlationId: string;
     optionNumber: number;
     text: string;
-  };
+    answers: any[];
+  }>;
 };
 type GetBotResponse = {
   id: number;
