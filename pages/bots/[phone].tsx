@@ -72,6 +72,7 @@ type BotTopic = {
 type BotTreeItem = {
   id: number | string;
   correlationId: string;
+  ownCorrelationId: string;
   type: string;
   optionNumber?: number;
   sortNumber?: number;
@@ -171,6 +172,7 @@ export default function Bot(): JSX.Element {
   );
 
   const handleSaveChanges = useCallback(() => {
+    console.log(botValidation.questionsWithoutAnswers);
     if (botValidation.questionsWithoutAnswers.ownCorrelationIds.length) {
       setBotValidation(oldValue => ({ ...oldValue, validate: true }));
       setExpandedTreeItems(oldValue => [
@@ -222,6 +224,26 @@ export default function Bot(): JSX.Element {
             item => item.id !== treeItem.id,
           );
           setTopics([...topics]);
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ownCorrelationIds: !parentTreeItem.answers.length
+                ? [
+                    ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
+                    parentTreeItem.ownCorrelationId,
+                  ]
+                : oldValue.questionsWithoutAnswers.ownCorrelationIds,
+              spplitedCorrelationIds: !parentTreeItem.answers.length
+                ? [
+                    ...new Set([
+                      ...oldValue.questionsWithoutAnswers
+                        .spplitedCorrelationIds,
+                      ...parentTreeItem.correlationId.split('-'),
+                    ]),
+                  ]
+                : oldValue.questionsWithoutAnswers.spplitedCorrelationIds,
+            },
+          }));
           break;
         }
         default:
@@ -272,7 +294,12 @@ export default function Bot(): JSX.Element {
                 ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
                 ownCorrelationId,
               ],
-              spplitedCorrelationIds,
+              spplitedCorrelationIds: [
+                ...new Set([
+                  ...oldValue.questionsWithoutAnswers.spplitedCorrelationIds,
+                  ...spplitedCorrelationIds,
+                ]),
+              ],
             },
           }));
           setExpandedTreeItems(oldValue => [
@@ -344,7 +371,12 @@ export default function Bot(): JSX.Element {
                 ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
                 ownCorrelationId,
               ],
-              spplitedCorrelationIds,
+              spplitedCorrelationIds: [
+                ...new Set([
+                  ...oldValue.questionsWithoutAnswers.spplitedCorrelationIds,
+                  ...spplitedCorrelationIds,
+                ]),
+              ],
             },
           }));
           setExpandedTreeItems(oldValue => [
