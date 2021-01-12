@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress, Divider } from '@material-ui/core';
@@ -63,6 +63,7 @@ export default function Bot(): JSX.Element {
   const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [bot, setBot] = useState<Bot>({} as Bot);
+  const [editMode, setEditMode] = useState(null);
 
   useEffect(() => {
     if (!authState.accessToken) {
@@ -82,6 +83,22 @@ export default function Bot(): JSX.Element {
 
     getBot();
   }, [router, authState.accessToken, authState.managerId, router.query.phone]);
+
+  const handleActiveEditMode = useCallback(
+    (event: React.MouseEvent<HTMLInputElement>) => {
+      const eventTargetEditMode = event.currentTarget.dataset.editmode;
+      setEditMode(eventTargetEditMode);
+    },
+    [],
+  );
+
+  const handleSaveChanges = useCallback(() => {
+    setEditMode(null);
+  }, []);
+  const handleCancelChanges = useCallback(() => {
+    setEditMode(null);
+  }, []);
+
   return (
     <>
       <Head>
@@ -107,10 +124,34 @@ export default function Bot(): JSX.Element {
             <S.SessionConversation>
               <header>
                 <h5>Fluxo de conversa</h5>
-                <S.Button size="small">
-                  <Icon name="edit" color="#84a98c" fontSize="small" />
-                  Editar
-                </S.Button>
+                {editMode === 'conversation' ? (
+                  <>
+                    <S.Button
+                      size="small"
+                      $styleType="save"
+                      onClick={handleSaveChanges}
+                    >
+                      Salvar alterações
+                    </S.Button>
+                    <S.Button
+                      size="small"
+                      $styleType="cancel"
+                      onClick={handleCancelChanges}
+                    >
+                      Cancelar
+                    </S.Button>
+                  </>
+                ) : (
+                  <S.Button
+                    size="small"
+                    $styleType="edit"
+                    data-editmode="conversation"
+                    onClick={handleActiveEditMode}
+                  >
+                    <Icon name="edit" color="#84a98c" fontSize="small" />
+                    Editar
+                  </S.Button>
+                )}
               </header>
               <S.TreeView
                 defaultExpanded={['1']}
@@ -150,7 +191,7 @@ export default function Bot(): JSX.Element {
             <S.SessionDetails>
               <div>
                 <header>
-                  <h5>Overview</h5>
+                  <h5>Visão geral</h5>
                 </header>
                 <div>
                   <p>Sessões: {bot.sessionsId?.length}</p>
@@ -160,10 +201,34 @@ export default function Bot(): JSX.Element {
               <div>
                 <header>
                   <h5>Horários de atendimento</h5>
-                  <S.Button size="small">
-                    <Icon name="edit" color="#84a98c" fontSize="small" />
-                    Editar
-                  </S.Button>
+                  {editMode === 'openingHours' ? (
+                    <>
+                      <S.Button
+                        size="small"
+                        $styleType="save"
+                        onClick={handleSaveChanges}
+                      >
+                        Salvar alterações
+                      </S.Button>
+                      <S.Button
+                        size="small"
+                        $styleType="cancel"
+                        onClick={handleCancelChanges}
+                      >
+                        Cancelar
+                      </S.Button>
+                    </>
+                  ) : (
+                    <S.Button
+                      size="small"
+                      $styleType="edit"
+                      data-editmode="openingHours"
+                      onClick={handleActiveEditMode}
+                    >
+                      <Icon name="edit" color="#84a98c" fontSize="small" />
+                      Editar
+                    </S.Button>
+                  )}
                 </header>
               </div>
               <div>

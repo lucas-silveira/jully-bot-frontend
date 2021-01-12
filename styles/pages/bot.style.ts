@@ -1,6 +1,11 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
-import { fade, Button as ButtonMUI } from '@material-ui/core';
+import {
+  fade,
+  Button as ButtonMUI,
+  ExtendButtonBase,
+  ButtonTypeMap,
+} from '@material-ui/core';
 import {
   TreeView as TreeViewMUI,
   TreeItem as TreeItemMUI,
@@ -41,7 +46,7 @@ export const Main = styled.main`
 `;
 
 export const SessionConversation = styled.div`
-  width: 540px;
+  flex: 1 0 0;
 
   header {
     display: flex;
@@ -50,11 +55,15 @@ export const SessionConversation = styled.div`
     h5 {
       flex-grow: 1;
     }
+
+    button + button {
+      margin-left: 10px;
+    }
   }
 `;
 
 export const SessionDetails = styled.div`
-  flex-grow: 2;
+  flex: 1 0 0;
 
   > div {
     header {
@@ -64,6 +73,10 @@ export const SessionDetails = styled.div`
       h5 {
         flex-grow: 1;
       }
+
+      button + button {
+        margin-left: 10px;
+      }
     }
 
     > div {
@@ -72,9 +85,7 @@ export const SessionDetails = styled.div`
   }
 `;
 
-export const TreeView = styled(TreeViewMUI)`
-  max-width: 540px;
-`;
+export const TreeView = styled(TreeViewMUI)``;
 
 export const TreeItem = styled(TreeItemMUI).attrs(() => ({
   TransitionComponent,
@@ -119,10 +130,33 @@ export const TreeLabel = styled.div`
   }
 `;
 
-export const Button = styled(ButtonMUI)`
+const buttonStyleTypes = {
+  edit: css`
+    color: var(--dark-sea-green-color);
+  `,
+  save: css`
+    color: #fff;
+    background-color: var(--dark-sea-green-color);
+
+    :hover {
+      background-color: ${lighten(0.1, '#84a98c')};
+    }
+  `,
+  cancel: css`
+    color: var(--dark-sea-green-color);
+  `,
+};
+
+interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
+  name?: string;
+  $styleType: 'edit' | 'save' | 'cancel';
+}
+
+export const Button = styled(ButtonMUI)<MyButtonProps>`
   display: flex;
   align-items: flex-start;
-  color: var(--dark-sea-green-color);
+
+  ${props => buttonStyleTypes[props.$styleType]};
 
   svg {
     margin-right: 5px;
