@@ -108,7 +108,7 @@ class JullyApiService {
     this.api.interceptors.response.use(
       response => response,
       error => {
-        if (error.response.status.toString().startsWith('4')) {
+        if (error.response.status === 401) {
           localStorage.removeItem('@jullybot:auth');
           localStorage.removeItem('@jullybot:manager');
           this.setAuthorizationToken(null);
