@@ -41,6 +41,7 @@
       "react/prop-types": "off",
       "react/jsx-one-expression-per-line": "off",
       "dot-notation": "off",
+      "react/jsx-wrap-multilines": ["error", {"declaration": false, "assignment": false}],
       "import/extensions": [
         "error",
         "ignorePackages",
