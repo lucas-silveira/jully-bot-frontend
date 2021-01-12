@@ -7,6 +7,7 @@ import ForumIcon from '@material-ui/icons/ForumRounded';
 import GroupIcon from '@material-ui/icons/GroupRounded';
 import LayersIcon from '@material-ui/icons/Layers';
 import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
 import * as S from './styles';
 
 type Icons = {
@@ -18,6 +19,7 @@ type Icons = {
   group: string;
   layers: string;
   edit: string;
+  add: string;
 };
 
 type IconProps = {
@@ -41,8 +43,9 @@ export default function Icon({
       group: <GroupIcon fontSize={fontSize} />,
       layers: <LayersIcon fontSize={fontSize} />,
       edit: <EditIcon fontSize={fontSize} />,
+      add: <AddIcon fontSize={fontSize} />,
     }),
-    [],
+    [fontSize],
   );
 
   return <S.IconWrapper color={color}>{icons[name]}</S.IconWrapper>;

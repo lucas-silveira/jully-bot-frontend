@@ -133,6 +133,9 @@ export const TreeLabel = styled.div`
 const buttonStyleTypes = {
   edit: css`
     color: var(--dark-sea-green-color);
+    svg {
+      margin-right: 5px;
+    }
   `,
   save: css`
     color: #fff;
@@ -145,11 +148,23 @@ const buttonStyleTypes = {
   cancel: css`
     color: var(--dark-sea-green-color);
   `,
+  icon: css`
+    min-width: auto;
+    border-radius: 50px;
+
+    :hover {
+      background-color: inherit;
+    }
+
+    svg {
+      color: var(--primary-color);
+    }
+  `,
 };
 
 interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   name?: string;
-  $styleType: 'edit' | 'save' | 'cancel';
+  $styleType: 'edit' | 'save' | 'cancel' | 'icon';
 }
 
 export const Button = styled(ButtonMUI)<MyButtonProps>`
@@ -157,8 +172,4 @@ export const Button = styled(ButtonMUI)<MyButtonProps>`
   align-items: flex-start;
 
   ${props => buttonStyleTypes[props.$styleType]};
-
-  svg {
-    margin-right: 5px;
-  }
 `;

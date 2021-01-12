@@ -29,15 +29,28 @@ type ResetPasswordDto = {
 type BotAnswer = {
   id: string;
   correlationId: string;
+  ownCorrelationId: string;
+  type: string;
   optionNumber: number;
   text: string;
   questions: Array<{
     id: string;
     correlationId: string;
-    optionNumber: number;
+    ownCorrelationId: string;
+    type: string;
+    sortNumber: number;
     text: string;
     answers: any[];
   }>;
+};
+type BotQuestion = {
+  id: string;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  sortNumber: number;
+  text: string;
+  answers: BotAnswer[];
 };
 type GetBotResponse = {
   id: number;
@@ -52,16 +65,13 @@ type GetBotResponse = {
   welcomeMessage: string;
   topics: Array<{
     id: number;
+    correlationId: string;
+    ownCorrelationId: string;
+    type: string;
     optionNumber: number;
     name: string;
     description: string;
-    questions: Array<{
-      id: string;
-      correlationId: string;
-      optionNumber: number;
-      text: string;
-      answers: BotAnswer[];
-    }>;
+    questions: BotQuestion[];
   }>;
   managerId: number;
   sessionsId: number[];
@@ -95,6 +105,16 @@ class JullyApiService {
     this.api = axios.create({
       baseURL: this.API_URL,
     });
+    this.api.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response.status.toString().startsWith('4')) {
+          localStorage.removeItem('@jullybot:auth');
+          localStorage.removeItem('@jullybot:manager');
+          this.setAuthorizationToken(null);
+        }
+      },
+    );
   }
 
   setAuthorizationToken(token: string): void {
@@ -107,7 +127,7 @@ class JullyApiService {
   }
 
   async getManager(): Promise<ManagerState> {
-    return (await this.api.get<ManagerState>('/managers')).data;
+    return (await this.api.get<ManagerState>('/managers'))?.data;
   }
 
   async createSession(
@@ -119,7 +139,7 @@ class JullyApiService {
         email,
         password,
       })
-    ).data;
+    )?.data;
   }
 
   async recoveryPassword(email: string): Promise<void> {
@@ -135,13 +155,13 @@ class JullyApiService {
       await this.api.get<GetBotResponse>(
         `/managers/${managerId}/bots/${botPhone}`,
       )
-    ).data;
+    )?.data;
   }
 
   async getAllBots(managerId: number): Promise<GetAllBotsResponse> {
     return (
       await this.api.get<GetAllBotsResponse>(`/managers/${managerId}/bots`)
-    ).data;
+    )?.data;
   }
 }
 

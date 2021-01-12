@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress, Divider } from '@material-ui/core';
-import DashboardLayout from '@layouts/dashboard';
-import jullyApiService from '@services/jully-api.service';
 import { useAuth } from '@context/auth';
+import jullyApiService from '@services/jully-api.service';
+import { randomId } from '@utils/random-id';
+import DashboardLayout from '@layouts/dashboard';
 import MinusSquare from '@components/squares/minus-square';
 import PlusSquare from '@components/squares/plus-square';
 import CloseSquare from '@components/squares/close-square';
@@ -12,18 +13,29 @@ import AnswersTree from '@components/bot/answers-tree';
 import OpeningHoursTable from '@components/bot/opening-hours-table';
 import { Backdrop } from '@styles/components/backdrop.style';
 import { Chip } from '@styles/components/chip.style';
-import * as S from '@styles/pages/bot.style';
 import Icon from '@components/icons';
+import * as S from '@styles/pages/bot.style';
 
+type BotQuestion = {
+  id: string;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  sortNumber: number;
+  text: string;
+  answers: BotAnswer[];
+};
 type BotAnswer = {
   id: string;
   correlationId: string;
+  ownCorrelationId: string;
+  type: string;
   optionNumber: number;
   text: string;
   questions: Array<{
     id: string;
     correlationId: string;
-    optionNumber: number;
+    sortNumber: number;
     text: string;
     answers: any[];
   }>;
@@ -39,23 +51,33 @@ type Bot = {
     endHour: string;
   }>;
   welcomeMessage: string;
-  topics: Array<{
-    id: number;
-    optionNumber: number;
-    name: string;
-    description: string;
-    questions: Array<{
-      id: string;
-      correlationId: string;
-      optionNumber: number;
-      text: string;
-      answers: BotAnswer[];
-    }>;
-  }>;
   managerId: number;
   sessionsId: number[];
   createdAt: string;
   updatedAt: string;
+};
+type BotTopic = {
+  id: number;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  name: string;
+  optionNumber: number;
+  description: string;
+  questions: BotQuestion[];
+};
+type BotTreeItem = {
+  correlationId?: string;
+  type: string;
+  optionNumber?: number;
+  sortNumber?: number;
+  questions?: BotQuestion[];
+  answers?: BotAnswer[];
+};
+
+const EDIT_MODE = {
+  CONVERSATION: 'conversation',
+  OPENING_HOURS: 'openingHours',
 };
 
 export default function Bot(): JSX.Element {
@@ -63,6 +85,8 @@ export default function Bot(): JSX.Element {
   const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [bot, setBot] = useState<Bot>({} as Bot);
+  const [topics, setTopics] = useState<BotTopic[]>([]);
+  const [backupTopics, setBackupTopics] = useState(null);
   const [editMode, setEditMode] = useState(null);
 
   useEffect(() => {
@@ -74,11 +98,16 @@ export default function Bot(): JSX.Element {
 
     const getBot = async () => {
       if (!router.query.phone) return;
-      const botFromApi = await jullyApiService.getBot(
+      const {
+        topics: TopicsFromApi,
+        ...botFromApi
+      } = await jullyApiService.getBot(
         authState.managerId,
         router.query.phone as string,
       );
       setBot(botFromApi);
+      setTopics(TopicsFromApi);
+      setBackupTopics(JSON.stringify(TopicsFromApi));
     };
 
     getBot();
@@ -95,9 +124,54 @@ export default function Bot(): JSX.Element {
   const handleSaveChanges = useCallback(() => {
     setEditMode(null);
   }, []);
+
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
-  }, []);
+    setTopics(JSON.parse(backupTopics));
+  }, [backupTopics]);
+
+  const handleEditTreeItem = useCallback(
+    (event: React.MouseEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+    },
+    [],
+  );
+
+  const handleAddTreeItem = useCallback(
+    (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+
+      switch (treeItem.type) {
+        case 'topic': {
+          const ownCorrelationId = randomId(5);
+          const correlationId = `${treeItem.correlationId}-${ownCorrelationId}`;
+          const { questions } = treeItem;
+          const sortNumber = questions.length
+            ? questions[questions.length - 1].sortNumber + 1
+            : 1;
+
+          treeItem.questions.push({
+            id: ownCorrelationId + Date.now(),
+            correlationId,
+            ownCorrelationId,
+            sortNumber,
+            text: 'Insira a sua pergunta',
+            answers: [],
+          } as BotQuestion);
+
+          setTopics([...topics]);
+
+          break;
+        }
+        case 'question':
+          break;
+        case 'answer':
+          break;
+        default:
+      }
+    },
+    [topics],
+  );
 
   return (
     <>
@@ -124,7 +198,7 @@ export default function Bot(): JSX.Element {
             <S.SessionConversation>
               <header>
                 <h5>Fluxo de conversa</h5>
-                {editMode === 'conversation' ? (
+                {editMode === EDIT_MODE.CONVERSATION ? (
                   <>
                     <S.Button
                       size="small"
@@ -145,7 +219,7 @@ export default function Bot(): JSX.Element {
                   <S.Button
                     size="small"
                     $styleType="edit"
-                    data-editmode="conversation"
+                    data-editmode={EDIT_MODE.CONVERSATION}
                     onClick={handleActiveEditMode}
                   >
                     <Icon name="edit" color="#84a98c" fontSize="small" />
@@ -159,14 +233,41 @@ export default function Bot(): JSX.Element {
                 defaultExpandIcon={<PlusSquare />}
                 defaultEndIcon={<CloseSquare />}
               >
-                {bot.topics?.map(topic => (
+                {topics?.map(topic => (
                   <S.TreeItem
                     key={topic.id}
                     nodeId={topic.id.toString()}
                     label={
                       <S.TreeLabel>
                         <div>{topic.name}</div>
-                        <span>Tópico</span>
+                        {editMode === EDIT_MODE.CONVERSATION ? (
+                          <>
+                            <S.Button
+                              size="small"
+                              $styleType="icon"
+                              onClick={handleEditTreeItem}
+                            >
+                              <Icon
+                                name="edit"
+                                color="#84a98c"
+                                fontSize="small"
+                              />
+                            </S.Button>
+                            <S.Button
+                              size="small"
+                              $styleType="icon"
+                              onClick={handleAddTreeItem(topic)}
+                            >
+                              <Icon
+                                name="add"
+                                color="#84a98c"
+                                fontSize="small"
+                              />
+                            </S.Button>
+                          </>
+                        ) : (
+                          <span>Tópico</span>
+                        )}
                       </S.TreeLabel>
                     }
                   >
@@ -177,11 +278,43 @@ export default function Bot(): JSX.Element {
                         label={
                           <S.TreeLabel>
                             <div>{question.text}</div>
-                            <span>Pergunta</span>
+                            {editMode === EDIT_MODE.CONVERSATION ? (
+                              <>
+                                <S.Button
+                                  size="small"
+                                  $styleType="icon"
+                                  onClick={handleEditTreeItem}
+                                >
+                                  <Icon
+                                    name="edit"
+                                    color="#84a98c"
+                                    fontSize="small"
+                                  />
+                                </S.Button>
+                                <S.Button
+                                  size="small"
+                                  $styleType="icon"
+                                  onClick={handleAddTreeItem(question)}
+                                >
+                                  <Icon
+                                    name="add"
+                                    color="#84a98c"
+                                    fontSize="small"
+                                  />
+                                </S.Button>
+                              </>
+                            ) : (
+                              <span>Pergunta</span>
+                            )}
                           </S.TreeLabel>
                         }
                       >
-                        <AnswersTree answers={question.answers} />
+                        <AnswersTree
+                          answers={question.answers}
+                          editMode={editMode === EDIT_MODE.CONVERSATION}
+                          editTreeItem={handleEditTreeItem}
+                          addTreeItem={handleAddTreeItem}
+                        />
                       </S.TreeItem>
                     ))}
                   </S.TreeItem>
@@ -201,7 +334,7 @@ export default function Bot(): JSX.Element {
               <div>
                 <header>
                   <h5>Horários de atendimento</h5>
-                  {editMode === 'openingHours' ? (
+                  {editMode === EDIT_MODE.OPENING_HOURS ? (
                     <>
                       <S.Button
                         size="small"
@@ -222,7 +355,7 @@ export default function Bot(): JSX.Element {
                     <S.Button
                       size="small"
                       $styleType="edit"
-                      data-editmode="openingHours"
+                      data-editmode={EDIT_MODE.OPENING_HOURS}
                       onClick={handleActiveEditMode}
                     >
                       <Icon name="edit" color="#84a98c" fontSize="small" />
