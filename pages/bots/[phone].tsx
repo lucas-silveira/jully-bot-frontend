@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress, Divider } from '@material-ui/core';
@@ -11,9 +11,10 @@ import PlusSquare from '@components/squares/plus-square';
 import CloseSquare from '@components/squares/close-square';
 import AnswersTree from '@components/bot/answers-tree';
 import OpeningHoursTable from '@components/bot/opening-hours-table';
+import ToastForm from '@components/toasts/toast-form';
+import Icon from '@components/icons';
 import { Backdrop } from '@styles/components/backdrop.style';
 import { Chip } from '@styles/components/chip.style';
-import Icon from '@components/icons';
 import * as S from '@styles/pages/bot.style';
 
 type BotQuestion = {
@@ -35,6 +36,8 @@ type BotAnswer = {
   questions: Array<{
     id: string;
     correlationId: string;
+    ownCorrelationId: string;
+    type: string;
     sortNumber: number;
     text: string;
     answers: any[];
@@ -75,11 +78,6 @@ type BotTreeItem = {
   answers?: BotAnswer[];
 };
 
-const EDIT_MODE = {
-  CONVERSATION: 'conversation',
-  OPENING_HOURS: 'openingHours',
-};
-
 export default function Bot(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
@@ -88,6 +86,28 @@ export default function Bot(): JSX.Element {
   const [topics, setTopics] = useState<BotTopic[]>([]);
   const [backupTopics, setBackupTopics] = useState(null);
   const [editMode, setEditMode] = useState(null);
+  const [toast, setToast] = useState({
+    type: 'error',
+    open: false,
+    message: '',
+  });
+
+  const EDIT_MODE = useMemo(
+    () => ({
+      CONVERSATION: 'conversation',
+      OPENING_HOURS: 'openingHours',
+    }),
+    [],
+  );
+
+  const TREE_ITEM_TYPE = useMemo(
+    () => ({
+      TOPIC: 'topic',
+      QUESTION: 'question',
+      ANSWER: 'answer',
+    }),
+    [],
+  );
 
   useEffect(() => {
     if (!authState.accessToken) {
@@ -113,6 +133,10 @@ export default function Bot(): JSX.Element {
     getBot();
   }, [router, authState.accessToken, authState.managerId, router.query.phone]);
 
+  const handleToastClose = useCallback(() => {
+    setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
+  }, []);
+
   const handleActiveEditMode = useCallback(
     (event: React.MouseEvent<HTMLInputElement>) => {
       const eventTargetEditMode = event.currentTarget.dataset.editmode;
@@ -123,7 +147,8 @@ export default function Bot(): JSX.Element {
 
   const handleSaveChanges = useCallback(() => {
     setEditMode(null);
-  }, []);
+    setBackupTopics(JSON.stringify(topics));
+  }, [topics]);
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
@@ -137,9 +162,25 @@ export default function Bot(): JSX.Element {
     [],
   );
 
+  const handleDeleteTreeItem = useCallback(
+    (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+    },
+    [],
+  );
+
   const handleAddTreeItem = useCallback(
     (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
       event.stopPropagation();
+      const itemsNested = treeItem.correlationId.split('-').length;
+
+      if (itemsNested === 5 && treeItem.type === TREE_ITEM_TYPE.ANSWER) {
+        setToast({
+          type: 'error',
+          open: true,
+          message: 'Você não pode adicionar mais perguntas.',
+        });
+      }
 
       switch (treeItem.type) {
         case 'topic': {
@@ -170,7 +211,7 @@ export default function Bot(): JSX.Element {
         default:
       }
     },
-    [topics],
+    [topics, TREE_ITEM_TYPE.ANSWER],
   );
 
   return (
@@ -181,6 +222,11 @@ export default function Bot(): JSX.Element {
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <ToastForm
+        type={toast.type as any}
+        toast={{ open: toast.open, message: toast.message }}
+        handleClose={handleToastClose}
+      />
       <DashboardLayout>
         <S.Wrapper>
           <S.Header>
@@ -264,6 +310,17 @@ export default function Bot(): JSX.Element {
                                 fontSize="small"
                               />
                             </S.Button>
+                            <S.Button
+                              size="small"
+                              $styleType="icon"
+                              onClick={handleDeleteTreeItem(topic)}
+                            >
+                              <Icon
+                                name="delete"
+                                color="#84a98c"
+                                fontSize="small"
+                              />
+                            </S.Button>
                           </>
                         ) : (
                           <span>Tópico</span>
@@ -302,6 +359,17 @@ export default function Bot(): JSX.Element {
                                     fontSize="small"
                                   />
                                 </S.Button>
+                                <S.Button
+                                  size="small"
+                                  $styleType="icon"
+                                  onClick={handleDeleteTreeItem(topic)}
+                                >
+                                  <Icon
+                                    name="delete"
+                                    color="#84a98c"
+                                    fontSize="small"
+                                  />
+                                </S.Button>
                               </>
                             ) : (
                               <span>Pergunta</span>
@@ -314,6 +382,7 @@ export default function Bot(): JSX.Element {
                           editMode={editMode === EDIT_MODE.CONVERSATION}
                           editTreeItem={handleEditTreeItem}
                           addTreeItem={handleAddTreeItem}
+                          deleteTreeItem={handleDeleteTreeItem}
                         />
                       </S.TreeItem>
                     ))}

@@ -13,7 +13,7 @@ type BotAnswer = {
     correlationId: string;
     ownCorrelationId: string;
     type: string;
-    optionNumber: number;
+    sortNumber: number;
     text: string;
     answers: any[];
   }>;
@@ -24,6 +24,7 @@ type AnswersTreeProps = {
   editMode: boolean;
   editTreeItem: (...args: any[]) => any;
   addTreeItem: (...args: any[]) => any;
+  deleteTreeItem: (...args: any[]) => any;
 };
 
 export default function AnswersTree({
@@ -31,6 +32,7 @@ export default function AnswersTree({
   editMode,
   editTreeItem,
   addTreeItem,
+  deleteTreeItem,
 }: AnswersTreeProps): JSX.Element {
   if (!answers) return <></>;
 
@@ -55,9 +57,16 @@ export default function AnswersTree({
                   <S.Button
                     size="small"
                     $styleType="icon"
-                    onClick={addTreeItem}
+                    onClick={addTreeItem(answer)}
                   >
                     <Icon name="add" color="#84a98c" fontSize="small" />
+                  </S.Button>
+                  <S.Button
+                    size="small"
+                    $styleType="icon"
+                    onClick={deleteTreeItem(answer)}
+                  >
+                    <Icon name="delete" color="#84a98c" fontSize="small" />
                   </S.Button>
                 </>
               ) : (
@@ -85,9 +94,16 @@ export default function AnswersTree({
                       <S.Button
                         size="small"
                         $styleType="icon"
-                        onClick={addTreeItem}
+                        onClick={addTreeItem(question)}
                       >
                         <Icon name="add" color="#84a98c" fontSize="small" />
+                      </S.Button>
+                      <S.Button
+                        size="small"
+                        $styleType="icon"
+                        onClick={deleteTreeItem(question)}
+                      >
+                        <Icon name="delete" color="#84a98c" fontSize="small" />
                       </S.Button>
                     </>
                   ) : (
@@ -101,6 +117,7 @@ export default function AnswersTree({
                 editMode={editMode}
                 editTreeItem={editTreeItem}
                 addTreeItem={addTreeItem}
+                deleteTreeItem={deleteTreeItem}
               />
             </S.TreeItem>
           ))}

@@ -8,6 +8,7 @@ import GroupIcon from '@material-ui/icons/GroupRounded';
 import LayersIcon from '@material-ui/icons/Layers';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import * as S from './styles';
 
 type Icons = {
@@ -20,6 +21,7 @@ type Icons = {
   layers: string;
   edit: string;
   add: string;
+  delete: string;
 };
 
 type IconProps = {
@@ -44,6 +46,7 @@ export default function Icon({
       layers: <LayersIcon fontSize={fontSize} />,
       edit: <EditIcon fontSize={fontSize} />,
       add: <AddIcon fontSize={fontSize} />,
+      delete: <DeleteIcon fontSize={fontSize} />,
     }),
     [fontSize],
   );

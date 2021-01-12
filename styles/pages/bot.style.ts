@@ -150,6 +150,7 @@ const buttonStyleTypes = {
   `,
   icon: css`
     min-width: auto;
+    padding: 4px 2px;
     border-radius: 50px;
 
     :hover {
@@ -158,6 +159,7 @@ const buttonStyleTypes = {
 
     svg {
       color: var(--primary-color);
+      font-size: 1.2rem;
     }
   `,
 };
