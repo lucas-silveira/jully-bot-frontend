@@ -18,10 +18,21 @@ type BotAnswer = {
     answers: any[];
   }>;
 };
+type BotQuestion = {
+  id: string;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  sortNumber: number;
+  text: string;
+  answers: BotAnswer[];
+};
 
 type AnswersTreeProps = {
   answers: BotAnswer[];
+  parentAnswers: BotQuestion;
   editMode: boolean;
+  botValidator: (...args: any[]) => any;
   editTreeItem: (...args: any[]) => any;
   addTreeItem: (...args: any[]) => any;
   deleteTreeItem: (...args: any[]) => any;
@@ -29,7 +40,9 @@ type AnswersTreeProps = {
 
 export default function AnswersTree({
   answers,
+  parentAnswers,
   editMode,
+  botValidator,
   editTreeItem,
   addTreeItem,
   deleteTreeItem,
@@ -41,7 +54,7 @@ export default function AnswersTree({
       {answers.map(answer => (
         <S.TreeItem
           key={answer.id}
-          nodeId={answer.id}
+          nodeId={answer.ownCorrelationId}
           label={
             <S.TreeLabel>
               <div>{`${answer.optionNumber}. ${answer.text}`}</div>
@@ -64,7 +77,7 @@ export default function AnswersTree({
                   <S.Button
                     size="small"
                     $styleType="icon"
-                    onClick={deleteTreeItem(answer)}
+                    onClick={deleteTreeItem(answer, parentAnswers)}
                   >
                     <Icon name="delete" color="#84a98c" fontSize="small" />
                   </S.Button>
@@ -78,7 +91,8 @@ export default function AnswersTree({
           {answer.questions?.map(question => (
             <S.TreeItem
               key={question.id}
-              nodeId={question.id}
+              nodeId={question.ownCorrelationId}
+              $isInvalid={botValidator(question.ownCorrelationId)}
               label={
                 <S.TreeLabel>
                   <div>{question.text}</div>
@@ -101,7 +115,7 @@ export default function AnswersTree({
                       <S.Button
                         size="small"
                         $styleType="icon"
-                        onClick={deleteTreeItem(question)}
+                        onClick={deleteTreeItem(question, answer)}
                       >
                         <Icon name="delete" color="#84a98c" fontSize="small" />
                       </S.Button>
@@ -114,7 +128,9 @@ export default function AnswersTree({
             >
               <AnswersTree
                 answers={question.answers}
+                parentAnswers={question}
                 editMode={editMode}
+                botValidator={botValidator}
                 editTreeItem={editTreeItem}
                 addTreeItem={addTreeItem}
                 deleteTreeItem={deleteTreeItem}

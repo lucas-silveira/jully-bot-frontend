@@ -107,14 +107,14 @@ const colorTypes = {
   inactive: 'var(--error-color)',
 };
 
-interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
+interface CustomButtonProps extends ExtendButtonBase<ButtonTypeMap> {
   name?: string;
   $colorType?: string;
   color?: string;
   $bgColor?: string;
 }
 
-export const Button = styled(ButtonMUI)<MyButtonProps>`
+export const Button = styled(ButtonMUI)<CustomButtonProps>`
   ${props =>
     props.$colorType
       ? css`

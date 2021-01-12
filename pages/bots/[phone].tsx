@@ -70,7 +70,8 @@ type BotTopic = {
   questions: BotQuestion[];
 };
 type BotTreeItem = {
-  correlationId?: string;
+  id: number | string;
+  correlationId: string;
   type: string;
   optionNumber?: number;
   sortNumber?: number;
@@ -86,6 +87,14 @@ export default function Bot(): JSX.Element {
   const [topics, setTopics] = useState<BotTopic[]>([]);
   const [backupTopics, setBackupTopics] = useState(null);
   const [editMode, setEditMode] = useState(null);
+  const [expandedTreeItems, setExpandedTreeItems] = useState([]);
+  const [botValidation, setBotValidation] = useState({
+    validate: false,
+    questionsWithoutAnswers: {
+      ownCorrelationIds: [],
+      spplitedCorrelationIds: [],
+    },
+  });
   const [toast, setToast] = useState({
     type: 'error',
     open: false,
@@ -145,10 +154,36 @@ export default function Bot(): JSX.Element {
     [],
   );
 
+  const handleTreeItemTogle = useCallback((event, nodesIds) => {
+    setExpandedTreeItems(nodesIds);
+  }, []);
+
+  const handleValidateBotConversation = useCallback(
+    (itemCorrelationId: string) => {
+      return (
+        botValidation.validate &&
+        botValidation.questionsWithoutAnswers.ownCorrelationIds.includes(
+          itemCorrelationId,
+        )
+      );
+    },
+    [botValidation],
+  );
+
   const handleSaveChanges = useCallback(() => {
+    if (botValidation.questionsWithoutAnswers.ownCorrelationIds.length) {
+      setBotValidation(oldValue => ({ ...oldValue, validate: true }));
+      setExpandedTreeItems(oldValue => [
+        ...new Set([
+          ...oldValue,
+          ...botValidation.questionsWithoutAnswers.spplitedCorrelationIds,
+        ]),
+      ]);
+      return;
+    }
     setEditMode(null);
     setBackupTopics(JSON.stringify(topics));
-  }, [topics]);
+  }, [topics, botValidation.questionsWithoutAnswers]);
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
@@ -163,10 +198,36 @@ export default function Bot(): JSX.Element {
   );
 
   const handleDeleteTreeItem = useCallback(
-    (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
+    (treeItem: BotTreeItem, parentTreeItem: BotTreeItem = null) => (
+      event: React.MouseEvent<HTMLInputElement>,
+    ) => {
       event.stopPropagation();
+
+      switch (treeItem.type) {
+        case TREE_ITEM_TYPE.TOPIC: {
+          setTopics(oldValues =>
+            oldValues.filter(topic => topic.id !== treeItem.id),
+          );
+          break;
+        }
+        case TREE_ITEM_TYPE.QUESTION: {
+          parentTreeItem.questions = parentTreeItem.questions.filter(
+            item => item.id !== treeItem.id,
+          );
+          setTopics([...topics]);
+          break;
+        }
+        case TREE_ITEM_TYPE.ANSWER: {
+          parentTreeItem.answers = parentTreeItem.answers.filter(
+            item => item.id !== treeItem.id,
+          );
+          setTopics([...topics]);
+          break;
+        }
+        default:
+      }
     },
-    [],
+    [TREE_ITEM_TYPE, topics],
   );
 
   const handleAddTreeItem = useCallback(
@@ -180,11 +241,13 @@ export default function Bot(): JSX.Element {
           open: true,
           message: 'Você não pode adicionar mais perguntas.',
         });
+        return;
       }
 
       switch (treeItem.type) {
-        case 'topic': {
+        case TREE_ITEM_TYPE.TOPIC: {
           const ownCorrelationId = randomId(5);
+          const spplitedCorrelationIds = treeItem.correlationId.split('-');
           const correlationId = `${treeItem.correlationId}-${ownCorrelationId}`;
           const { questions } = treeItem;
           const sortNumber = questions.length
@@ -195,23 +258,105 @@ export default function Bot(): JSX.Element {
             id: ownCorrelationId + Date.now(),
             correlationId,
             ownCorrelationId,
+            type: TREE_ITEM_TYPE.QUESTION,
             sortNumber,
             text: 'Insira a sua pergunta',
             answers: [],
-          } as BotQuestion);
+          });
 
           setTopics([...topics]);
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ownCorrelationIds: [
+                ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
+                ownCorrelationId,
+              ],
+              spplitedCorrelationIds,
+            },
+          }));
+          setExpandedTreeItems(oldValue => [
+            ...new Set([...oldValue, ...spplitedCorrelationIds]),
+          ]);
 
           break;
         }
-        case 'question':
+        case TREE_ITEM_TYPE.QUESTION: {
+          const ownCorrelationId = randomId(5);
+          const parentCorrelationId = treeItem.correlationId.split('-').pop();
+          const spplitedCorrelationIds = treeItem.correlationId.split('-');
+          const correlationId = `${treeItem.correlationId}-${ownCorrelationId}`;
+          const { answers } = treeItem;
+          const optionNumber = answers.length
+            ? answers[answers.length - 1].optionNumber + 1
+            : 1;
+
+          treeItem.answers.push({
+            id: ownCorrelationId + Date.now(),
+            correlationId,
+            ownCorrelationId,
+            type: TREE_ITEM_TYPE.ANSWER,
+            optionNumber,
+            text: 'Insira a resposta',
+            questions: [],
+          });
+
+          setTopics([...topics]);
+          setExpandedTreeItems(oldValue => [
+            ...new Set([...oldValue, ...spplitedCorrelationIds]),
+          ]);
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ...oldValue.questionsWithoutAnswers,
+              ownCorrelationIds: oldValue.questionsWithoutAnswers.ownCorrelationIds.filter(
+                coId => coId !== parentCorrelationId,
+              ),
+            },
+          }));
+
           break;
-        case 'answer':
+        }
+        case TREE_ITEM_TYPE.ANSWER: {
+          const ownCorrelationId = randomId(5);
+          const spplitedCorrelationIds = treeItem.correlationId.split('-');
+          const correlationId = `${treeItem.correlationId}-${ownCorrelationId}`;
+          const { questions } = treeItem;
+          const sortNumber = questions.length
+            ? questions[questions.length - 1].sortNumber + 1
+            : 1;
+
+          treeItem.questions.push({
+            id: ownCorrelationId + Date.now(),
+            correlationId,
+            ownCorrelationId,
+            type: TREE_ITEM_TYPE.QUESTION,
+            sortNumber,
+            text: 'Insira a sua pergunta',
+            answers: [],
+          });
+
+          setTopics([...topics]);
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ownCorrelationIds: [
+                ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
+                ownCorrelationId,
+              ],
+              spplitedCorrelationIds,
+            },
+          }));
+          setExpandedTreeItems(oldValue => [
+            ...new Set([...oldValue, ...spplitedCorrelationIds]),
+          ]);
+
           break;
+        }
         default:
       }
     },
-    [topics, TREE_ITEM_TYPE.ANSWER],
+    [TREE_ITEM_TYPE, topics],
   );
 
   return (
@@ -274,15 +419,19 @@ export default function Bot(): JSX.Element {
                 )}
               </header>
               <S.TreeView
-                defaultExpanded={['1']}
+                expanded={expandedTreeItems}
                 defaultCollapseIcon={<MinusSquare />}
                 defaultExpandIcon={<PlusSquare />}
                 defaultEndIcon={<CloseSquare />}
+                onNodeToggle={handleTreeItemTogle}
               >
                 {topics?.map(topic => (
                   <S.TreeItem
                     key={topic.id}
-                    nodeId={topic.id.toString()}
+                    nodeId={topic.ownCorrelationId}
+                    $isInvalid={handleValidateBotConversation(
+                      topic.ownCorrelationId,
+                    )}
                     label={
                       <S.TreeLabel>
                         <div>{topic.name}</div>
@@ -331,7 +480,10 @@ export default function Bot(): JSX.Element {
                     {topic.questions.map(question => (
                       <S.TreeItem
                         key={question.id}
-                        nodeId={question.correlationId}
+                        nodeId={question.ownCorrelationId}
+                        $isInvalid={handleValidateBotConversation(
+                          question.ownCorrelationId,
+                        )}
                         label={
                           <S.TreeLabel>
                             <div>{question.text}</div>
@@ -362,7 +514,10 @@ export default function Bot(): JSX.Element {
                                 <S.Button
                                   size="small"
                                   $styleType="icon"
-                                  onClick={handleDeleteTreeItem(topic)}
+                                  onClick={handleDeleteTreeItem(
+                                    question,
+                                    topic,
+                                  )}
                                 >
                                   <Icon
                                     name="delete"
@@ -379,7 +534,9 @@ export default function Bot(): JSX.Element {
                       >
                         <AnswersTree
                           answers={question.answers}
+                          parentAnswers={question}
                           editMode={editMode === EDIT_MODE.CONVERSATION}
+                          botValidator={handleValidateBotConversation}
                           editTreeItem={handleEditTreeItem}
                           addTreeItem={handleAddTreeItem}
                           deleteTreeItem={handleDeleteTreeItem}

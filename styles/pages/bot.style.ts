@@ -87,22 +87,38 @@ export const SessionDetails = styled.div`
 
 export const TreeView = styled(TreeViewMUI)``;
 
+type CustomTreeItem = typeof TreeItemMUI & {
+  $isInvalid?: boolean;
+};
+
 export const TreeItem = styled(TreeItemMUI).attrs(() => ({
   TransitionComponent,
-}))`
-  .MuiTreeItem-label,
-  &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
-  &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+}))<CustomTreeItem>`
+  .MuiTreeItem-label {
     margin: 5px;
     padding: 2px 5px;
     background-color: ${lighten(0.4, '#52489C')};
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
+    border: 1px solid ${lighten(0.4, '#52489C')};
     transition: 500ms;
+    ${props =>
+      props.$isInvalid
+        ? css`
+            border-color: var(--error-color);
+          `
+        : ''}
 
     :hover {
       background-color: ${lighten(0.5, '#52489C')};
+      border-color: ${lighten(0.5, '#52489C')};
     }
+  }
+
+  &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
+  &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+    background-color: ${lighten(0.4, '#52489C')};
+    border-color: ${lighten(0.4, '#52489C')};
   }
 
   .MuiTreeItem-iconContainer .close {
