@@ -103,12 +103,30 @@ const fadeAnimation = keyframes`
 `;
 
 const treeItemTypes = {
+  default: css`
+    background-color: ${lighten(0.4, '#52489C')};
+    :hover {
+      background-color: ${lighten(0.5, '#52489C')};
+    }
+
+    &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
+    &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+      background-color: ${lighten(0.4, '#52489C')};
+      border-color: ${lighten(0.4, '#52489C')};
+    }
+  `,
   new: css`
     color: #84a98c;
     background-color: #ebebeb;
     border: 1px dashed #cad2c5;
     :hover {
       background-color: ${darken(0.05, '#ebebeb')};
+    }
+
+    &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
+    &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+      background-color: ${lighten(0.4, '#52489C')};
+      border-color: ${lighten(0.4, '#52489C')};
     }
   `,
 };
@@ -129,21 +147,7 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
           `
         : ''}
 
-    ${props =>
-      props.type
-        ? treeItemTypes[props.type]
-        : css`
-            background-color: ${lighten(0.4, '#52489C')};
-            :hover {
-              background-color: ${lighten(0.5, '#52489C')};
-            }
-          `}
-  }
-
-  &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
-  &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
-    background-color: ${lighten(0.4, '#52489C')};
-    border-color: ${lighten(0.4, '#52489C')};
+    ${props => treeItemTypes[props.type || 'default']}
   }
 
   .MuiTreeItem-iconContainer .close {
