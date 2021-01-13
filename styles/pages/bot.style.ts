@@ -88,7 +88,7 @@ export const SessionDetails = styled.div`
 export const TreeView = styled(TreeViewMUI)``;
 
 type CustomTreeItem = typeof TreeItemMUI & {
-  type?: 'new';
+  type?: 'new' | 'dynamic';
   $isInvalid?: boolean;
 };
 
@@ -121,6 +121,19 @@ const treeItemTypes = {
     border: 1px dashed #cad2c5;
     :hover {
       background-color: ${darken(0.05, '#ebebeb')};
+    }
+
+    &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
+    &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+      background-color: ${lighten(0.4, '#52489C')};
+      border-color: ${lighten(0.4, '#52489C')};
+    }
+  `,
+  dynamic: css`
+    color: ${darken(0.3, '#2196f3')};
+    background-color: ${lighten(0.2, '#2196f3')};
+    :hover {
+      background-color: ${lighten(0.3, '#2196f3')};
     }
 
     &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
@@ -167,6 +180,7 @@ export const TreeLabel = styled.div`
 
   div {
     flex-grow: 1;
+    font-size: 0.9rem;
   }
 
   span {

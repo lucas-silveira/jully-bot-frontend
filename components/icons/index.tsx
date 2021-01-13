@@ -11,6 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CancelIcon from '@material-ui/icons/Cancel';
+import LinkIcon from '@material-ui/icons/Link';
 import * as S from './styles';
 
 type Icons = {
@@ -26,6 +27,7 @@ type Icons = {
   add: string;
   delete: string;
   cancel: string;
+  link: string;
 };
 
 type IconProps = {
@@ -53,6 +55,7 @@ export default function Icon({
       add: <AddIcon fontSize={fontSize} />,
       delete: <DeleteIcon fontSize={fontSize} />,
       cancel: <CancelIcon fontSize={fontSize} />,
+      link: <LinkIcon fontSize={fontSize} />,
     }),
     [fontSize],
   );

@@ -833,9 +833,7 @@ export default function Bot(): JSX.Element {
                                   question.dynamicAnswer.ownCorrelationId,
                                 )}
                                 nodeId={question.dynamicAnswer.ownCorrelationId}
-                                $isInvalid={handleValidateBotConversation(
-                                  question.dynamicAnswer.ownCorrelationId,
-                                )}
+                                type="dynamic"
                                 label={
                                   <S.TreeLabel>
                                     <div>
@@ -860,20 +858,36 @@ export default function Bot(): JSX.Element {
                                       )}
                                     </div>
                                     {editMode ? (
-                                      <S.Button
-                                        size="small"
-                                        $styleType="icon"
-                                        onClick={handleDeleteAnswer(
-                                          question.dynamicAnswer,
-                                          question,
-                                        )}
-                                      >
-                                        <Icon
-                                          name="delete"
-                                          color="#84a98c"
-                                          fontSize="small"
-                                        />
-                                      </S.Button>
+                                      <>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleDeleteAnswer(
+                                            question.dynamicAnswer,
+                                            question,
+                                          )}
+                                        >
+                                          <Icon
+                                            name="link"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleDeleteAnswer(
+                                            question.dynamicAnswer,
+                                            question,
+                                          )}
+                                        >
+                                          <Icon
+                                            name="delete"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                      </>
                                     ) : (
                                       <span>Resposta</span>
                                     )}
