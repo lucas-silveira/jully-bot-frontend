@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
-import { lighten } from 'polished';
+import styled, { css, keyframes } from 'styled-components';
+import { darken, lighten } from 'polished';
 import {
   fade,
   Button as ButtonMUI,
@@ -88,7 +88,29 @@ export const SessionDetails = styled.div`
 export const TreeView = styled(TreeViewMUI)``;
 
 type CustomTreeItem = typeof TreeItemMUI & {
+  type?: 'new';
   $isInvalid?: boolean;
+};
+
+const fadeAnimation = keyframes`
+  from {
+    background-color: ${lighten(0.3, '#52489C')};
+  }
+
+  to {
+    background-color: ${lighten(0.5, '#52489C')};
+  }
+`;
+
+const treeItemTypes = {
+  new: css`
+    color: #84a98c;
+    background-color: #ebebeb;
+    border: 1px dashed #cad2c5;
+    :hover {
+      background-color: ${darken(0.05, '#ebebeb')};
+    }
+  `,
 };
 
 export const TreeItem = styled(TreeItemMUI).attrs(() => ({
@@ -97,22 +119,25 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
   .MuiTreeItem-label {
     margin: 5px;
     padding: 2px 5px;
-    background-color: ${lighten(0.4, '#52489C')};
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
-    border: 1px solid ${lighten(0.4, '#52489C')};
     transition: 500ms;
     ${props =>
       props.$isInvalid
         ? css`
-            border-color: var(--error-color);
+            animation: ${fadeAnimation} 1s linear infinite alternate;
           `
         : ''}
 
-    :hover {
-      background-color: ${lighten(0.5, '#52489C')};
-      border-color: ${lighten(0.5, '#52489C')};
-    }
+    ${props =>
+      props.type
+        ? treeItemTypes[props.type]
+        : css`
+            background-color: ${lighten(0.4, '#52489C')};
+            :hover {
+              background-color: ${lighten(0.5, '#52489C')};
+            }
+          `}
   }
 
   &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
@@ -175,7 +200,7 @@ const buttonStyleTypes = {
 
     svg {
       color: var(--primary-color);
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
   `,
 };

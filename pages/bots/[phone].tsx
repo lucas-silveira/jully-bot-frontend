@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CircularProgress, Divider } from '@material-ui/core';
@@ -16,6 +16,7 @@ import Icon from '@components/icons';
 import { Backdrop } from '@styles/components/backdrop.style';
 import { Chip } from '@styles/components/chip.style';
 import * as S from '@styles/pages/bot.style';
+import Popover from '@components/bot/popover';
 
 type BotQuestion = {
   id: string;
@@ -80,10 +81,19 @@ type BotTreeItem = {
   answers?: BotAnswer[];
 };
 
+const popoverDuration = 3000;
+
 export default function Bot(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
+  const [toast, setToast] = useState({
+    type: 'error',
+    open: false,
+    message: '',
+  });
+  const treeItemRef = useRef({});
+  const [openPopover, setOpenPopover] = useState([]);
   const [bot, setBot] = useState<Bot>({} as Bot);
   const [topics, setTopics] = useState<BotTopic[]>([]);
   const [backupTopics, setBackupTopics] = useState(null);
@@ -95,11 +105,6 @@ export default function Bot(): JSX.Element {
       ownCorrelationIds: [],
       spplitedCorrelationIds: [],
     },
-  });
-  const [toast, setToast] = useState({
-    type: 'error',
-    open: false,
-    message: '',
   });
 
   const EDIT_MODE = useMemo(
@@ -127,17 +132,25 @@ export default function Bot(): JSX.Element {
     setPageIsLoading(false);
 
     const getBot = async () => {
-      if (!router.query.phone) return;
-      const {
-        topics: TopicsFromApi,
-        ...botFromApi
-      } = await jullyApiService.getBot(
-        authState.managerId,
-        router.query.phone as string,
-      );
-      setBot(botFromApi);
-      setTopics(TopicsFromApi);
-      setBackupTopics(JSON.stringify(TopicsFromApi));
+      try {
+        if (!router.query.phone) return;
+        const {
+          topics: TopicsFromApi,
+          ...botFromApi
+        } = await jullyApiService.getBot(
+          authState.managerId,
+          router.query.phone as string,
+        );
+        setBot(botFromApi);
+        setTopics(TopicsFromApi);
+        setBackupTopics(JSON.stringify(TopicsFromApi));
+      } catch (err) {
+        setToast({
+          type: 'error',
+          open: true,
+          message: 'Houve um erro ao tentar obter o bot.',
+        });
+      }
     };
 
     getBot();
@@ -145,6 +158,17 @@ export default function Bot(): JSX.Element {
 
   const handleToastClose = useCallback(() => {
     setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
+  }, []);
+
+  const handleSetItemRef = useCallback(
+    (topicId: string) => (element: HTMLElement) => {
+      treeItemRef.current[topicId] = element;
+    },
+    [],
+  );
+
+  const handlePopoverClose = useCallback(() => {
+    setOpenPopover([]);
   }, []);
 
   const handleActiveEditMode = useCallback(
@@ -181,16 +205,52 @@ export default function Bot(): JSX.Element {
           ...botValidation.questionsWithoutAnswers.spplitedCorrelationIds,
         ]),
       ]);
+      setOpenPopover(botValidation.questionsWithoutAnswers.ownCorrelationIds);
+      setTimeout(() => handlePopoverClose(), popoverDuration);
       return;
     }
     setEditMode(null);
     setBackupTopics(JSON.stringify(topics));
-  }, [topics, botValidation.questionsWithoutAnswers]);
+  }, [topics, botValidation.questionsWithoutAnswers, handlePopoverClose]);
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
     setTopics(JSON.parse(backupTopics));
   }, [backupTopics]);
+
+  const handleAddTopic = useCallback(() => {
+    const newTopic = {
+      correlationId: randomId(5),
+      ownCorrelationId: randomId(5),
+      type: TREE_ITEM_TYPE.TOPIC,
+      name: 'Tópico vazio',
+      description: '',
+      questions: [],
+    };
+    setTopics(oldValue => [
+      ...oldValue,
+      {
+        ...newTopic,
+        id: oldValue[oldValue.length - 1].id + 1,
+        optionNumber: oldValue[oldValue.length - 1].optionNumber + 1,
+      },
+    ]);
+    setBotValidation(oldValue => ({
+      ...oldValue,
+      questionsWithoutAnswers: {
+        ownCorrelationIds: [
+          ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
+          newTopic.ownCorrelationId,
+        ],
+        spplitedCorrelationIds: [
+          ...new Set([
+            ...oldValue.questionsWithoutAnswers.spplitedCorrelationIds,
+            newTopic.ownCorrelationId,
+          ]),
+        ],
+      },
+    }));
+  }, [TREE_ITEM_TYPE]);
 
   const handleEditTreeItem = useCallback(
     (event: React.MouseEvent<HTMLInputElement>) => {
@@ -291,7 +351,9 @@ export default function Bot(): JSX.Element {
             ...oldValue,
             questionsWithoutAnswers: {
               ownCorrelationIds: [
-                ...oldValue.questionsWithoutAnswers.ownCorrelationIds,
+                ...oldValue.questionsWithoutAnswers.ownCorrelationIds.filter(
+                  coId => coId !== treeItem.ownCorrelationId,
+                ),
                 ownCorrelationId,
               ],
               spplitedCorrelationIds: [
@@ -393,17 +455,19 @@ export default function Bot(): JSX.Element {
 
   return (
     <>
-      <Head>
-        <title>Bot {bot?.name} | Jully Bot</title>
-      </Head>
-      <Backdrop open={pageIsLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <ToastForm
-        type={toast.type as any}
-        toast={{ open: toast.open, message: toast.message }}
-        handleClose={handleToastClose}
-      />
+      <>
+        <Head>
+          <title>Bot {bot?.name} | Jully Bot</title>
+        </Head>
+        <Backdrop open={pageIsLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <ToastForm
+          type={toast.type as any}
+          toast={{ open: toast.open, message: toast.message }}
+          handleClose={handleToastClose}
+        />
+      </>
       <DashboardLayout>
         <S.Wrapper>
           <S.Header>
@@ -458,125 +522,159 @@ export default function Bot(): JSX.Element {
                 onNodeToggle={handleTreeItemTogle}
               >
                 {topics?.map(topic => (
-                  <S.TreeItem
-                    key={topic.id}
-                    nodeId={topic.ownCorrelationId}
-                    $isInvalid={handleValidateBotConversation(
-                      topic.ownCorrelationId,
-                    )}
-                    label={
-                      <S.TreeLabel>
-                        <div>{topic.name}</div>
-                        {editMode === EDIT_MODE.CONVERSATION ? (
-                          <>
-                            <S.Button
-                              size="small"
-                              $styleType="icon"
-                              onClick={handleEditTreeItem}
-                            >
-                              <Icon
-                                name="edit"
-                                color="#84a98c"
-                                fontSize="small"
-                              />
-                            </S.Button>
-                            <S.Button
-                              size="small"
-                              $styleType="icon"
-                              onClick={handleAddTreeItem(topic)}
-                            >
-                              <Icon
-                                name="add"
-                                color="#84a98c"
-                                fontSize="small"
-                              />
-                            </S.Button>
-                            <S.Button
-                              size="small"
-                              $styleType="icon"
-                              onClick={handleDeleteTreeItem(topic)}
-                            >
-                              <Icon
-                                name="delete"
-                                color="#84a98c"
-                                fontSize="small"
-                              />
-                            </S.Button>
-                          </>
-                        ) : (
-                          <span>Tópico</span>
-                        )}
-                      </S.TreeLabel>
-                    }
-                  >
-                    {topic.questions.map(question => (
-                      <S.TreeItem
-                        key={question.id}
-                        nodeId={question.ownCorrelationId}
-                        $isInvalid={handleValidateBotConversation(
-                          question.ownCorrelationId,
-                        )}
-                        label={
-                          <S.TreeLabel>
-                            <div>{question.text}</div>
-                            {editMode === EDIT_MODE.CONVERSATION ? (
-                              <>
-                                <S.Button
-                                  size="small"
-                                  $styleType="icon"
-                                  onClick={handleEditTreeItem}
-                                >
-                                  <Icon
-                                    name="edit"
-                                    color="#84a98c"
-                                    fontSize="small"
-                                  />
-                                </S.Button>
-                                <S.Button
-                                  size="small"
-                                  $styleType="icon"
-                                  onClick={handleAddTreeItem(question)}
-                                >
-                                  <Icon
-                                    name="add"
-                                    color="#84a98c"
-                                    fontSize="small"
-                                  />
-                                </S.Button>
-                                <S.Button
-                                  size="small"
-                                  $styleType="icon"
-                                  onClick={handleDeleteTreeItem(
-                                    question,
-                                    topic,
-                                  )}
-                                >
-                                  <Icon
-                                    name="delete"
-                                    color="#84a98c"
-                                    fontSize="small"
-                                  />
-                                </S.Button>
-                              </>
-                            ) : (
-                              <span>Pergunta</span>
+                  <div key={topic.id}>
+                    <S.TreeItem
+                      ref={handleSetItemRef(topic.ownCorrelationId)}
+                      nodeId={topic.ownCorrelationId}
+                      $isInvalid={handleValidateBotConversation(
+                        topic.ownCorrelationId,
+                      )}
+                      label={
+                        <S.TreeLabel>
+                          <div>{topic.name}</div>
+                          {editMode === EDIT_MODE.CONVERSATION ? (
+                            <>
+                              <S.Button
+                                size="small"
+                                $styleType="icon"
+                                onClick={handleEditTreeItem}
+                              >
+                                <Icon
+                                  name="edit"
+                                  color="#84a98c"
+                                  fontSize="small"
+                                />
+                              </S.Button>
+                              <S.Button
+                                size="small"
+                                $styleType="icon"
+                                onClick={handleAddTreeItem(topic)}
+                              >
+                                <Icon
+                                  name="add"
+                                  color="#84a98c"
+                                  fontSize="small"
+                                />
+                              </S.Button>
+                              <S.Button
+                                size="small"
+                                $styleType="icon"
+                                onClick={handleDeleteTreeItem(topic)}
+                              >
+                                <Icon
+                                  name="delete"
+                                  color="#84a98c"
+                                  fontSize="small"
+                                />
+                              </S.Button>
+                            </>
+                          ) : (
+                            <span>Tópico</span>
+                          )}
+                        </S.TreeLabel>
+                      }
+                    >
+                      {topic.questions.map(question => (
+                        <div key={question.id}>
+                          <S.TreeItem
+                            ref={handleSetItemRef(question.ownCorrelationId)}
+                            nodeId={question.ownCorrelationId}
+                            $isInvalid={handleValidateBotConversation(
+                              question.ownCorrelationId,
                             )}
-                          </S.TreeLabel>
-                        }
-                      >
-                        <AnswersTree
-                          answers={question.answers}
-                          parentAnswers={question}
-                          editMode={editMode === EDIT_MODE.CONVERSATION}
-                          botValidator={handleValidateBotConversation}
-                          editTreeItem={handleEditTreeItem}
-                          addTreeItem={handleAddTreeItem}
-                          deleteTreeItem={handleDeleteTreeItem}
-                        />
-                      </S.TreeItem>
-                    ))}
-                  </S.TreeItem>
+                            label={
+                              <S.TreeLabel>
+                                <div>{question.text}</div>
+                                {editMode === EDIT_MODE.CONVERSATION ? (
+                                  <>
+                                    <S.Button
+                                      size="small"
+                                      $styleType="icon"
+                                      onClick={handleEditTreeItem}
+                                    >
+                                      <Icon
+                                        name="edit"
+                                        color="#84a98c"
+                                        fontSize="small"
+                                      />
+                                    </S.Button>
+                                    <S.Button
+                                      size="small"
+                                      $styleType="icon"
+                                      onClick={handleAddTreeItem(question)}
+                                    >
+                                      <Icon
+                                        name="add"
+                                        color="#84a98c"
+                                        fontSize="small"
+                                      />
+                                    </S.Button>
+                                    <S.Button
+                                      size="small"
+                                      $styleType="icon"
+                                      onClick={handleDeleteTreeItem(
+                                        question,
+                                        topic,
+                                      )}
+                                    >
+                                      <Icon
+                                        name="delete"
+                                        color="#84a98c"
+                                        fontSize="small"
+                                      />
+                                    </S.Button>
+                                  </>
+                                ) : (
+                                  <span>Pergunta</span>
+                                )}
+                              </S.TreeLabel>
+                            }
+                          >
+                            <AnswersTree
+                              answers={question.answers}
+                              parentAnswers={question}
+                              treeItemRef={treeItemRef}
+                              handleSetItemRef={handleSetItemRef}
+                              openPopover={openPopover}
+                              onPopoverClose={handlePopoverClose}
+                              editMode={editMode === EDIT_MODE.CONVERSATION}
+                              botValidator={handleValidateBotConversation}
+                              editTreeItem={handleEditTreeItem}
+                              addTreeItem={handleAddTreeItem}
+                              deleteTreeItem={handleDeleteTreeItem}
+                            />
+                          </S.TreeItem>
+                          <Popover
+                            id={question.ownCorrelationId}
+                            anchorEl={
+                              treeItemRef.current[question.ownCorrelationId]
+                            }
+                            open={openPopover.includes(
+                              question.ownCorrelationId,
+                            )}
+                            onClose={handlePopoverClose}
+                            message="Adicione pelo menos uma resposta."
+                          />
+                        </div>
+                      ))}
+                    </S.TreeItem>
+                    <Popover
+                      id={topic.ownCorrelationId}
+                      anchorEl={treeItemRef.current[topic.ownCorrelationId]}
+                      open={openPopover.includes(topic.ownCorrelationId)}
+                      onClose={handlePopoverClose}
+                      message="Adicione pelo menos uma pergunta."
+                    />
+                  </div>
                 ))}
+                {editMode === EDIT_MODE.CONVERSATION && (
+                  <S.TreeItem
+                    type="new"
+                    label="Adicione um novo tópico"
+                    nodeId="1"
+                    onLabelClick={handleAddTopic}
+                  />
+                )}
               </S.TreeView>
             </S.SessionConversation>
             <S.SessionDetails>
