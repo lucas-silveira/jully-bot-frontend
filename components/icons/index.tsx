@@ -6,9 +6,11 @@ import AdbIcon from '@material-ui/icons/Adb';
 import ForumIcon from '@material-ui/icons/ForumRounded';
 import GroupIcon from '@material-ui/icons/GroupRounded';
 import LayersIcon from '@material-ui/icons/Layers';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CancelIcon from '@material-ui/icons/Cancel';
 import * as S from './styles';
 
 type Icons = {
@@ -19,9 +21,11 @@ type Icons = {
   forum: string;
   group: string;
   layers: string;
+  save: string;
   edit: string;
   add: string;
   delete: string;
+  cancel: string;
 };
 
 type IconProps = {
@@ -44,9 +48,11 @@ export default function Icon({
       forum: <ForumIcon fontSize={fontSize} />,
       group: <GroupIcon fontSize={fontSize} />,
       layers: <LayersIcon fontSize={fontSize} />,
+      save: <CheckCircleIcon fontSize={fontSize} />,
       edit: <EditIcon fontSize={fontSize} />,
       add: <AddIcon fontSize={fontSize} />,
       delete: <DeleteIcon fontSize={fontSize} />,
+      cancel: <CancelIcon fontSize={fontSize} />,
     }),
     [fontSize],
   );

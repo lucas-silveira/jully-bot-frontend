@@ -171,6 +171,19 @@ export const TreeLabel = styled.div`
   }
 `;
 
+export const InputLabel = styled.input.attrs(() => ({
+  type: 'text',
+}))`
+  width: 100%;
+  background: transparent;
+  font-size: 1rem;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  border: none;
+`;
+
 const buttonStyleTypes = {
   edit: css`
     color: var(--dark-sea-green-color);

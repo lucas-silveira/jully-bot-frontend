@@ -75,6 +75,8 @@ type BotTreeItem = {
   correlationId: string;
   ownCorrelationId: string;
   type: string;
+  name?: string;
+  text?: string;
   optionNumber?: number;
   sortNumber?: number;
   questions?: BotQuestion[];
@@ -82,6 +84,7 @@ type BotTreeItem = {
 };
 
 const popoverDuration = 3000;
+const charactersLimit = 100;
 
 export default function Bot(): JSX.Element {
   const router = useRouter();
@@ -93,11 +96,16 @@ export default function Bot(): JSX.Element {
     message: '',
   });
   const treeItemRef = useRef({});
+  const treeItemInputLabelRef = useRef({});
   const [openPopover, setOpenPopover] = useState([]);
   const [bot, setBot] = useState<Bot>({} as Bot);
   const [topics, setTopics] = useState<BotTopic[]>([]);
   const [backupTopics, setBackupTopics] = useState(null);
   const [editMode, setEditMode] = useState(null);
+  const [editTreeItemLabel, setEditTreeItemLabel] = useState({
+    active: null,
+    value: 'teste',
+  });
   const [expandedTreeItems, setExpandedTreeItems] = useState([]);
   const [botValidation, setBotValidation] = useState({
     validate: false,
@@ -156,6 +164,10 @@ export default function Bot(): JSX.Element {
     getBot();
   }, [router, authState.accessToken, authState.managerId, router.query.phone]);
 
+  useEffect(() => {
+    treeItemInputLabelRef.current[editTreeItemLabel.active]?.focus();
+  }, [editTreeItemLabel.active]);
+
   const handleToastClose = useCallback(() => {
     setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
   }, []);
@@ -167,7 +179,14 @@ export default function Bot(): JSX.Element {
     [],
   );
 
-  const handlePopoverClose = useCallback(() => {
+  const handleSetItemInputLabelRef = useCallback(
+    (topicId: string) => (element: HTMLElement) => {
+      treeItemInputLabelRef.current[topicId] = element;
+    },
+    [],
+  );
+
+  const handleClosePopover = useCallback(() => {
     setOpenPopover([]);
   }, []);
 
@@ -196,7 +215,6 @@ export default function Bot(): JSX.Element {
   );
 
   const handleSaveChanges = useCallback(() => {
-    console.log(botValidation.questionsWithoutAnswers);
     if (botValidation.questionsWithoutAnswers.ownCorrelationIds.length) {
       setBotValidation(oldValue => ({ ...oldValue, validate: true }));
       setExpandedTreeItems(oldValue => [
@@ -206,12 +224,12 @@ export default function Bot(): JSX.Element {
         ]),
       ]);
       setOpenPopover(botValidation.questionsWithoutAnswers.ownCorrelationIds);
-      setTimeout(() => handlePopoverClose(), popoverDuration);
+      setTimeout(() => handleClosePopover(), popoverDuration);
       return;
     }
     setEditMode(null);
     setBackupTopics(JSON.stringify(topics));
-  }, [topics, botValidation.questionsWithoutAnswers, handlePopoverClose]);
+  }, [topics, botValidation.questionsWithoutAnswers, handleClosePopover]);
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
@@ -219,9 +237,10 @@ export default function Bot(): JSX.Element {
   }, [backupTopics]);
 
   const handleAddTopic = useCallback(() => {
+    const ownCorrelationId = randomId(5);
     const newTopic = {
-      correlationId: randomId(5),
-      ownCorrelationId: randomId(5),
+      correlationId: ownCorrelationId,
+      ownCorrelationId,
       type: TREE_ITEM_TYPE.TOPIC,
       name: 'Tópico vazio',
       description: '',
@@ -253,10 +272,17 @@ export default function Bot(): JSX.Element {
   }, [TREE_ITEM_TYPE]);
 
   const handleEditTreeItem = useCallback(
-    (event: React.MouseEvent<HTMLInputElement>) => {
+    (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
       event.stopPropagation();
+      setEditTreeItemLabel({
+        active: treeItem.ownCorrelationId,
+        value:
+          treeItem.type === TREE_ITEM_TYPE.TOPIC
+            ? treeItem.name
+            : treeItem.text,
+      });
     },
-    [],
+    [TREE_ITEM_TYPE],
   );
 
   const handleDeleteTreeItem = useCallback(
@@ -270,6 +296,17 @@ export default function Bot(): JSX.Element {
           setTopics(oldValues =>
             oldValues.filter(topic => topic.id !== treeItem.id),
           );
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ...oldValue.questionsWithoutAnswers,
+              ownCorrelationIds: [
+                ...oldValue.questionsWithoutAnswers.ownCorrelationIds.filter(
+                  coId => coId !== treeItem.ownCorrelationId,
+                ),
+              ],
+            },
+          }));
           break;
         }
         case TREE_ITEM_TYPE.QUESTION: {
@@ -277,6 +314,32 @@ export default function Bot(): JSX.Element {
             item => item.id !== treeItem.id,
           );
           setTopics([...topics]);
+          setBotValidation(oldValue => ({
+            ...oldValue,
+            questionsWithoutAnswers: {
+              ownCorrelationIds:
+                parentTreeItem.type === TREE_ITEM_TYPE.TOPIC &&
+                !parentTreeItem.questions.length
+                  ? [
+                      ...oldValue.questionsWithoutAnswers.ownCorrelationIds.filter(
+                        coId => coId !== treeItem.ownCorrelationId,
+                      ),
+                      parentTreeItem.ownCorrelationId,
+                    ]
+                  : oldValue.questionsWithoutAnswers.ownCorrelationIds.filter(
+                      coId => coId !== treeItem.ownCorrelationId,
+                    ),
+              spplitedCorrelationIds: !parentTreeItem.questions.length
+                ? [
+                    ...new Set([
+                      ...oldValue.questionsWithoutAnswers
+                        .spplitedCorrelationIds,
+                      ...parentTreeItem.correlationId.split('-'),
+                    ]),
+                  ]
+                : oldValue.questionsWithoutAnswers.spplitedCorrelationIds,
+            },
+          }));
           break;
         }
         case TREE_ITEM_TYPE.ANSWER: {
@@ -391,9 +454,6 @@ export default function Bot(): JSX.Element {
           });
 
           setTopics([...topics]);
-          setExpandedTreeItems(oldValue => [
-            ...new Set([...oldValue, ...spplitedCorrelationIds]),
-          ]);
           setBotValidation(oldValue => ({
             ...oldValue,
             questionsWithoutAnswers: {
@@ -403,6 +463,9 @@ export default function Bot(): JSX.Element {
               ),
             },
           }));
+          setExpandedTreeItems(oldValue => [
+            ...new Set([...oldValue, ...spplitedCorrelationIds]),
+          ]);
 
           break;
         }
@@ -451,6 +514,57 @@ export default function Bot(): JSX.Element {
       }
     },
     [TREE_ITEM_TYPE, topics],
+  );
+
+  const handleChangeTreeItemInputLabel = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.value.length === charactersLimit) return;
+
+      setEditTreeItemLabel(oldValue => ({
+        ...oldValue,
+        value: event.target.value,
+      }));
+    },
+    [],
+  );
+
+  const handleSaveTreeItemInputLabel = useCallback(
+    (treeItem: BotTreeItem) => (event: React.MouseEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+
+      switch (treeItem.type) {
+        case TREE_ITEM_TYPE.TOPIC: {
+          treeItem.name = editTreeItemLabel.value;
+          setTopics([...topics]);
+          break;
+        }
+        case TREE_ITEM_TYPE.QUESTION:
+        case TREE_ITEM_TYPE.ANSWER: {
+          treeItem.text = editTreeItemLabel.value;
+          setTopics([...topics]);
+          break;
+        }
+        default:
+      }
+
+      setEditTreeItemLabel({
+        active: null,
+        value: null,
+      });
+    },
+    [TREE_ITEM_TYPE, editTreeItemLabel.value, topics],
+  );
+
+  const handleCancelTreeItemInputLabel = useCallback(
+    (event: React.MouseEvent<HTMLInputElement>) => {
+      event.stopPropagation();
+
+      setEditTreeItemLabel({
+        active: null,
+        value: null,
+      });
+    },
+    [],
   );
 
   return (
@@ -531,42 +645,88 @@ export default function Bot(): JSX.Element {
                       )}
                       label={
                         <S.TreeLabel>
-                          <div>{topic.name}</div>
+                          <div>
+                            {editTreeItemLabel.active ===
+                            topic.ownCorrelationId ? (
+                              <S.InputLabel
+                                ref={handleSetItemInputLabelRef(
+                                  topic.ownCorrelationId,
+                                )}
+                                value={editTreeItemLabel.value}
+                                onChange={handleChangeTreeItemInputLabel}
+                                onClick={event => event.stopPropagation()}
+                              />
+                            ) : (
+                              topic.name
+                            )}
+                          </div>
                           {editMode === EDIT_MODE.CONVERSATION ? (
                             <>
-                              <S.Button
-                                size="small"
-                                $styleType="icon"
-                                onClick={handleEditTreeItem}
-                              >
-                                <Icon
-                                  name="edit"
-                                  color="#84a98c"
-                                  fontSize="small"
-                                />
-                              </S.Button>
-                              <S.Button
-                                size="small"
-                                $styleType="icon"
-                                onClick={handleAddTreeItem(topic)}
-                              >
-                                <Icon
-                                  name="add"
-                                  color="#84a98c"
-                                  fontSize="small"
-                                />
-                              </S.Button>
-                              <S.Button
-                                size="small"
-                                $styleType="icon"
-                                onClick={handleDeleteTreeItem(topic)}
-                              >
-                                <Icon
-                                  name="delete"
-                                  color="#84a98c"
-                                  fontSize="small"
-                                />
-                              </S.Button>
+                              {editTreeItemLabel.active ===
+                              topic.ownCorrelationId ? (
+                                <>
+                                  <S.Button
+                                    size="small"
+                                    $styleType="icon"
+                                    onClick={handleSaveTreeItemInputLabel(
+                                      topic,
+                                    )}
+                                  >
+                                    <Icon
+                                      name="save"
+                                      color="#84a98c"
+                                      fontSize="small"
+                                    />
+                                  </S.Button>
+                                  <S.Button
+                                    size="small"
+                                    $styleType="icon"
+                                    onClick={handleCancelTreeItemInputLabel}
+                                  >
+                                    <Icon
+                                      name="cancel"
+                                      color="#84a98c"
+                                      fontSize="small"
+                                    />
+                                  </S.Button>
+                                </>
+                              ) : (
+                                <>
+                                  <S.Button
+                                    size="small"
+                                    $styleType="icon"
+                                    onClick={handleEditTreeItem(topic)}
+                                  >
+                                    <Icon
+                                      name="edit"
+                                      color="#84a98c"
+                                      fontSize="small"
+                                    />
+                                  </S.Button>
+                                  <S.Button
+                                    size="small"
+                                    $styleType="icon"
+                                    onClick={handleAddTreeItem(topic)}
+                                  >
+                                    <Icon
+                                      name="add"
+                                      color="#84a98c"
+                                      fontSize="small"
+                                    />
+                                  </S.Button>
+                                  <S.Button
+                                    size="small"
+                                    $styleType="icon"
+                                    onClick={handleDeleteTreeItem(topic)}
+                                  >
+                                    <Icon
+                                      name="delete"
+                                      color="#84a98c"
+                                      fontSize="small"
+                                    />
+                                  </S.Button>
+                                </>
+                              )}
                             </>
                           ) : (
                             <span>Tópico</span>
@@ -584,45 +744,93 @@ export default function Bot(): JSX.Element {
                             )}
                             label={
                               <S.TreeLabel>
-                                <div>{question.text}</div>
+                                <div>
+                                  {editTreeItemLabel.active ===
+                                  question.ownCorrelationId ? (
+                                    <S.InputLabel
+                                      ref={handleSetItemInputLabelRef(
+                                        question.ownCorrelationId,
+                                      )}
+                                      value={editTreeItemLabel.value}
+                                      onChange={handleChangeTreeItemInputLabel}
+                                      onClick={event => event.stopPropagation()}
+                                    />
+                                  ) : (
+                                    question.text
+                                  )}
+                                </div>
                                 {editMode === EDIT_MODE.CONVERSATION ? (
                                   <>
-                                    <S.Button
-                                      size="small"
-                                      $styleType="icon"
-                                      onClick={handleEditTreeItem}
-                                    >
-                                      <Icon
-                                        name="edit"
-                                        color="#84a98c"
-                                        fontSize="small"
-                                      />
-                                    </S.Button>
-                                    <S.Button
-                                      size="small"
-                                      $styleType="icon"
-                                      onClick={handleAddTreeItem(question)}
-                                    >
-                                      <Icon
-                                        name="add"
-                                        color="#84a98c"
-                                        fontSize="small"
-                                      />
-                                    </S.Button>
-                                    <S.Button
-                                      size="small"
-                                      $styleType="icon"
-                                      onClick={handleDeleteTreeItem(
-                                        question,
-                                        topic,
-                                      )}
-                                    >
-                                      <Icon
-                                        name="delete"
-                                        color="#84a98c"
-                                        fontSize="small"
-                                      />
-                                    </S.Button>
+                                    {editTreeItemLabel.active ===
+                                    question.ownCorrelationId ? (
+                                      <>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleSaveTreeItemInputLabel(
+                                            question,
+                                          )}
+                                        >
+                                          <Icon
+                                            name="save"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={
+                                            handleCancelTreeItemInputLabel
+                                          }
+                                        >
+                                          <Icon
+                                            name="cancel"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleEditTreeItem(question)}
+                                        >
+                                          <Icon
+                                            name="edit"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleAddTreeItem(question)}
+                                        >
+                                          <Icon
+                                            name="add"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                        <S.Button
+                                          size="small"
+                                          $styleType="icon"
+                                          onClick={handleDeleteTreeItem(
+                                            question,
+                                            topic,
+                                          )}
+                                        >
+                                          <Icon
+                                            name="delete"
+                                            color="#84a98c"
+                                            fontSize="small"
+                                          />
+                                        </S.Button>
+                                      </>
+                                    )}
                                   </>
                                 ) : (
                                   <span>Pergunta</span>
@@ -636,12 +844,23 @@ export default function Bot(): JSX.Element {
                               treeItemRef={treeItemRef}
                               handleSetItemRef={handleSetItemRef}
                               openPopover={openPopover}
-                              onPopoverClose={handlePopoverClose}
+                              onPopoverClose={handleClosePopover}
                               editMode={editMode === EDIT_MODE.CONVERSATION}
                               botValidator={handleValidateBotConversation}
                               editTreeItem={handleEditTreeItem}
                               addTreeItem={handleAddTreeItem}
                               deleteTreeItem={handleDeleteTreeItem}
+                              editTreeItemLabel={editTreeItemLabel}
+                              setItemInputLabelRef={handleSetItemInputLabelRef}
+                              changeTreeItemInputLabel={
+                                handleChangeTreeItemInputLabel
+                              }
+                              saveTreeItemInputLabel={
+                                handleSaveTreeItemInputLabel
+                              }
+                              cancelTreeItemInputLabel={
+                                handleCancelTreeItemInputLabel
+                              }
                             />
                           </S.TreeItem>
                           <Popover
@@ -652,7 +871,7 @@ export default function Bot(): JSX.Element {
                             open={openPopover.includes(
                               question.ownCorrelationId,
                             )}
-                            onClose={handlePopoverClose}
+                            onClose={handleClosePopover}
                             message="Adicione pelo menos uma resposta."
                           />
                         </div>
@@ -662,7 +881,7 @@ export default function Bot(): JSX.Element {
                       id={topic.ownCorrelationId}
                       anchorEl={treeItemRef.current[topic.ownCorrelationId]}
                       open={openPopover.includes(topic.ownCorrelationId)}
-                      onClose={handlePopoverClose}
+                      onClose={handleClosePopover}
                       message="Adicione pelo menos uma pergunta."
                     />
                   </div>
