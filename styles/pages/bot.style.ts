@@ -104,42 +104,48 @@ const fadeAnimation = keyframes`
 
 const treeItemTypes = {
   default: css`
-    background-color: ${lighten(0.4, '#52489C')};
-    :hover {
-      background-color: ${lighten(0.5, '#52489C')};
+    .MuiTreeItem-label {
+      background-color: ${lighten(0.4, '#52489C')};
+      :hover {
+        background-color: ${lighten(0.5, '#52489C')};
+      }
     }
 
     &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
     &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
-      background-color: ${lighten(0.4, '#52489C')};
-      border-color: ${lighten(0.4, '#52489C')};
+      background-color: ${lighten(0.45, '#52489C')};
+      border-color: ${lighten(0.5, '#52489C')};
     }
   `,
   new: css`
-    color: #84a98c;
-    background-color: #ebebeb;
-    border: 1px dashed #cad2c5;
-    :hover {
-      background-color: ${darken(0.05, '#ebebeb')};
+    .MuiTreeItem-label {
+      color: #84a98c;
+      background-color: #ebebeb;
+      border: 1px dashed #cad2c5;
+      :hover {
+        background-color: ${darken(0.05, '#ebebeb')};
+      }
     }
 
     &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
     &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
-      background-color: ${lighten(0.4, '#52489C')};
-      border-color: ${lighten(0.4, '#52489C')};
+      background-color: #ebebeb;
+      border-color: #cad2c5;
     }
   `,
   dynamic: css`
-    color: ${darken(0.3, '#2196f3')};
-    background-color: ${lighten(0.2, '#2196f3')};
-    :hover {
-      background-color: ${lighten(0.3, '#2196f3')};
+    .MuiTreeItem-label {
+      color: ${darken(0.3, '#2196f3')};
+      background-color: ${lighten(0.2, '#2196f3')};
+      :hover {
+        background-color: ${lighten(0.3, '#2196f3')};
+      }
     }
 
     &.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label,
     &.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
-      background-color: ${lighten(0.4, '#52489C')};
-      border-color: ${lighten(0.4, '#52489C')};
+      background-color: ${lighten(0.4, '#2196f3')};
+      border-color: ${lighten(0.4, '#2196f3')};
     }
   `,
 };
@@ -159,8 +165,6 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
             animation: ${fadeAnimation} 1s linear infinite alternate;
           `
         : ''}
-
-    ${props => treeItemTypes[props.type || 'default']}
   }
 
   .MuiTreeItem-iconContainer .close {
@@ -171,6 +175,8 @@ export const TreeItem = styled(TreeItemMUI).attrs(() => ({
     padding-left: 18px;
     border-left: 1px dashed ${fade('#333', 0.4)};
   }
+
+  ${props => treeItemTypes[props.type || 'default']}
 `;
 
 export const TreeLabel = styled.div`
