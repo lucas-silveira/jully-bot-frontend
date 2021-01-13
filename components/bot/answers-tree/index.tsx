@@ -3,6 +3,14 @@ import * as S from '@styles/pages/bot.style';
 import { RefObject } from 'react';
 import Popover from '../popover';
 
+type BotDynamicAnswer = {
+  id: string;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  dynamicType: string;
+  triggerName: string;
+};
 type BotAnswer = {
   id: string;
   correlationId: string;
@@ -18,6 +26,7 @@ type BotAnswer = {
     sortNumber: number;
     text: string;
     answers: any[];
+    dynamicAnswer: BotDynamicAnswer;
   }>;
 };
 type BotQuestion = {
@@ -28,6 +37,7 @@ type BotQuestion = {
   sortNumber: number;
   text: string;
   answers: BotAnswer[];
+  dynamicAnswer: BotDynamicAnswer;
 };
 
 type AnswersTreeProps = {
@@ -39,9 +49,11 @@ type AnswersTreeProps = {
   onPopoverClose: (...args: any[]) => any;
   editMode: boolean;
   botValidator: (...args: any[]) => any;
+  addQuestion: (...args: any[]) => any;
+  addAnswer: (...args: any[]) => any;
   editTreeItem: (...args: any[]) => any;
-  addTreeItem: (...args: any[]) => any;
-  deleteTreeItem: (...args: any[]) => any;
+  deleteQuestion: (...args: any[]) => any;
+  deleteAnswer: (...args: any[]) => any;
   editTreeItemLabel: {
     active: string;
     value: string;
@@ -61,9 +73,11 @@ export default function AnswersTree({
   onPopoverClose,
   editMode,
   botValidator,
+  addQuestion,
+  addAnswer,
   editTreeItem,
-  addTreeItem,
-  deleteTreeItem,
+  deleteQuestion,
+  deleteAnswer,
   editTreeItemLabel,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
@@ -123,14 +137,14 @@ export default function AnswersTree({
                       <S.Button
                         size="small"
                         $styleType="icon"
-                        onClick={addTreeItem(answer)}
+                        onClick={addQuestion(answer)}
                       >
                         <Icon name="add" color="#84a98c" fontSize="small" />
                       </S.Button>
                       <S.Button
                         size="small"
                         $styleType="icon"
-                        onClick={deleteTreeItem(answer, parentAnswers)}
+                        onClick={deleteAnswer(answer, parentAnswers)}
                       >
                         <Icon name="delete" color="#84a98c" fontSize="small" />
                       </S.Button>
@@ -208,7 +222,7 @@ export default function AnswersTree({
                             <S.Button
                               size="small"
                               $styleType="icon"
-                              onClick={addTreeItem(question)}
+                              onClick={addAnswer(question)}
                             >
                               <Icon
                                 name="add"
@@ -219,7 +233,7 @@ export default function AnswersTree({
                             <S.Button
                               size="small"
                               $styleType="icon"
-                              onClick={deleteTreeItem(question, answer)}
+                              onClick={deleteQuestion(question, answer)}
                             >
                               <Icon
                                 name="delete"
@@ -236,24 +250,77 @@ export default function AnswersTree({
                   </S.TreeLabel>
                 }
               >
-                <AnswersTree
-                  answers={question.answers}
-                  parentAnswers={question}
-                  treeItemRef={treeItemRef}
-                  handleSetItemRef={handleSetItemRef}
-                  openPopover={openPopover}
-                  onPopoverClose={onPopoverClose}
-                  editMode={editMode}
-                  botValidator={botValidator}
-                  editTreeItem={editTreeItem}
-                  addTreeItem={addTreeItem}
-                  deleteTreeItem={deleteTreeItem}
-                  editTreeItemLabel={editTreeItemLabel}
-                  setItemInputLabelRef={setItemInputLabelRef}
-                  changeTreeItemInputLabel={changeTreeItemInputLabel}
-                  saveTreeItemInputLabel={saveTreeItemInputLabel}
-                  cancelTreeItemInputLabel={cancelTreeItemInputLabel}
-                />
+                {question.dynamicAnswer ? (
+                  <S.TreeItem
+                    ref={handleSetItemRef(
+                      question.dynamicAnswer.ownCorrelationId,
+                    )}
+                    nodeId={question.dynamicAnswer.ownCorrelationId}
+                    $isInvalid={botValidator(
+                      question.dynamicAnswer.ownCorrelationId,
+                    )}
+                    label={
+                      <S.TreeLabel>
+                        <div>
+                          {editTreeItemLabel.active ===
+                          question.dynamicAnswer.ownCorrelationId ? (
+                            <S.InputLabel
+                              ref={setItemInputLabelRef(
+                                question.dynamicAnswer.ownCorrelationId,
+                              )}
+                              value={editTreeItemLabel.value}
+                              onChange={changeTreeItemInputLabel}
+                              onClick={event => {
+                                event.stopPropagation();
+                              }}
+                            />
+                          ) : (
+                            question.dynamicAnswer.text
+                          )}
+                        </div>
+                        {editMode ? (
+                          <S.Button
+                            size="small"
+                            $styleType="icon"
+                            onClick={deleteTreeItem(
+                              question.dynamicAnswer,
+                              question,
+                            )}
+                          >
+                            <Icon
+                              name="delete"
+                              color="#84a98c"
+                              fontSize="small"
+                            />
+                          </S.Button>
+                        ) : (
+                          <span>Resposta</span>
+                        )}
+                      </S.TreeLabel>
+                    }
+                  />
+                ) : (
+                  <AnswersTree
+                    answers={question.answers}
+                    parentAnswers={question}
+                    treeItemRef={treeItemRef}
+                    handleSetItemRef={handleSetItemRef}
+                    openPopover={openPopover}
+                    onPopoverClose={onPopoverClose}
+                    editMode={editMode}
+                    botValidator={botValidator}
+                    editTreeItem={editTreeItem}
+                    addQuestion={addQuestion}
+                    addAnswer={addAnswer}
+                    deleteQuestion={deleteQuestion}
+                    deleteAnswer={deleteAnswer}
+                    editTreeItemLabel={editTreeItemLabel}
+                    setItemInputLabelRef={setItemInputLabelRef}
+                    changeTreeItemInputLabel={changeTreeItemInputLabel}
+                    saveTreeItemInputLabel={saveTreeItemInputLabel}
+                    cancelTreeItemInputLabel={cancelTreeItemInputLabel}
+                  />
+                )}
               </S.TreeItem>
               <Popover
                 id={question.ownCorrelationId}
