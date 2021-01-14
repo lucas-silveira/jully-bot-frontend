@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import Icon from '@components/icons';
 import * as S from '@styles/pages/bot.style';
 
@@ -84,6 +84,9 @@ export default function TreeLabel({
   saveTreeItemInputLabel,
   cancelTreeItemInputLabel,
 }: TreeLabelProps): JSX.Element {
+  const buttonAddRef = useRef(null);
+  const [openMenu, setOpenMenu] = useState(null);
+
   const TREE_ITEM_TYPE = useMemo(
     () => ({
       TOPIC: 'topic',
@@ -91,6 +94,33 @@ export default function TreeLabel({
       ANSWER: 'answer',
     }),
     [],
+  );
+
+  const handleOpenMenu = useCallback(
+    (treeItemId: string | number) => (
+      event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+      event.stopPropagation();
+      setOpenMenu(treeItemId);
+    },
+    [],
+  );
+
+  const handleCloseMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+      setOpenMenu(null);
+    },
+    [],
+  );
+
+  const handleAddTreeItem = useCallback(
+    (item: BotTreeItem) => (event: React.MouseEvent<HTMLLIElement>) => {
+      event.stopPropagation();
+      addTreeItem(item)(event);
+      setOpenMenu(null);
+    },
+    [addTreeItem],
   );
 
   return (
@@ -140,12 +170,33 @@ export default function TreeLabel({
                 <Icon name="edit" color="#84a98c" fontSize="small" />
               </S.Button>
               <S.Button
+                ref={buttonAddRef}
                 size="small"
                 $styleType="icon"
-                onClick={addTreeItem(treeItem)}
+                onClick={
+                  treeItem.type === TREE_ITEM_TYPE.QUESTION
+                    ? handleOpenMenu(treeItem.id)
+                    : addTreeItem(treeItem)
+                }
+                aria-controls={`menu-${treeItem.id}`}
+                aria-haspopup="true"
               >
                 <Icon name="add" color="#84a98c" fontSize="small" />
               </S.Button>
+              <S.Menu
+                id={`menu-${treeItem.id}`}
+                anchorEl={buttonAddRef.current}
+                keepMounted
+                open={openMenu === treeItem.id}
+                onClose={handleCloseMenu}
+              >
+                <S.MenuItem onClick={handleAddTreeItem(treeItem)}>
+                  Resposta simples
+                </S.MenuItem>
+                <S.MenuItem onClick={handleCloseMenu}>
+                  Resposta dinâmica
+                </S.MenuItem>
+              </S.Menu>
               <S.Button
                 size="small"
                 $styleType="icon"

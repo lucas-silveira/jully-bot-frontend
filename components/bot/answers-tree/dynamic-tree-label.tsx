@@ -1,3 +1,4 @@
+import { useState, useCallback, useRef } from 'react';
 import Icon from '@components/icons';
 import * as S from '@styles/pages/bot.style';
 
@@ -62,6 +63,34 @@ export default function DynamicTreeLabel({
   setItemInputLabelRef,
   changeTreeItemInputLabel,
 }: TreeLabelProps): JSX.Element {
+  const buttonAddRef = useRef(null);
+  const [openMenu, setOpenMenu] = useState(null);
+
+  const handleOpenMenu = useCallback(
+    (dynamicAnswerId: string | number) => (
+      event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+      event.stopPropagation();
+      setOpenMenu(dynamicAnswerId);
+    },
+    [],
+  );
+
+  const handleCloseMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+      setOpenMenu(null);
+    },
+    [],
+  );
+
+  const handleAddTrigger = useCallback(
+    () => (event: React.MouseEvent<HTMLLIElement>) => {
+      event.stopPropagation();
+      setOpenMenu(null);
+    },
+    [],
+  );
   return (
     <S.TreeLabel>
       <div>
@@ -79,12 +108,24 @@ export default function DynamicTreeLabel({
       {editMode ? (
         <>
           <S.Button
+            ref={buttonAddRef}
             size="small"
             $styleType="icon"
-            onClick={deleteAnswer(dynamicAnswer, question)}
+            onClick={handleOpenMenu(dynamicAnswer.id)}
+            aria-controls={`menu-${dynamicAnswer.id}`}
+            aria-haspopup="true"
           >
             <Icon name="link" color="#84a98c" fontSize="small" />
           </S.Button>
+          <S.Menu
+            id={`menu-${dynamicAnswer.id}`}
+            anchorEl={buttonAddRef.current}
+            keepMounted
+            open={openMenu === dynamicAnswer.id}
+            onClose={handleCloseMenu}
+          >
+            <S.MenuItem onClick={handleAddTrigger()}>Google Agenda</S.MenuItem>
+          </S.Menu>
           <S.Button
             size="small"
             $styleType="icon"

@@ -3,6 +3,8 @@ import { darken, lighten } from 'polished';
 import {
   fade,
   Button as ButtonMUI,
+  Menu as MenuMUI,
+  MenuItem as MenuItemMUI,
   ExtendButtonBase,
   ButtonTypeMap,
 } from '@material-ui/core';
@@ -253,3 +255,7 @@ export const Button = styled(ButtonMUI)<MyButtonProps>`
 
   ${props => buttonStyleTypes[props.$styleType]};
 `;
+
+export const Menu = styled(MenuMUI)``;
+
+export const MenuItem = styled(MenuItemMUI)``;
