@@ -17,6 +17,8 @@ import { Backdrop } from '@styles/components/backdrop.style';
 import { Chip } from '@styles/components/chip.style';
 import * as S from '@styles/pages/bot.style';
 import Popover from '@components/bot/popover';
+import TreeLabel from '@components/bot/answers-tree/tree-label';
+import DynamicTreeLabel from '@components/bot/answers-tree/dynamic-tree-label';
 
 type BotDynamicAnswer = {
   id: string;
@@ -25,6 +27,7 @@ type BotDynamicAnswer = {
   type: string;
   dynamicType: string;
   triggerName: string;
+  text: string;
 };
 type BotQuestion = {
   id: string;
@@ -408,7 +411,7 @@ export default function Bot(): JSX.Element {
     (topic: BotTopic) => (event: React.MouseEvent<HTMLInputElement>) => {
       event.stopPropagation();
 
-      setTopics(oldValues => oldValues.filter(tp => tp.id !== treeItem.id));
+      setTopics(oldValues => oldValues.filter(tp => tp.id !== topic.id));
       setBotValidation(oldValue => ({
         ...oldValue,
         questionsWithoutAnswers: {
@@ -633,94 +636,23 @@ export default function Bot(): JSX.Element {
                         topic.ownCorrelationId,
                       )}
                       label={
-                        <S.TreeLabel>
-                          <div>
-                            {editTreeItemLabel.active ===
-                            topic.ownCorrelationId ? (
-                              <S.InputLabel
-                                ref={handleSetItemInputLabelRef(
-                                  topic.ownCorrelationId,
-                                )}
-                                value={editTreeItemLabel.value}
-                                onChange={handleChangeTreeItemInputLabel}
-                                onClick={event => event.stopPropagation()}
-                              />
-                            ) : (
-                              topic.name
-                            )}
-                          </div>
-                          {editMode === EDIT_MODE.CONVERSATION ? (
-                            <>
-                              {editTreeItemLabel.active ===
-                              topic.ownCorrelationId ? (
-                                <>
-                                  <S.Button
-                                    size="small"
-                                    $styleType="icon"
-                                    onClick={handleSaveTreeItemInputLabel(
-                                      topic,
-                                    )}
-                                  >
-                                    <Icon
-                                      name="save"
-                                      color="#84a98c"
-                                      fontSize="small"
-                                    />
-                                  </S.Button>
-                                  <S.Button
-                                    size="small"
-                                    $styleType="icon"
-                                    onClick={handleCancelTreeItemInputLabel}
-                                  >
-                                    <Icon
-                                      name="cancel"
-                                      color="#84a98c"
-                                      fontSize="small"
-                                    />
-                                  </S.Button>
-                                </>
-                              ) : (
-                                <>
-                                  <S.Button
-                                    size="small"
-                                    $styleType="icon"
-                                    onClick={handleEditTreeItem(topic)}
-                                  >
-                                    <Icon
-                                      name="edit"
-                                      color="#84a98c"
-                                      fontSize="small"
-                                    />
-                                  </S.Button>
-                                  <S.Button
-                                    size="small"
-                                    $styleType="icon"
-                                    onClick={handleAddQuestion(topic)}
-                                  >
-                                    <Icon
-                                      name="add"
-                                      color="#84a98c"
-                                      fontSize="small"
-                                    />
-                                  </S.Button>
-                                  <S.Button
-                                    size="small"
-                                    $styleType="icon"
-                                    onClick={handleDeleteTopic(topic)}
-                                  >
-                                    <Icon
-                                      name="delete"
-                                      color="#84a98c"
-                                      fontSize="small"
-                                    />
-                                  </S.Button>
-                                </>
-                              )}
-                            </>
-                          ) : (
-                            <span>Tópico</span>
-                          )}
-                        </S.TreeLabel>
+                        <TreeLabel
+                          label="Tópico"
+                          treeItem={topic}
+                          editMode={editMode === EDIT_MODE.CONVERSATION}
+                          editTreeItemLabel={editTreeItemLabel}
+                          editTreeItem={handleEditTreeItem}
+                          addTreeItem={handleAddQuestion}
+                          deleteTreeItem={handleDeleteTopic}
+                          setItemInputLabelRef={handleSetItemInputLabelRef}
+                          changeTreeItemInputLabel={
+                            handleChangeTreeItemInputLabel
+                          }
+                          saveTreeItemInputLabel={handleSaveTreeItemInputLabel}
+                          cancelTreeItemInputLabel={
+                            handleCancelTreeItemInputLabel
+                          }
+                        />
                       }
                     >
                       {topic.questions.map(question => (
@@ -732,99 +664,28 @@ export default function Bot(): JSX.Element {
                               question.ownCorrelationId,
                             )}
                             label={
-                              <S.TreeLabel>
-                                <div>
-                                  {editTreeItemLabel.active ===
-                                  question.ownCorrelationId ? (
-                                    <S.InputLabel
-                                      ref={handleSetItemInputLabelRef(
-                                        question.ownCorrelationId,
-                                      )}
-                                      value={editTreeItemLabel.value}
-                                      onChange={handleChangeTreeItemInputLabel}
-                                      onClick={event => event.stopPropagation()}
-                                    />
-                                  ) : (
-                                    question.text
-                                  )}
-                                </div>
-                                {editMode === EDIT_MODE.CONVERSATION ? (
-                                  <>
-                                    {editTreeItemLabel.active ===
-                                    question.ownCorrelationId ? (
-                                      <>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleSaveTreeItemInputLabel(
-                                            question,
-                                          )}
-                                        >
-                                          <Icon
-                                            name="save"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={
-                                            handleCancelTreeItemInputLabel
-                                          }
-                                        >
-                                          <Icon
-                                            name="cancel"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleEditTreeItem(question)}
-                                        >
-                                          <Icon
-                                            name="edit"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleAddAnswer(question)}
-                                        >
-                                          <Icon
-                                            name="add"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleDeleteQuestion(
-                                            question,
-                                            topic,
-                                          )}
-                                        >
-                                          <Icon
-                                            name="delete"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                      </>
-                                    )}
-                                  </>
-                                ) : (
-                                  <span>Pergunta</span>
-                                )}
-                              </S.TreeLabel>
+                              <TreeLabel
+                                label="Pergunta"
+                                treeItem={question}
+                                parentTreeItem={topic}
+                                editMode={editMode === EDIT_MODE.CONVERSATION}
+                                editTreeItemLabel={editTreeItemLabel}
+                                editTreeItem={handleEditTreeItem}
+                                addTreeItem={handleAddAnswer}
+                                deleteTreeItem={handleDeleteQuestion}
+                                setItemInputLabelRef={
+                                  handleSetItemInputLabelRef
+                                }
+                                changeTreeItemInputLabel={
+                                  handleChangeTreeItemInputLabel
+                                }
+                                saveTreeItemInputLabel={
+                                  handleSaveTreeItemInputLabel
+                                }
+                                cancelTreeItemInputLabel={
+                                  handleCancelTreeItemInputLabel
+                                }
+                              />
                             }
                           >
                             {question.dynamicAnswer ? (
@@ -835,63 +696,22 @@ export default function Bot(): JSX.Element {
                                 nodeId={question.dynamicAnswer.ownCorrelationId}
                                 type="dynamic"
                                 label={
-                                  <S.TreeLabel>
-                                    <div>
-                                      {editTreeItemLabel.active ===
-                                      question.dynamicAnswer
-                                        .ownCorrelationId ? (
-                                        <S.InputLabel
-                                            ref={handleSetItemInputLabelRef(
-                                            question.dynamicAnswer
-                                              .ownCorrelationId,
-                                          )}
-                                            value={editTreeItemLabel.value}
-                                            onChange={
-                                            handleChangeTreeItemInputLabel
-                                          }
-                                            onClick={event => {
-                                            event.stopPropagation();
-                                          }}
-                                          />
-                                      ) : (
-                                        question.dynamicAnswer.text
-                                      )}
-                                    </div>
-                                    {editMode ? (
-                                      <>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleDeleteAnswer(
-                                            question.dynamicAnswer,
-                                            question,
-                                          )}
-                                        >
-                                          <Icon
-                                            name="link"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                        <S.Button
-                                          size="small"
-                                          $styleType="icon"
-                                          onClick={handleDeleteAnswer(
-                                            question.dynamicAnswer,
-                                            question,
-                                          )}
-                                        >
-                                          <Icon
-                                            name="delete"
-                                            color="#84a98c"
-                                            fontSize="small"
-                                          />
-                                        </S.Button>
-                                      </>
-                                    ) : (
-                                      <span>Resposta</span>
-                                    )}
-                                  </S.TreeLabel>
+                                  <DynamicTreeLabel
+                                    label="Resposta"
+                                    dynamicAnswer={question.dynamicAnswer}
+                                    question={question}
+                                    editMode={
+                                      editMode === EDIT_MODE.CONVERSATION
+                                    }
+                                    editTreeItemLabel={editTreeItemLabel}
+                                    deleteAnswer={handleDeleteAnswer}
+                                    setItemInputLabelRef={
+                                      handleSetItemInputLabelRef
+                                    }
+                                    changeTreeItemInputLabel={
+                                      handleChangeTreeItemInputLabel
+                                    }
+                                  />
                                 }
                               />
                             ) : (
