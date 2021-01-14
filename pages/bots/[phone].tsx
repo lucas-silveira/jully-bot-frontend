@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { v4 as uuidv4 } from 'uuid';
 import { CircularProgress, Divider } from '@material-ui/core';
 import { useAuth } from '@context/auth';
 import jullyApiService from '@services/jully-api.service';
@@ -311,7 +312,7 @@ export default function Bot(): JSX.Element {
         : 1;
 
       question.answers.push({
-        id: ownCorrelationId + Date.now(),
+        id: uuidv4(),
         correlationId,
         ownCorrelationId,
         type: CONVERSATION_ITEM_TYPE.ANSWER,
@@ -367,7 +368,7 @@ export default function Bot(): JSX.Element {
       const correlationId = `${question.correlationId}-${ownCorrelationId}`;
 
       question.dynamicAnswer = {
-        id: ownCorrelationId + Date.now(),
+        id: uuidv4(),
         correlationId,
         ownCorrelationId,
         type: CONVERSATION_ITEM_TYPE.ANSWER,
@@ -417,7 +418,7 @@ export default function Bot(): JSX.Element {
         : 1;
 
       treeItem.questions.push({
-        id: ownCorrelationId + Date.now(),
+        id: uuidv4(),
         correlationId,
         ownCorrelationId,
         type: CONVERSATION_ITEM_TYPE.QUESTION,
