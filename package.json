@@ -25,6 +25,7 @@
     "recoil": "^0.1.2",
     "styled-components": "^5.2.1",
     "swr": "^0.3.11",
+    "uuid": "^8.3.2",
     "yup": "^0.32.8"
   },
   "devDependencies": {
