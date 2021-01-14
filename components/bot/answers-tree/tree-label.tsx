@@ -1,6 +1,8 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Icon from '@components/icons';
+import { CONVERSATION_ITEM_TYPE } from '@utils/conversation-item-type.enum';
 import * as S from '@styles/pages/bot.style';
+import { DYNAMIC_ANSWERS_TYPE } from '@utils/dynamic-answers-type.enum';
 
 type BotDynamicAnswer = {
   id: string;
@@ -61,8 +63,9 @@ type TreeLabelProps = {
     active: string;
     value: string;
   };
-  editTreeItem: (...args: any[]) => any;
   addTreeItem: (...args: any[]) => any;
+  addDynamicAnswer?: (...args: any[]) => any;
+  editTreeItem: (...args: any[]) => any;
   deleteTreeItem: (...args: any[]) => any;
   setItemInputLabelRef: (...args: any[]) => any;
   changeTreeItemInputLabel: (...args: any[]) => any;
@@ -76,8 +79,9 @@ export default function TreeLabel({
   parentTreeItem,
   editMode,
   editTreeItemLabel,
-  editTreeItem,
   addTreeItem,
+  addDynamicAnswer,
+  editTreeItem,
   deleteTreeItem,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
@@ -85,16 +89,9 @@ export default function TreeLabel({
   cancelTreeItemInputLabel,
 }: TreeLabelProps): JSX.Element {
   const buttonAddRef = useRef(null);
+  const subButtonAddRef = useRef(null);
   const [openMenu, setOpenMenu] = useState(null);
-
-  const TREE_ITEM_TYPE = useMemo(
-    () => ({
-      TOPIC: 'topic',
-      QUESTION: 'question',
-      ANSWER: 'answer',
-    }),
-    [],
-  );
+  const [openSubMenu, setOpenSubMenu] = useState(null);
 
   const handleOpenMenu = useCallback(
     (treeItemId: string | number) => (
@@ -106,21 +103,38 @@ export default function TreeLabel({
     [],
   );
 
+  const handleOpenSubMenu = useCallback(
+    (subMenuId: string) => (event: React.MouseEvent<HTMLLIElement>) => {
+      event.stopPropagation();
+      console.log(subMenuId);
+      setOpenSubMenu(subMenuId);
+    },
+    [],
+  );
+
   const handleCloseMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
       setOpenMenu(null);
+      setOpenSubMenu(null);
     },
     [],
   );
 
   const handleAddTreeItem = useCallback(
-    (item: BotTreeItem) => (event: React.MouseEvent<HTMLLIElement>) => {
+    (item: BotTreeItem, dynamicAnswerType: DYNAMIC_ANSWERS_TYPE = null) => (
+      event: React.MouseEvent<HTMLLIElement>,
+    ) => {
       event.stopPropagation();
-      addTreeItem(item)(event);
+      if (dynamicAnswerType) {
+        addDynamicAnswer(item, dynamicAnswerType)(event);
+      } else {
+        addTreeItem(item)(event);
+      }
       setOpenMenu(null);
+      setOpenSubMenu(null);
     },
-    [addTreeItem],
+    [addTreeItem, addDynamicAnswer],
   );
 
   return (
@@ -135,7 +149,7 @@ export default function TreeLabel({
           />
         ) : (
           <>
-            {treeItem.type === TREE_ITEM_TYPE.TOPIC
+            {treeItem.type === CONVERSATION_ITEM_TYPE.TOPIC
               ? treeItem.name
               : treeItem.text}
           </>
@@ -174,7 +188,7 @@ export default function TreeLabel({
                 size="small"
                 $styleType="icon"
                 onClick={
-                  treeItem.type === TREE_ITEM_TYPE.QUESTION
+                  treeItem.type === CONVERSATION_ITEM_TYPE.QUESTION
                     ? handleOpenMenu(treeItem.id)
                     : addTreeItem(treeItem)
                 }
@@ -186,16 +200,42 @@ export default function TreeLabel({
               <S.Menu
                 id={`menu-${treeItem.id}`}
                 anchorEl={buttonAddRef.current}
+                getContentAnchorEl={null}
                 keepMounted
                 open={openMenu === treeItem.id}
                 onClose={handleCloseMenu}
               >
                 <S.MenuItem onClick={handleAddTreeItem(treeItem)}>
-                  Resposta simples
+                  <Icon name="message" color="#84a98c" fontSize="small" />
+                  <span>Resposta simples</span>
                 </S.MenuItem>
-                <S.MenuItem onClick={handleCloseMenu}>
-                  Resposta dinâmica
+                <S.MenuItem
+                  ref={subButtonAddRef}
+                  onClick={handleOpenSubMenu('dynamic_answer')}
+                  aria-controls={`submenu-${treeItem.id}`}
+                  aria-haspopup="true"
+                >
+                  <Icon name="rateReview" color="#84a98c" fontSize="small" />
+                  <span>Resposta dinâmica</span>
                 </S.MenuItem>
+                <S.SubMenu
+                  id={`submenu-${treeItem.id}`}
+                  anchorEl={subButtonAddRef.current}
+                  getContentAnchorEl={null}
+                  keepMounted
+                  open={openSubMenu === 'dynamic_answer'}
+                  onClose={handleCloseMenu}
+                >
+                  <S.MenuItem
+                    onClick={handleAddTreeItem(
+                      treeItem,
+                      DYNAMIC_ANSWERS_TYPE.DATE,
+                    )}
+                  >
+                    <Icon name="date" color="#84a98c" fontSize="small" />
+                    <span>Solicitar uma data</span>
+                  </S.MenuItem>
+                </S.SubMenu>
               </S.Menu>
               <S.Button
                 size="small"

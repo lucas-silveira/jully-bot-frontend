@@ -120,11 +120,15 @@ export default function DynamicTreeLabel({
           <S.Menu
             id={`menu-${dynamicAnswer.id}`}
             anchorEl={buttonAddRef.current}
+            getContentAnchorEl={null}
             keepMounted
             open={openMenu === dynamicAnswer.id}
             onClose={handleCloseMenu}
           >
-            <S.MenuItem onClick={handleAddTrigger()}>Google Agenda</S.MenuItem>
+            <S.MenuItem onClick={handleAddTrigger()}>
+              <Icon name="calendar" color="#84a98c" fontSize="small" />
+              <span>Google Agenda</span>
+            </S.MenuItem>
           </S.Menu>
           <S.Button
             size="small"

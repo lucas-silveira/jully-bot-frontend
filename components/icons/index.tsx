@@ -12,6 +12,10 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CancelIcon from '@material-ui/icons/Cancel';
 import LinkIcon from '@material-ui/icons/Link';
+import MessageIcon from '@material-ui/icons/Message';
+import RateReviewIcon from '@material-ui/icons/RateReview';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import DateRangeIcon from '@material-ui/icons/DateRange';
 import * as S from './styles';
 
 type Icons = {
@@ -28,6 +32,10 @@ type Icons = {
   delete: string;
   cancel: string;
   link: string;
+  message: string;
+  rateReview: string;
+  calendar: string;
+  date: string;
 };
 
 type IconProps = {
@@ -56,6 +64,10 @@ export default function Icon({
       delete: <DeleteIcon fontSize={fontSize} />,
       cancel: <CancelIcon fontSize={fontSize} />,
       link: <LinkIcon fontSize={fontSize} />,
+      message: <MessageIcon fontSize={fontSize} />,
+      rateReview: <RateReviewIcon fontSize={fontSize} />,
+      calendar: <CalendarTodayIcon fontSize={fontSize} />,
+      date: <DateRangeIcon fontSize={fontSize} />,
     }),
     [fontSize],
   );

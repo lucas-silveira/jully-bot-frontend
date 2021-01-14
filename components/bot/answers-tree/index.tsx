@@ -53,6 +53,7 @@ type AnswersTreeProps = {
   botValidator: (...args: any[]) => any;
   addQuestion: (...args: any[]) => any;
   addAnswer: (...args: any[]) => any;
+  addDynamicAnswer: (...args: any[]) => any;
   editTreeItem: (...args: any[]) => any;
   deleteQuestion: (...args: any[]) => any;
   deleteAnswer: (...args: any[]) => any;
@@ -77,6 +78,7 @@ export default function AnswersTree({
   botValidator,
   addQuestion,
   addAnswer,
+  addDynamicAnswer,
   editTreeItem,
   deleteQuestion,
   deleteAnswer,
@@ -124,8 +126,9 @@ export default function AnswersTree({
                     parentTreeItem={answer}
                     editMode={editMode}
                     editTreeItemLabel={editTreeItemLabel}
-                    editTreeItem={editTreeItem}
                     addTreeItem={addAnswer}
+                    addDynamicAnswer={addDynamicAnswer}
+                    editTreeItem={editTreeItem}
                     deleteTreeItem={deleteQuestion}
                     setItemInputLabelRef={setItemInputLabelRef}
                     changeTreeItemInputLabel={changeTreeItemInputLabel}
@@ -167,6 +170,7 @@ export default function AnswersTree({
                     editTreeItem={editTreeItem}
                     addQuestion={addQuestion}
                     addAnswer={addAnswer}
+                    addDynamicAnswer={addDynamicAnswer}
                     deleteQuestion={deleteQuestion}
                     deleteAnswer={deleteAnswer}
                     editTreeItemLabel={editTreeItemLabel}

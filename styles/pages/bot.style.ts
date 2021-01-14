@@ -7,6 +7,7 @@ import {
   MenuItem as MenuItemMUI,
   ExtendButtonBase,
   ButtonTypeMap,
+  Zoom,
 } from '@material-ui/core';
 import {
   TreeView as TreeViewMUI,
@@ -256,6 +257,43 @@ export const Button = styled(ButtonMUI)<MyButtonProps>`
   ${props => buttonStyleTypes[props.$styleType]};
 `;
 
-export const Menu = styled(MenuMUI)``;
+export const Menu = styled(MenuMUI).attrs(() => ({
+  anchorOrigin: {
+    vertical: 'center',
+    horizontal: 'right',
+  },
+  transformOrigin: {
+    vertical: 'center',
+    horizontal: 'center',
+  },
+}))`
+  .MuiPaper-root {
+    ul {
+      padding: 6px 0;
+    }
+  }
+`;
 
-export const MenuItem = styled(MenuItemMUI)``;
+export const SubMenu = styled(MenuMUI).attrs(() => ({
+  TransitionComponent: Zoom,
+  anchorOrigin: {
+    vertical: 'center',
+    horizontal: 'right',
+  },
+  transformOrigin: {
+    vertical: 'center',
+    horizontal: 'left',
+  },
+}))`
+  .MuiPaper-root {
+    ul {
+      padding: 6px 0;
+    }
+  }
+`;
+
+export const MenuItem = styled(MenuItemMUI)`
+  svg {
+    margin-right: 10px;
+  }
+`;
