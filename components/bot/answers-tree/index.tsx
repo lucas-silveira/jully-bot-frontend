@@ -57,6 +57,7 @@ type AnswersTreeProps = {
   editTreeItem: (...args: any[]) => any;
   deleteQuestion: (...args: any[]) => any;
   deleteAnswer: (...args: any[]) => any;
+  addTrigger: (...args: any[]) => any;
   editTreeItemLabel: {
     active: string;
     value: string;
@@ -82,6 +83,7 @@ export default function AnswersTree({
   editTreeItem,
   deleteQuestion,
   deleteAnswer,
+  addTrigger,
   editTreeItemLabel,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
@@ -106,6 +108,7 @@ export default function AnswersTree({
               editTreeItem={editTreeItem}
               addTreeItem={addQuestion}
               deleteTreeItem={deleteAnswer}
+              addTrigger={addTrigger}
               setItemInputLabelRef={setItemInputLabelRef}
               changeTreeItemInputLabel={changeTreeItemInputLabel}
               saveTreeItemInputLabel={saveTreeItemInputLabel}
@@ -130,6 +133,7 @@ export default function AnswersTree({
                     addDynamicAnswer={addDynamicAnswer}
                     editTreeItem={editTreeItem}
                     deleteTreeItem={deleteQuestion}
+                    addTrigger={addTrigger}
                     setItemInputLabelRef={setItemInputLabelRef}
                     changeTreeItemInputLabel={changeTreeItemInputLabel}
                     saveTreeItemInputLabel={saveTreeItemInputLabel}
@@ -152,6 +156,7 @@ export default function AnswersTree({
                         editMode={editMode}
                         editTreeItemLabel={editTreeItemLabel}
                         deleteAnswer={deleteAnswer}
+                        addTrigger={addTrigger}
                         setItemInputLabelRef={setItemInputLabelRef}
                         changeTreeItemInputLabel={changeTreeItemInputLabel}
                       />
@@ -173,6 +178,7 @@ export default function AnswersTree({
                     addDynamicAnswer={addDynamicAnswer}
                     deleteQuestion={deleteQuestion}
                     deleteAnswer={deleteAnswer}
+                    addTrigger={addTrigger}
                     editTreeItemLabel={editTreeItemLabel}
                     setItemInputLabelRef={setItemInputLabelRef}
                     changeTreeItemInputLabel={changeTreeItemInputLabel}

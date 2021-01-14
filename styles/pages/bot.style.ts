@@ -196,6 +196,21 @@ export const TreeLabel = styled.div`
     font-size: 0.7rem;
     font-style: italic;
   }
+
+  span + button {
+    margin-left: 10px;
+  }
+`;
+
+export const TriggerLabel = styled.p`
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+
+  svg {
+    font-size: 0.9rem;
+    margin-right: 5px;
+  }
 `;
 
 export const InputLabel = styled.input.attrs(() => ({
@@ -203,7 +218,7 @@ export const InputLabel = styled.input.attrs(() => ({
 }))`
   width: 100%;
   background: transparent;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 400;
   line-height: 1.5;

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import Icon from '@components/icons';
 import * as S from '@styles/pages/bot.style';
+import { TRIGGER_NAMES } from '@utils/trigger-names.enum';
 
 type BotDynamicAnswer = {
   id: string;
@@ -49,6 +50,7 @@ type TreeLabelProps = {
     value: string;
   };
   deleteAnswer: (...args: any[]) => any;
+  addTrigger: (...args: any[]) => any;
   setItemInputLabelRef: (...args: any[]) => any;
   changeTreeItemInputLabel: (...args: any[]) => any;
 };
@@ -60,6 +62,7 @@ export default function DynamicTreeLabel({
   editMode,
   editTreeItemLabel,
   deleteAnswer,
+  addTrigger,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
 }: TreeLabelProps): JSX.Element {
@@ -85,12 +88,16 @@ export default function DynamicTreeLabel({
   );
 
   const handleAddTrigger = useCallback(
-    () => (event: React.MouseEvent<HTMLLIElement>) => {
+    (answer: BotDynamicAnswer, triggerName: TRIGGER_NAMES) => (
+      event: React.MouseEvent<HTMLLIElement>,
+    ) => {
       event.stopPropagation();
+      addTrigger(answer, triggerName);
       setOpenMenu(null);
     },
-    [],
+    [addTrigger],
   );
+
   return (
     <S.TreeLabel>
       <div>
@@ -107,6 +114,7 @@ export default function DynamicTreeLabel({
       </div>
       {editMode ? (
         <>
+          <span>{dynamicAnswer.triggerName || ''}</span>
           <S.Button
             ref={buttonAddRef}
             size="small"
@@ -125,7 +133,15 @@ export default function DynamicTreeLabel({
             open={openMenu === dynamicAnswer.id}
             onClose={handleCloseMenu}
           >
-            <S.MenuItem onClick={handleAddTrigger()}>
+            <S.MenuItem
+              selected={
+                dynamicAnswer.triggerName === TRIGGER_NAMES.GOOGLE_AGENDA
+              }
+              onClick={handleAddTrigger(
+                dynamicAnswer,
+                TRIGGER_NAMES.GOOGLE_AGENDA,
+              )}
+            >
               <Icon name="calendar" color="#84a98c" fontSize="small" />
               <span>Google Agenda</span>
             </S.MenuItem>
@@ -139,7 +155,15 @@ export default function DynamicTreeLabel({
           </S.Button>
         </>
       ) : (
-        <span>{label}</span>
+        <>
+          {dynamicAnswer.triggerName && (
+            <S.TriggerLabel>
+              <Icon name="link" color="#064475" fontSize="small" />
+              <span>{dynamicAnswer.triggerName}</span>
+            </S.TriggerLabel>
+          )}
+          <span>{label}</span>
+        </>
       )}
     </S.TreeLabel>
   );

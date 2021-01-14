@@ -21,6 +21,7 @@ import TreeLabel from '@components/bot/answers-tree/tree-label';
 import DynamicTreeLabel from '@components/bot/answers-tree/dynamic-tree-label';
 import { CONVERSATION_ITEM_TYPE } from '@utils/conversation-item-type.enum';
 import { DYNAMIC_ANSWERS_TYPE } from '@utils/dynamic-answers-type.enum';
+import { TRIGGER_NAMES } from '@utils/trigger-names.enum';
 
 type BotDynamicAnswer = {
   id: string;
@@ -242,6 +243,15 @@ export default function Bot(): JSX.Element {
     setEditMode(null);
     setTopics(JSON.parse(backupTopics));
   }, [backupTopics]);
+
+  const handleAddTrigger = useCallback(
+    (answer: BotTreeItem, triggerName: TRIGGER_NAMES) => {
+      answer.triggerName = triggerName;
+
+      setTopics([...topics]);
+    },
+    [topics],
+  );
 
   const handleAddTopic = useCallback(() => {
     const ownCorrelationId = randomId(5);
@@ -693,6 +703,7 @@ export default function Bot(): JSX.Element {
                           editTreeItem={handleEditTreeItem}
                           addTreeItem={handleAddQuestion}
                           deleteTreeItem={handleDeleteTopic}
+                          addTrigger={handleAddTrigger}
                           setItemInputLabelRef={handleSetItemInputLabelRef}
                           changeTreeItemInputLabel={
                             handleChangeTreeItemInputLabel
@@ -723,6 +734,7 @@ export default function Bot(): JSX.Element {
                                 addDynamicAnswer={handleAddDynamicAnswer}
                                 editTreeItem={handleEditTreeItem}
                                 deleteTreeItem={handleDeleteQuestion}
+                                addTrigger={handleAddTrigger}
                                 setItemInputLabelRef={
                                   handleSetItemInputLabelRef
                                 }
@@ -755,6 +767,7 @@ export default function Bot(): JSX.Element {
                                     }
                                     editTreeItemLabel={editTreeItemLabel}
                                     deleteAnswer={handleDeleteAnswer}
+                                    addTrigger={handleAddTrigger}
                                     setItemInputLabelRef={
                                       handleSetItemInputLabelRef
                                     }
@@ -780,6 +793,7 @@ export default function Bot(): JSX.Element {
                                 editTreeItem={handleEditTreeItem}
                                 deleteQuestion={handleDeleteQuestion}
                                 deleteAnswer={handleDeleteAnswer}
+                                addTrigger={handleAddTrigger}
                                 editTreeItemLabel={editTreeItemLabel}
                                 setItemInputLabelRef={
                                   handleSetItemInputLabelRef

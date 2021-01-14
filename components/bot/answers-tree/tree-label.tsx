@@ -67,6 +67,7 @@ type TreeLabelProps = {
   addDynamicAnswer?: (...args: any[]) => any;
   editTreeItem: (...args: any[]) => any;
   deleteTreeItem: (...args: any[]) => any;
+  addTrigger: (...args: any[]) => any;
   setItemInputLabelRef: (...args: any[]) => any;
   changeTreeItemInputLabel: (...args: any[]) => any;
   saveTreeItemInputLabel: (...args: any[]) => any;
@@ -83,6 +84,7 @@ export default function TreeLabel({
   addDynamicAnswer,
   editTreeItem,
   deleteTreeItem,
+  addTrigger,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
   saveTreeItemInputLabel,
