@@ -113,6 +113,8 @@ class JullyApiService {
           localStorage.removeItem('@jullybot:manager');
           this.setAuthorizationToken(null);
         }
+
+        throw error;
       },
     );
   }
