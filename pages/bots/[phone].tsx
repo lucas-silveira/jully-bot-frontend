@@ -171,7 +171,7 @@ export default function Bot(): JSX.Element {
     };
 
     getBot();
-  }, [router, authState.accessToken, authState.managerId, router.query.phone]);
+  }, [router, authState]);
 
   useEffect(() => {
     treeItemInputLabelRef.current[editTreeItemLabel.active]?.focus();
