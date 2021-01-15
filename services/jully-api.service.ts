@@ -41,7 +41,17 @@ type BotAnswer = {
     sortNumber: number;
     text: string;
     answers: any[];
+    dynamicAnswer: BotDynamicAnswer;
   }>;
+};
+type BotDynamicAnswer = {
+  id: string;
+  correlationId: string;
+  ownCorrelationId: string;
+  type: string;
+  dynamicType: string;
+  triggerName: string;
+  text: string;
 };
 type BotQuestion = {
   id: string;
@@ -51,6 +61,7 @@ type BotQuestion = {
   sortNumber: number;
   text: string;
   answers: BotAnswer[];
+  dynamicAnswer: BotDynamicAnswer;
 };
 type GetBotResponse = {
   id: number;
