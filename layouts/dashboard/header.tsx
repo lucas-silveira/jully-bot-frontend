@@ -34,21 +34,21 @@ export default function Header({
       new Date(managerState.signature?.dueAt),
       new Date(),
     );
-  }, [managerState.signature?.dueAt]);
+  }, [managerState]);
 
   const planButtonTextHelper = useMemo(() => {
     if (!getSignatureDaysRemaining) return `Seu plano venceu`;
     if (managerState.signature.plan.name === PLANS.TRIAL)
       return `${getSignatureDaysRemaining} dias de uso restantes`;
     return null;
-  }, [getSignatureDaysRemaining, managerState.signature?.plan?.name]);
+  }, [getSignatureDaysRemaining, managerState]);
 
   const planButtonColorType = useMemo(() => {
     if (getSignatureDaysRemaining < 1) return 'inactive';
     return managerState.signature?.plan?.name === PLANS.TRIAL
       ? 'test'
       : 'active';
-  }, [getSignatureDaysRemaining, managerState.signature?.plan?.name]);
+  }, [getSignatureDaysRemaining, managerState]);
 
   const handleAccountMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
