@@ -24,7 +24,16 @@ export type ManagerState = {
       messagesQuantity: number;
     };
   };
+  applications: Array<{
+    name: string;
+    title: string;
+    description: string;
+    logotipo: string;
+    icon: string;
+    siteUrl: string;
+  }>;
 };
+
 type ManagerContextData = {
   managerState: ManagerState;
   getManager: () => Promise<void>;
