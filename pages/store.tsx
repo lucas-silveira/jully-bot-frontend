@@ -12,9 +12,9 @@ import { useManager } from '@context/hooks';
 import jullyApiService from '@services/jully-api.service';
 import DashboardLayout from 'layouts/dashboard';
 import ToastForm from '@components/toasts/toast-form';
+import AppInstallDialog from '@components/dialogs/app-install-dialog';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/store.style';
-import AppInstallDialog from '@components/dialogs/app-install-dialog';
 
 type Product = {
   id: number;
@@ -31,7 +31,7 @@ type Product = {
 export default function Store(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
-  const { getManager, appIsInstalled } = useManager();
+  const { getManager } = useManager();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [toast, setToast] = useState({
     type: 'error',
@@ -41,7 +41,10 @@ export default function Store(): JSX.Element {
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingInstallation, setLoadingInstallation] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [productSelected, setProductSelected] = useState<Product>({});
+  const [managerApps, setManagerApps] = useState<Product[]>([]);
+  const [productSelected, setProductSelected] = useState<Product>(
+    {} as Product,
+  );
 
   useEffect(() => {
     if (!authState.accessToken) {
@@ -67,20 +70,44 @@ export default function Store(): JSX.Element {
       }
     };
 
+    const getManagerApps = async () => {
+      try {
+        const managerAppsFromApi = await jullyApiService.getManagerApplications();
+        setManagerApps(managerAppsFromApi);
+      } catch (err) {
+        setToast({
+          type: 'error',
+          open: true,
+          message:
+            err.response?.data?.message ||
+            'Houve um erro ao tentar obter os aplicativos instalados.',
+        });
+      }
+    };
+
     getAllProducts();
+    getManagerApps();
   }, []);
 
   const handleToastClose = useCallback(() => {
     setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
   }, []);
 
+  const appAlreadyIsInstalled = useCallback(
+    (productName: string) => {
+      const appsName = managerApps.map(app => app.name);
+      return appsName.includes(productName);
+    },
+    [managerApps],
+  );
+
   const handleClickOpenDialog = useCallback(
     (product: Product) => () => {
-      if (appIsInstalled(product.name)) return;
+      if (appAlreadyIsInstalled(product.name)) return;
       setOpenDialog(true);
       setProductSelected(product);
     },
-    [appIsInstalled],
+    [appAlreadyIsInstalled],
   );
 
   const handleCloseDialog = useCallback(() => {
@@ -93,9 +120,15 @@ export default function Store(): JSX.Element {
         try {
           setLoadingInstallation(true);
           await jullyApiService.installApplication(appName);
-          await getManager();
+          const managerAppsFromApi = await jullyApiService.getManagerApplications();
+          setManagerApps(managerAppsFromApi);
           setOpenDialog(false);
           setLoadingInstallation(false);
+          setToast({
+            type: 'success',
+            open: true,
+            message: 'Aplicativo instalado com sucesso!',
+          });
         } catch (err) {
           setLoadingInstallation(false);
           setToast({
@@ -111,13 +144,6 @@ export default function Store(): JSX.Element {
       installApp();
     },
     [getManager],
-  );
-
-  const appAlreadyIsInstalled = useCallback(
-    (productName: string) => {
-      return appIsInstalled(productName);
-    },
-    [appIsInstalled],
   );
 
   return (

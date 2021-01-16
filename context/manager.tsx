@@ -30,23 +30,12 @@ export type ManagerState = {
       messagesQuantity: number;
     };
   };
-  applications: Array<{
-    id: number;
-    name: string;
-    title: string;
-    description: string;
-    logotipo: string;
-    banner: string;
-    icon: string;
-    siteUrl: string;
-  }>;
 };
 
 type ManagerContextData = {
   managerState: ManagerState;
   getManager: () => Promise<void>;
   clearManagerState: () => void;
-  appIsInstalled: (appName: string) => boolean;
 };
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -84,17 +73,9 @@ export function ManagerProvider({ children }: AuthProviderProps): JSX.Element {
     setManagerState({} as ManagerState);
   }, []);
 
-  const appIsInstalled = useCallback(
-    (productName: string): boolean => {
-      const appsId = managerState.applications.map(app => app.name);
-      return appsId.includes(productName);
-    },
-    [managerState],
-  );
-
   return (
     <ManagerContext.Provider
-      value={{ managerState, getManager, clearManagerState, appIsInstalled }}
+      value={{ managerState, getManager, clearManagerState }}
     >
       {children}
     </ManagerContext.Provider>

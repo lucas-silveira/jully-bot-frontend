@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import {
@@ -8,14 +8,40 @@ import {
   Divider,
 } from '@material-ui/core';
 import { useAuth } from '@context/auth';
+import { useManager } from '@context/hooks';
+import jullyApiService from '@services/jully-api.service';
 import DashboardLayout from 'layouts/dashboard';
+import ToastForm from '@components/toasts/toast-form';
+import AppRemoveDialog from '@components/dialogs/app-remove-dialog';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/applications.style';
+
+type Product = {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  logotipo: string;
+  banner: string;
+  icon: string;
+  siteUrl: string;
+  providerId: number;
+};
 
 export default function Applications(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
+  const { getManager, appIsInstalled } = useManager();
   const [pageIsLoading, setPageIsLoading] = useState(true);
+  const [toast, setToast] = useState({
+    type: 'error',
+    open: false,
+    message: '',
+  });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [loadingRemoving, setLoadingRemoving] = useState(false);
+  const [apps, setApps] = useState<Product[]>([]);
+  const [appSelected, setAppSelected] = useState<Product>({} as Product);
 
   useEffect(() => {
     if (!authState.accessToken) {
@@ -25,14 +51,86 @@ export default function Applications(): JSX.Element {
     setPageIsLoading(false);
   }, [router, authState]);
 
+  useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        const appsFromApi = await jullyApiService.getManagerApplications();
+        setApps(appsFromApi);
+      } catch (err) {
+        setToast({
+          type: 'error',
+          open: true,
+          message:
+            err.response?.data?.message ||
+            'Houve um erro ao tentar obter os aplicativos instalados.',
+        });
+      }
+    };
+
+    getAllProducts();
+  }, []);
+
+  const handleToastClose = useCallback(() => {
+    setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
+  }, []);
+
+  const handleClickOpenDialog = useCallback(
+    (product: Product) => () => {
+      setOpenDialog(true);
+      setAppSelected(product);
+    },
+    [],
+  );
+
+  const handleCloseDialog = useCallback(() => {
+    setOpenDialog(false);
+  }, []);
+
+  const handleRemoveApp = useCallback(
+    (appId: number) => () => {
+      const installApp = async () => {
+        try {
+          setLoadingRemoving(true);
+          await jullyApiService.removeApplication(appId);
+          await getManager();
+          setApps(oldValue => oldValue.filter(app => app.id !== appId));
+          setOpenDialog(false);
+          setLoadingRemoving(false);
+          setToast({
+            type: 'success',
+            open: true,
+            message: 'Aplicativo removido com sucesso!',
+          });
+        } catch (err) {
+          setLoadingRemoving(false);
+          setToast({
+            type: 'error',
+            open: true,
+            message:
+              err.response?.data?.message ||
+              'Houve um erro ao tentar remover o aplicativo.',
+          });
+        }
+      };
+
+      installApp();
+    },
+    [getManager],
+  );
+
   return (
     <>
       <Head>
-        <title>Meus aplicativos | Jully Bot</title>
+        <title>Loja de Aplicativos | Jully Bot</title>
       </Head>
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <ToastForm
+        type={toast.type as any}
+        toast={{ open: toast.open, message: toast.message }}
+        handleClose={handleToastClose}
+      />
       {!pageIsLoading && (
         <DashboardLayout>
           <S.Wrapper>
@@ -42,30 +140,40 @@ export default function Applications(): JSX.Element {
             <Divider light />
             <S.Main>
               <S.AppsList>
-                <S.AppCard>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      alt="Contemplative Reptile"
-                      image="https://yanado.com/blog/wp-content/uploads/2016/02/yanado_banner_03.jpg"
-                      title="Contemplative Reptile"
-                    />
-                    <S.AppCardContent>
-                      <h4>Google Agenda</h4>
-                      <p>
-                        Lizards are a widespread group of squamate reptiles,
-                        with over 6,000 species, ranging across all continents
-                        except Antarctica
-                      </p>
-                    </S.AppCardContent>
-                    <footer>
-                      <p>Instalar agora</p>
-                    </footer>
-                  </CardActionArea>
-                </S.AppCard>
+                {apps.length ? (
+                  apps.map(app => (
+                    <S.AppCard key={app.id}>
+                      <CardActionArea onClick={handleClickOpenDialog(app)}>
+                        <CardMedia
+                          component="img"
+                          alt={app.title}
+                          image={app.banner}
+                          title={app.title}
+                        />
+                        <S.AppCardContent>
+                          <h4>{app.title}</h4>
+                          <p>{app.description}</p>
+                        </S.AppCardContent>
+                        <footer>
+                          <p>Remover</p>
+                        </footer>
+                      </CardActionArea>
+                    </S.AppCard>
+                  ))
+                ) : (
+                  <p>Você ainda não instalou nenhum aplicativo.</p>
+                )}
               </S.AppsList>
             </S.Main>
           </S.Wrapper>
+          <AppRemoveDialog
+            open={openDialog}
+            handleClose={handleCloseDialog}
+            handleSubmit={handleRemoveApp}
+            appId={appSelected.id}
+            appTitle={appSelected.title}
+            loading={loadingRemoving}
+          />
         </DashboardLayout>
       )}
     </>

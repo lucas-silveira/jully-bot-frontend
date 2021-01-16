@@ -115,6 +115,17 @@ type GetAllProductsResponse = Array<{
   siteUrl: string;
   providerId: number;
 }>;
+type GetManagerApplications = Array<{
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  logotipo: string;
+  banner: string;
+  icon: string;
+  siteUrl: string;
+  providerId: number;
+}>;
 
 class JullyApiService {
   public API_URL = JULLY_API_URL;
@@ -204,6 +215,14 @@ class JullyApiService {
       name: appName,
       accessToken: '123',
     });
+  }
+
+  async removeApplication(appId: number): Promise<void> {
+    await this.api.delete(`/managers/apps/${appId}`);
+  }
+
+  async getManagerApplications(): Promise<GetManagerApplications> {
+    return (await this.api.get(`/managers/apps`))?.data;
   }
 }
 

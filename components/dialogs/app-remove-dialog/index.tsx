@@ -15,7 +15,7 @@ type DefaultDialogProps = {
   open: boolean;
   handleClose: (...args: any[]) => any;
   handleSubmit: (...args: any[]) => any;
-  appName: string;
+  appId: number;
   appTitle: string;
   loading: boolean;
 };
@@ -27,11 +27,11 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-export default function AppInstallDialog({
+export default function AppRemoveDialog({
   open,
   handleClose,
   handleSubmit,
-  appName,
+  appId,
   appTitle,
   loading,
 }: DefaultDialogProps): JSX.Element {
@@ -49,12 +49,12 @@ export default function AppInstallDialog({
       aria-describedby="app-install-dialog-description"
     >
       <DialogTitle id="app-install-dialog-title">
-        Instalar aplicativo {appTitle}?
+        Remover aplicativo {appTitle}?
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="app-install-dialog-description">
-          Ao confirmar, você instalará o aplicativo na sua conta. Após a
-          instalação, o aplicativo já estará disponível para uso.
+          Ao confirmar, você removerá o aplicativo da sua conta. Após a remoção,
+          o aplicativo não estará mais disponível.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -67,8 +67,8 @@ export default function AppInstallDialog({
             <Button onClick={handleClose} color="primary">
               Cancelar
             </Button>
-            <Button onClick={handleSubmit(appName)} color="primary">
-              Instalar
+            <Button onClick={handleSubmit(appId)} color="primary">
+              Remover
             </Button>
           </>
         )}
