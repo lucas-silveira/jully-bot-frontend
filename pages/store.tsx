@@ -10,9 +10,9 @@ import {
 import { useAuth } from '@context/auth';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
-import * as S from '@styles/pages/applications.style';
+import * as S from '@styles/pages/store.style';
 
-export default function Applications(): JSX.Element {
+export default function Store(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
@@ -28,7 +28,7 @@ export default function Applications(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Meus aplicativos | Jully Bot</title>
+        <title>Loja de Aplicativos | Jully Bot</title>
       </Head>
       <Backdrop open={pageIsLoading}>
         <CircularProgress color="inherit" />
@@ -37,7 +37,7 @@ export default function Applications(): JSX.Element {
         <DashboardLayout>
           <S.Wrapper>
             <S.Header>
-              <h4>Meus aplicativos</h4>
+              <h4>Loja de aplicativos</h4>
             </S.Header>
             <Divider light />
             <S.Main>

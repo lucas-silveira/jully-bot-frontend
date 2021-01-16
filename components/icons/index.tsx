@@ -16,6 +16,7 @@ import MessageIcon from '@material-ui/icons/Message';
 import RateReviewIcon from '@material-ui/icons/RateReview';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DateRangeIcon from '@material-ui/icons/DateRange';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import * as S from './styles';
 
 type Icons = {
@@ -36,6 +37,7 @@ type Icons = {
   rateReview: string;
   calendar: string;
   date: string;
+  cart: string;
 };
 
 type IconProps = {
@@ -68,6 +70,7 @@ export default function Icon({
       rateReview: <RateReviewIcon fontSize={fontSize} />,
       calendar: <CalendarTodayIcon fontSize={fontSize} />,
       date: <DateRangeIcon fontSize={fontSize} />,
+      cart: <ShoppingCartIcon fontSize={fontSize} />,
     }),
     [fontSize],
   );

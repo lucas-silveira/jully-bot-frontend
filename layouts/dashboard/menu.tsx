@@ -39,6 +39,11 @@ export default function Menu(): JSX.Element {
         icon: <Icon name="layers" />,
         href: '/applications',
       },
+      {
+        label: 'Loja',
+        icon: <Icon name="cart" />,
+        href: '/store',
+      },
     ],
     [],
   );
