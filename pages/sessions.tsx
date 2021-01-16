@@ -18,7 +18,7 @@ export default function Sessions(): JSX.Element {
       return;
     }
     setPageIsLoading(false);
-  }, [router, authState.accessToken]);
+  }, [router, authState]);
 
   return (
     <>

@@ -52,14 +52,6 @@ export default function Bots(): JSX.Element {
       return;
     }
     setPageIsLoading(false);
-  }, [router, authState.accessToken]);
-
-  useEffect(() => {
-    if (!authState.accessToken) {
-      router.push('/signin');
-      return;
-    }
-    setPageIsLoading(false);
 
     const getAllBots = async () => {
       try {
@@ -78,7 +70,7 @@ export default function Bots(): JSX.Element {
     };
 
     getAllBots();
-  }, [router, authState.accessToken]); // eslint-disable-line
+  }, [router, authState]);
 
   const handleToastErrorClose = useCallback(() => {
     setToastError({
