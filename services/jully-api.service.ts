@@ -104,6 +104,17 @@ type GetAllBotsResponse = Array<{
   createdAt: string;
   updatedAt: string;
 }>;
+type GetAllProductsResponse = Array<{
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  logotipo: string;
+  banner: string;
+  icon: string;
+  siteUrl: string;
+  providerId: number;
+}>;
 
 class JullyApiService {
   public API_URL = JULLY_API_URL;
@@ -111,6 +122,8 @@ class JullyApiService {
   public authorizationToken: string;
 
   private api: AxiosInstance;
+
+  private managerId: number;
 
   constructor() {
     this.api = axios.create({
@@ -133,6 +146,10 @@ class JullyApiService {
   setAuthorizationToken(token: string): void {
     this.authorizationToken = token;
     this.api.defaults.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  setManagerId(managerId: number): void {
+    this.managerId = managerId;
   }
 
   async createManager(managerDto: CreateManagerDto): Promise<void> {
@@ -175,6 +192,18 @@ class JullyApiService {
     return (
       await this.api.get<GetAllBotsResponse>(`/managers/${managerId}/bots`)
     )?.data;
+  }
+
+  async getAllProducts(): Promise<GetAllProductsResponse> {
+    return (await this.api.get<GetAllProductsResponse>(`/providers/products`))
+      ?.data;
+  }
+
+  async installApplication(appName: string): Promise<void> {
+    await this.api.post(`/managers/${this.managerId}/apps`, {
+      name: appName,
+      accessToken: '123',
+    });
   }
 }
 

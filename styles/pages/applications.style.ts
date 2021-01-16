@@ -33,6 +33,10 @@ export const AppsList = styled.section`
 `;
 
 export const AppCard = styled(Card)`
+  img {
+    height: 140px;
+  }
+
   footer {
     padding: 10px 20px 20px;
 
@@ -47,6 +51,8 @@ export const AppCard = styled(Card)`
 
 export const AppCardContent = styled(CardContent)`
   p {
+    font-size: 0.9rem;
+    line-height: 1.2rem;
     margin-top: 10px;
   }
 `;

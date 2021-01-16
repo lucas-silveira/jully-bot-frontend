@@ -47,7 +47,6 @@ export default function Applications(): JSX.Element {
                     <CardMedia
                       component="img"
                       alt="Contemplative Reptile"
-                      height="140"
                       image="https://yanado.com/blog/wp-content/uploads/2016/02/yanado_banner_03.jpg"
                       title="Contemplative Reptile"
                     />

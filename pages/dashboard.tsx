@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { CircularProgress, Divider } from '@material-ui/core';
 import { useAuth } from '@context/auth';
+import { useManager } from '@context/hooks';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/dahsboard.style';
@@ -10,6 +11,7 @@ import * as S from '@styles/pages/dahsboard.style';
 export default function Dashboard(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
+  const { getManager } = useManager();
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +21,14 @@ export default function Dashboard(): JSX.Element {
     }
     setPageIsLoading(false);
   }, [router, authState.accessToken]);
+
+  useEffect(() => {
+    const getManagerFromApi = async () => {
+      await getManager();
+    };
+
+    getManagerFromApi();
+  }, [getManager]);
 
   return (
     <>

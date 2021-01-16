@@ -29,6 +29,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     if (authStateSerialized) {
       const authStateParsed = JSON.parse(authStateSerialized);
       jullyApiService.setAuthorizationToken(authStateParsed.accessToken);
+      jullyApiService.setManagerId(authStateParsed.managerId);
       return authStateParsed;
     }
 
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
     localStorage.setItem('@jullybot:auth', JSON.stringify(session));
     jullyApiService.setAuthorizationToken(session.accessToken);
+    jullyApiService.setManagerId(session.managerId);
 
     setAuthState(session);
   }, []);
