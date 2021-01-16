@@ -118,6 +118,7 @@ type GetAllProductsResponse = Array<{
 type GetManagerApplications = Array<{
   id: number;
   name: string;
+  type: string;
   title: string;
   description: string;
   banner: string;

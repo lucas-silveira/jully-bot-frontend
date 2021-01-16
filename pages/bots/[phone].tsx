@@ -23,6 +23,7 @@ import DynamicTreeLabel from '@components/bot/answers-tree/dynamic-tree-label';
 import { CONVERSATION_ITEM_TYPE } from '@utils/conversation-item-type.enum';
 import { DYNAMIC_ANSWERS_TYPE } from '@utils/dynamic-answers-type.enum';
 import { TRIGGER_NAMES } from '@utils/trigger-names.enum';
+import { APP_TYPES } from '@utils/app-types.enum';
 
 type BotDynamicAnswer = {
   id: string;
@@ -103,6 +104,7 @@ type BotTreeItem = {
 type Application = {
   id: number;
   name: string;
+  type: string;
   title: string;
   description: string;
   banner: string;
@@ -201,6 +203,10 @@ export default function Bot(): JSX.Element {
   useEffect(() => {
     treeItemInputLabelRef.current[editTreeItemLabel.active]?.focus();
   }, [editTreeItemLabel.active]);
+
+  const triggerApps = useMemo(() => {
+    return apps.filter(app => app.type === APP_TYPES.TRIGGER);
+  }, [apps]);
 
   const handleToastClose = useCallback(() => {
     setToast(oldValue => ({ ...oldValue, open: false, message: '' }));
@@ -794,7 +800,7 @@ export default function Bot(): JSX.Element {
                                     editTreeItemLabel={editTreeItemLabel}
                                     deleteAnswer={handleDeleteAnswer}
                                     addTrigger={handleAddTrigger}
-                                    apps={apps}
+                                    apps={triggerApps}
                                     setItemInputLabelRef={
                                       handleSetItemInputLabelRef
                                     }
@@ -808,7 +814,7 @@ export default function Bot(): JSX.Element {
                               <AnswersTree
                                 answers={question.answers}
                                 parentAnswers={question}
-                                apps={apps}
+                                apps={triggerApps}
                                 treeItemRef={treeItemRef}
                                 handleSetItemRef={handleSetItemRef}
                                 openPopover={openPopover}

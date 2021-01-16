@@ -44,6 +44,7 @@ type BotQuestion = {
 type Application = {
   id: number;
   name: string;
+  type: string;
   title: string;
   description: string;
   banner: string;
