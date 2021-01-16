@@ -1,5 +1,11 @@
 import jullyApiService from '@services/jully-api.service';
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react';
 
 export type ManagerState = {
   id: number;
@@ -48,18 +54,18 @@ const ManagerContext = createContext<ManagerContextData>(
 );
 
 export function ManagerProvider({ children }: AuthProviderProps): JSX.Element {
-  const [managerState, setManagerState] = useState<ManagerState>(() => {
-    if (typeof localStorage === 'undefined') return {};
+  const [managerState, setManagerState] = useState<ManagerState>(
+    {} as ManagerState,
+  );
 
+  useEffect(() => {
     const managerStateSerialized = localStorage.getItem('@jullybot:manager');
 
     if (managerStateSerialized) {
       const managerStateParsed = JSON.parse(managerStateSerialized);
-      return managerStateParsed;
+      setManagerState(managerStateParsed);
     }
-
-    return {};
-  });
+  }, []);
 
   const getManager = useCallback(async () => {
     const manager = await jullyApiService.getManager();
