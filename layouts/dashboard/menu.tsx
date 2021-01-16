@@ -15,7 +15,7 @@ export default function Menu(): JSX.Element {
   const menuItems = useMemo<MenuItem[]>(
     () => [
       {
-        label: 'Overview',
+        label: 'Visão geral',
         icon: <Icon name="home" />,
         href: '/dashboard',
       },

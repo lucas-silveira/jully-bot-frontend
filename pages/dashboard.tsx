@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Divider } from '@material-ui/core';
 import DashboardLayout from 'layouts/dashboard';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/dahsboard.style';
@@ -30,7 +30,13 @@ export default function Dashboard(): JSX.Element {
       </Backdrop>
       {!pageIsLoading && (
         <DashboardLayout>
-          <S.Wrapper>Carregando...</S.Wrapper>
+          <S.Wrapper>
+            <S.Header>
+              <h4>Visão geral</h4>
+            </S.Header>
+            <Divider light />
+            <S.Main />
+          </S.Wrapper>
         </DashboardLayout>
       )}
     </>
