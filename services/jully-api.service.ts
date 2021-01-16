@@ -120,11 +120,8 @@ type GetManagerApplications = Array<{
   name: string;
   title: string;
   description: string;
-  logotipo: string;
   banner: string;
   icon: string;
-  siteUrl: string;
-  providerId: number;
 }>;
 
 class JullyApiService {

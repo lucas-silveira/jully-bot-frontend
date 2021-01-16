@@ -40,6 +40,14 @@ type BotQuestion = {
   answers: BotAnswer[];
   dynamicAnswer: BotDynamicAnswer;
 };
+type Application = {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  banner: string;
+  icon: string;
+};
 type TreeLabelProps = {
   label: string;
   dynamicAnswer: BotDynamicAnswer;
@@ -51,6 +59,7 @@ type TreeLabelProps = {
   };
   deleteAnswer: (...args: any[]) => any;
   addTrigger: (...args: any[]) => any;
+  apps: Application[];
   setItemInputLabelRef: (...args: any[]) => any;
   changeTreeItemInputLabel: (...args: any[]) => any;
 };
@@ -63,6 +72,7 @@ export default function DynamicTreeLabel({
   editTreeItemLabel,
   deleteAnswer,
   addTrigger,
+  apps,
   setItemInputLabelRef,
   changeTreeItemInputLabel,
 }: TreeLabelProps): JSX.Element {
@@ -133,18 +143,22 @@ export default function DynamicTreeLabel({
             open={openMenu === dynamicAnswer.id}
             onClose={handleCloseMenu}
           >
-            <S.MenuItem
-              selected={
-                dynamicAnswer.triggerName === TRIGGER_NAMES.GOOGLE_AGENDA
-              }
-              onClick={handleAddTrigger(
-                dynamicAnswer,
-                TRIGGER_NAMES.GOOGLE_AGENDA,
-              )}
-            >
-              <Icon name="calendar" color="#84a98c" fontSize="small" />
-              <span>Google Agenda</span>
-            </S.MenuItem>
+            {apps.length ? (
+              apps.map(app => (
+                <S.MenuItem
+                  selected={dynamicAnswer.triggerName === app.name}
+                  onClick={handleAddTrigger(
+                    dynamicAnswer,
+                    app.name as TRIGGER_NAMES,
+                  )}
+                >
+                  <Icon name="calendar" color="#84a98c" fontSize="small" />
+                  <span>{app.title}</span>
+                </S.MenuItem>
+              ))
+            ) : (
+              <S.MenuItem>Nenhum applicativo instalado.</S.MenuItem>
+            )}
           </S.Menu>
           <S.Button
             size="small"

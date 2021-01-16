@@ -41,10 +41,18 @@ type BotQuestion = {
   answers: BotAnswer[];
   dynamicAnswer: BotDynamicAnswer;
 };
-
+type Application = {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  banner: string;
+  icon: string;
+};
 type AnswersTreeProps = {
   answers: BotAnswer[];
   parentAnswers: BotQuestion;
+  apps: Application[];
   treeItemRef: RefObject<any>;
   handleSetItemRef: (...args: any[]) => any;
   openPopover: string[];
@@ -71,6 +79,7 @@ type AnswersTreeProps = {
 export default function AnswersTree({
   answers,
   parentAnswers,
+  apps,
   treeItemRef,
   handleSetItemRef,
   openPopover,
@@ -157,6 +166,7 @@ export default function AnswersTree({
                         editTreeItemLabel={editTreeItemLabel}
                         deleteAnswer={deleteAnswer}
                         addTrigger={addTrigger}
+                        apps={apps}
                         setItemInputLabelRef={setItemInputLabelRef}
                         changeTreeItemInputLabel={changeTreeItemInputLabel}
                       />
@@ -166,6 +176,7 @@ export default function AnswersTree({
                   <AnswersTree
                     answers={question.answers}
                     parentAnswers={question}
+                    apps={apps}
                     treeItemRef={treeItemRef}
                     handleSetItemRef={handleSetItemRef}
                     openPopover={openPopover}

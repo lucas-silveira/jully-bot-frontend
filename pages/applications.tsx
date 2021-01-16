@@ -16,22 +16,19 @@ import AppRemoveDialog from '@components/dialogs/app-remove-dialog';
 import { Backdrop } from '@styles/components/backdrop.style';
 import * as S from '@styles/pages/applications.style';
 
-type Product = {
+type Application = {
   id: number;
   name: string;
   title: string;
   description: string;
-  logotipo: string;
   banner: string;
   icon: string;
-  siteUrl: string;
-  providerId: number;
 };
 
 export default function Applications(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
-  const { getManager, appIsInstalled } = useManager();
+  const { getManager } = useManager();
   const [pageIsLoading, setPageIsLoading] = useState(true);
   const [toast, setToast] = useState({
     type: 'error',
@@ -40,8 +37,10 @@ export default function Applications(): JSX.Element {
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingRemoving, setLoadingRemoving] = useState(false);
-  const [apps, setApps] = useState<Product[]>([]);
-  const [appSelected, setAppSelected] = useState<Product>({} as Product);
+  const [apps, setApps] = useState<Application[]>([]);
+  const [appSelected, setAppSelected] = useState<Application>(
+    {} as Application,
+  );
 
   useEffect(() => {
     if (!authState.accessToken) {
@@ -52,7 +51,7 @@ export default function Applications(): JSX.Element {
   }, [router, authState]);
 
   useEffect(() => {
-    const getAllProducts = async () => {
+    const getApps = async () => {
       try {
         const appsFromApi = await jullyApiService.getManagerApplications();
         setApps(appsFromApi);
@@ -67,7 +66,7 @@ export default function Applications(): JSX.Element {
       }
     };
 
-    getAllProducts();
+    getApps();
   }, []);
 
   const handleToastClose = useCallback(() => {
@@ -75,9 +74,9 @@ export default function Applications(): JSX.Element {
   }, []);
 
   const handleClickOpenDialog = useCallback(
-    (product: Product) => () => {
+    (app: Application) => () => {
       setOpenDialog(true);
-      setAppSelected(product);
+      setAppSelected(app);
     },
     [],
   );

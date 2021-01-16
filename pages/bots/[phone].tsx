@@ -100,6 +100,14 @@ type BotTreeItem = {
   answers?: BotAnswer[];
   dynamicAnswer?: BotDynamicAnswer;
 };
+type Application = {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  banner: string;
+  icon: string;
+};
 
 const popoverDuration = 3000;
 const charactersLimit = 100;
@@ -116,6 +124,7 @@ export default function Bot(): JSX.Element {
   const treeItemRef = useRef({});
   const treeItemInputLabelRef = useRef({});
   const [openPopover, setOpenPopover] = useState([]);
+  const [apps, setApps] = useState<Application[]>([]);
   const [bot, setBot] = useState<Bot>({} as Bot);
   const [topics, setTopics] = useState<BotTopic[]>([]);
   const [backupTopics, setBackupTopics] = useState(null);
@@ -170,6 +179,22 @@ export default function Bot(): JSX.Element {
       }
     };
 
+    const getApps = async () => {
+      try {
+        const appsFromApi = await jullyApiService.getManagerApplications();
+        setApps(appsFromApi);
+      } catch (err) {
+        setToast({
+          type: 'error',
+          open: true,
+          message:
+            err.response?.data?.message ||
+            'Houve um erro ao tentar obter os aplicativos instalados.',
+        });
+      }
+    };
+
+    getApps();
     getBot();
   }, [router, authState]);
 
@@ -769,6 +794,7 @@ export default function Bot(): JSX.Element {
                                     editTreeItemLabel={editTreeItemLabel}
                                     deleteAnswer={handleDeleteAnswer}
                                     addTrigger={handleAddTrigger}
+                                    apps={apps}
                                     setItemInputLabelRef={
                                       handleSetItemInputLabelRef
                                     }
@@ -782,6 +808,7 @@ export default function Bot(): JSX.Element {
                               <AnswersTree
                                 answers={question.answers}
                                 parentAnswers={question}
+                                apps={apps}
                                 treeItemRef={treeItemRef}
                                 handleSetItemRef={handleSetItemRef}
                                 openPopover={openPopover}
