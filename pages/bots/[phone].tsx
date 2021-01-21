@@ -97,6 +97,7 @@ type BotTreeItem = {
   text?: string;
   optionNumber?: number;
   sortNumber?: number;
+  triggerName: string;
   questions?: BotQuestion[];
   answers?: BotAnswer[];
   dynamicAnswer?: BotDynamicAnswer;
@@ -134,7 +135,7 @@ export default function Bot(): JSX.Element {
   const [editMode, setEditMode] = useState(null);
   const [editTreeItemLabel, setEditTreeItemLabel] = useState({
     active: null,
-    value: 'teste',
+    value: '',
   });
   const [expandedTreeItems, setExpandedTreeItems] = useState([]);
   const [botValidation, setBotValidation] = useState({
@@ -289,6 +290,7 @@ export default function Bot(): JSX.Element {
       return;
     }
     setEditMode(null);
+    setEditTreeItemLabel({ active: false, value: '' });
     setBackupTopics(JSON.stringify(topics));
     handleBotSubmit();
   }, [
@@ -300,6 +302,7 @@ export default function Bot(): JSX.Element {
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
+    setEditTreeItemLabel({ active: false, value: '' });
     setTopics(JSON.parse(backupTopics));
   }, [backupTopics]);
 
