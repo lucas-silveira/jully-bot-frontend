@@ -267,7 +267,7 @@ interface MyButtonProps extends ExtendButtonBase<ButtonTypeMap> {
 
 export const Button = styled(ButtonMUI)<MyButtonProps>`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   ${props => buttonStyleTypes[props.$styleType]};
 `;

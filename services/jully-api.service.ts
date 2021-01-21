@@ -63,6 +63,32 @@ type BotQuestion = {
   answers: BotAnswer[];
   dynamicAnswer: BotDynamicAnswer;
 };
+type Bot = {
+  id: number;
+  phone: string;
+  name: string;
+  active: boolean;
+  openingHours: Array<{
+    dayWeek: number;
+    startHour: string;
+    endHour: string;
+  }>;
+  topics: Array<{
+    id: number;
+    correlationId: string;
+    ownCorrelationId: string;
+    type: string;
+    name: string;
+    optionNumber: number;
+    description: string;
+    questions: BotQuestion[];
+  }>;
+  welcomeMessage: string;
+  managerId: number;
+  sessionsId: number[];
+  createdAt: string;
+  updatedAt: string;
+};
 type GetBotResponse = {
   id: number;
   phone: string;
@@ -187,6 +213,10 @@ class JullyApiService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     await this.api.post('/managers/reset-password', resetPasswordDto);
+  }
+
+  async updateBot(managerId: number, bot: Bot): Promise<void> {
+    await this.api.put<void>(`/managers/${managerId}/bots/${bot.phone}`, bot);
   }
 
   async getBot(managerId: number, botPhone: string): Promise<GetBotResponse> {

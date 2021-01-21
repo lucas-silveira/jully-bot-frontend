@@ -118,6 +118,7 @@ export default function Bot(): JSX.Element {
   const router = useRouter();
   const { authState } = useAuth();
   const [pageIsLoading, setPageIsLoading] = useState(true);
+  const [sendingBot, setSendingBot] = useState(false);
   const [toast, setToast] = useState({
     type: 'error',
     open: false,
@@ -254,6 +255,26 @@ export default function Bot(): JSX.Element {
     [botValidation],
   );
 
+  const handleBotSubmit = useCallback(async () => {
+    try {
+      setSendingBot(true);
+      await jullyApiService.updateBot(authState.managerId, {
+        ...bot,
+        topics,
+      });
+      setSendingBot(false);
+    } catch (err) {
+      setSendingBot(false);
+      setToast({
+        type: 'error',
+        open: true,
+        message:
+          err.response?.data.message ||
+          'Ops! Algo deu errado ao salvar o bot. Tente novamente.',
+      });
+    }
+  }, [authState, bot, topics]);
+
   const handleSaveChanges = useCallback(() => {
     if (botValidation.questionsWithoutAnswers.ownCorrelationIds.length) {
       setBotValidation(oldValue => ({ ...oldValue, validate: true }));
@@ -269,7 +290,13 @@ export default function Bot(): JSX.Element {
     }
     setEditMode(null);
     setBackupTopics(JSON.stringify(topics));
-  }, [topics, botValidation.questionsWithoutAnswers, handleClosePopover]);
+    handleBotSubmit();
+  }, [
+    topics,
+    botValidation.questionsWithoutAnswers,
+    handleClosePopover,
+    handleBotSubmit,
+  ]);
 
   const handleCancelChanges = useCallback(() => {
     setEditMode(null);
@@ -689,7 +716,11 @@ export default function Bot(): JSX.Element {
                       $styleType="save"
                       onClick={handleSaveChanges}
                     >
-                      Salvar alterações
+                      {sendingBot ? (
+                        <CircularProgress size={12} color="inherit" />
+                      ) : (
+                        'Salvar alterações'
+                      )}
                     </S.Button>
                     <S.Button
                       size="small"
@@ -784,6 +815,7 @@ export default function Bot(): JSX.Element {
                           >
                             {question.dynamicAnswer ? (
                               <S.TreeItem
+                                key={question.dynamicAnswer.id}
                                 ref={handleSetItemRef(
                                   question.dynamicAnswer.ownCorrelationId,
                                 )}
